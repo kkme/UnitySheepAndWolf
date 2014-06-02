@@ -9,6 +9,12 @@ public class UnitPlayer : UnitBase
 	void Awake()
 	{
 		WorldInfo.unitPlayer = this;
+		myType = EnumUnitTypes.UNIT.PLAYER;
+		UnitEnemy.EVENT_HIT_PLAYER += EVENT_GOT_HIT;
+	}
+	void EVENT_GOT_HIT()
+	{
+		Debug.Log("OH MY GOD I GOT HIT");
 	}
 	public override bool move(Vector2 dir)
 	{

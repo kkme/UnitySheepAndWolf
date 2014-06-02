@@ -9,24 +9,29 @@ public class UnitBase : MonoBehaviour
 	public Vector2 pos;
 	public Vector2 POS { get { return pos; } }
 	
+	protected EnumUnitTypes.UNIT myType = EnumUnitTypes.UNIT.BASIC;
+
 	void Awake()
 	{
 		WorldInfo.units.Add(this);
 	}
-	bool helperIsGridAvailable(bool[,] grid, int x, int y)
+	protected bool helperIsIndexValid(int x, int y)
 	{
-		if (x < 0 || y < 0 || 
-			x >= WorldInfo.worldSize.x || y >= WorldInfo.worldSize.y ||
-			grid[x,y] ) return false;		
+		return !(x < 0 || y < 0 ||
+			x >= WorldInfo.worldSize.x || y >= WorldInfo.worldSize.y);
+	}
+	protected bool helperIsGridAvailable(EnumUnitTypes.UNIT?[,] grid, int x, int y)
+	{
+		if (!helperIsIndexValid(x, y) || grid[x, y] != null) return false;		
 		return true;
 	}
 	public virtual bool move(Vector2 dir)
 	{
 		var posTo = pos + dir;
-		if (!helperIsGridAvailable(WorldInfo.gridCollision, (int)posTo.x, (int)posTo.y)) return false;
-		WorldInfo.gridCollision[(int)pos.x, (int)pos.y] = false;
+		if (!helperIsGridAvailable(WorldInfo.gridUnits, (int)posTo.x, (int)posTo.y)) return false;
+		WorldInfo.gridUnits[(int)pos.x, (int)pos.y] = null;
 		pos = posTo;
-		WorldInfo.gridCollision[(int)pos.x, (int)pos.y] = true;
+		WorldInfo.gridUnits[(int)pos.x, (int)pos.y] = myType;
 		return true;
 	}
 }

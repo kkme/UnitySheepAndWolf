@@ -3,8 +3,20 @@ using System.Collections;
 namespace ExtensionsUnityVectors{
 	static class ExtensionsUnityVectors
 	{
+		//helper
+		static float getDir(float n)
+		{
+			if (n > 0) return 1;
+			if (n < 0) return -1;
+			return 0;
+		}
+
 		public static Vector3 XYZ(this Vector2 me,float z = 0){
 			return new Vector3 (me.x, me.y, z);
+		}
+		public static Vector2 dir(this Vector2 me)
+		{
+			return new Vector2(getDir(me.x), getDir(me.y));
 		}
 		public static Vector2 damp(this Vector2 me, float xMin, float xMax, float yMin, float yMax)
 		{
