@@ -46,22 +46,36 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Enums\EnumUnitTypes.cs" />
-     <Compile Include="Assets\Extensions\ExtensionsSprite.cs" />
-     <Compile Include="Assets\Extensions\ExtensionsSpriteRenderer.cs" />
-     <Compile Include="Assets\Extensions\ExtensionsTexture2D.cs" />
-     <Compile Include="Assets\Extensions\ExtensionsTransform.cs" />
-     <Compile Include="Assets\Extensions\ExtensionsUnityVectors.cs" />
-     <Compile Include="Assets\Extensions\RendererGame.cs" />
-     <Compile Include="Assets\Extensions\WorldInfo.cs" />
-     <Compile Include="Assets\GamePlay\LoopDeskTop.cs" />
-     <Compile Include="Assets\GamePlay\LoopGame.cs" />
-     <Compile Include="Assets\Units\UnitBase.cs" />
-     <Compile Include="Assets\Units\UnitBaseController.cs" />
-     <Compile Include="Assets\Units\UnitEnemy.cs" />
-     <Compile Include="Assets\Units\UnitNonPlayer.cs" />
-     <Compile Include="Assets\Units\UnitPlayer.cs" />
-     <Compile Include="Assets\Units\UnitySheep.cs" />
+     <Compile Include="Assets\Scripts\00Utility\CameraSub.cs" />
+     <Compile Include="Assets\Scripts\00Utility\KDelegates.cs" />
+     <Compile Include="Assets\Scripts\Enums\EnumUnitTypes.cs" />
+     <Compile Include="Assets\Scripts\Extensions\ExtensionsSprite.cs" />
+     <Compile Include="Assets\Scripts\Extensions\ExtensionsSpriteRenderer.cs" />
+     <Compile Include="Assets\Scripts\Extensions\ExtensionsTexture2D.cs" />
+     <Compile Include="Assets\Scripts\Extensions\ExtensionsTransform.cs" />
+     <Compile Include="Assets\Scripts\Extensions\ExtensionsUnityVectors.cs" />
+     <Compile Include="Assets\Scripts\Game\Board.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit\HazardBase.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit\UnitBase.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit\UnitBaseController.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit\UnitEnemy.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit\UnitNonPlayer.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit\UnitPlayer.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit\UnitySheep.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Data\KLevel.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Data\KLevelComponents.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Data\Level00.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\GameLoop.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\GameSetting.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Main.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\WorldInfo.cs" />
+     <Compile Include="Assets\Scripts\OS\OS_DeskTOp.cs" />
+     <Compile Include="Assets\Scripts\UI\UIInfo.cs" />
+     <Compile Include="Assets\Scripts\UI\UIItem.cs" />
+     <Compile Include="Assets\Scripts\UI\UIOrganizer.cs" />
+     <Compile Include="Assets\Scripts\UI\UI_Game.cs" />
+     <Compile Include="Assets\Scripts\UI\UI_GameFinished.cs" />
+     <Compile Include="Assets\Scripts\UI\UI_Menu.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
