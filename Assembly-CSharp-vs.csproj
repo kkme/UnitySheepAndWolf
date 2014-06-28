@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\00Utility\CameraSub.cs" />
      <Compile Include="Assets\Scripts\00Utility\KDelegates.cs" />
+     <Compile Include="Assets\Scripts\00Utility\plugins\SimpleJSON.cs" />
      <Compile Include="Assets\Scripts\Enums\EnumUnitTypes.cs" />
      <Compile Include="Assets\Scripts\Extensions\ExtensionsSprite.cs" />
      <Compile Include="Assets\Scripts\Extensions\ExtensionsSpriteRenderer.cs" />
@@ -64,6 +65,7 @@
      <Compile Include="Assets\Scripts\Game\Unit\UnitySheep.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Data\KLevel.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Data\KLevelComponents.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Data\KLevel_Unit.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Data\Level00.cs" />
      <Compile Include="Assets\Scripts\GameSystem\GameLoop.cs" />
      <Compile Include="Assets\Scripts\GameSystem\GameSetting.cs" />
@@ -76,6 +78,14 @@
      <Compile Include="Assets\Scripts\UI\UI_Game.cs" />
      <Compile Include="Assets\Scripts\UI\UI_GameFinished.cs" />
      <Compile Include="Assets\Scripts\UI\UI_Menu.cs" />
+     <None Include="Assets\Scripts\GameSystem\Data\Level00.txt" />
+     <None Include="Assets\Plugins\Newtonsoft.Json.xml" />
+ <Reference Include="ICSharpCode.SharpZipLib">
+ <HintPath>Assets\Scripts\00Utility\plugins\ICSharpCode.SharpZipLib.dll</HintPath>
+ </Reference>
+ <Reference Include="Newtonsoft.Json">
+ <HintPath>Assets\Plugins\Newtonsoft.Json.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

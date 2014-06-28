@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Newtonsoft.Json;
 
 class Main : MonoBehaviour
 {
-	public Board PREFAB_BOARD;
 	public
 		UIOrganizer myUI_menu, myUI_game, myUI_gameFinished;
-
-	Board myBoard;
 	KDels.EVENTHDR_REQUEST_SIMPLE
 		EVENT_GAME_OVER = delegate { },
 		EVENT_GAME_RESTART = delegate { },
-		EVENT_GAME_NEXT = delegate { }; 
+		EVENT_GAME_NEXT = delegate { }; 	
+
+	int level = 0;
+	Board myBoard;
+	GameSetting setting = new GameSetting();
 
 	public void Awake()	
 	{
@@ -25,6 +26,16 @@ class Main : MonoBehaviour
 		UI_GameFinished.EVENT_REQUEST_NEXT_LEVEL += EVENT_GAME_NEXT;
 		
 		GameLoop.EVENT_GAME_OVER += EVENT_GAME_OVER;
+
+		//var level = new KLevel(3, 3);
+		//var a = new KLevel_Unit(KEnums.UNIT.PLAYER,0, 0, 0);
+		//var b = new KLevel_Unit(KEnums.UNIT.ENEMY, 0, 0, 1);
+		//var c = new KLevel_Unit(KEnums.UNIT.ENEMY, 0, 0, 2);
+		//level.units.Add(a);
+		//level.units.Add(b);
+		//level.units.Add(c);
+		//var serialized = JsonConvert.SerializeObject(level);
+		//Debug.Log(serialized);
 	}
 	void Start()
 	{
@@ -35,7 +46,24 @@ class Main : MonoBehaviour
 	{
 		hideAll();
 		myUI_game.show();
-		GameSetting.initGame(new Level00());
+		var level = new KLevel(3, 3);
+		var a = new KLevel_Unit(KEnums.UNIT.PLAYER,0, 0, 0);
+		var b = new KLevel_Unit(KEnums.UNIT.ENEMY, 0, 0, 1);
+		var c = new KLevel_Unit(KEnums.UNIT.ENEMY, 0, 0, 2);
+		level.units.Add(a);
+		level.units.Add(b);
+		level.units.Add(c);
+		var serialized = JsonConvert.SerializeObject(level);
+		using (System.IO.StreamWriter writer = new System.IO.StreamWriter("TEST_FILE.txt", true))
+		{
+
+			writer.Write("HELLOW");
+			writer.Write(serialized);
+		}
+		Debug.Log("WRITING " + serialized);
+
+		//level.units.Add(c);
+		setting.initGame(level);
 	}
 	void EVENTHDR_GAME_OVER()
 	{

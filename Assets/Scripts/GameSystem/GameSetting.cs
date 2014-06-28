@@ -2,27 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SimpleJSON;
 
-public class GameSetting : MonoBehaviour
+public class GameSetting
 {
-	enum OS { DESKTOP, ANDROID };
-	static OS myOS = OS.DESKTOP;
-	static bool isInitiated = false;
-	static List<GameObject> objectsInitiated = new List<GameObject>();
+	bool isInitiated = false;
 
-	public static void initGame(KLevel level)
+	public enum OS { DESKTOP, ANDROID };
+	OS myOS = OS.DESKTOP;
+	List<GameObject> objectsInitiated = new List<GameObject>();
+	public GameSetting(OS osChosen = OS.DESKTOP)
+	{
+		myOS = osChosen;
+	}
+	public void initGame(KLevel level)
 	{
 		if (isInitiated) destoryPreviousGame();
 		isInitiated = true;
 
 		initWorldInfo(level.WIDTH, level.HEIGHT);
 		var kBoard = initBoard(level.WIDTH, level.HEIGHT);
-		initUnits(level.units);
+		foreach (var u in level.units) initUnits(u);
+		//initUnits(level.units);
 
-		var loop = new GameObject("GameSystem : GameLoop", typeof(GameLoop)).GetComponent<GameLoop>();
+		var loop = new GameObject("	GameSystem : GameLoop", typeof(GameLoop)).GetComponent<GameLoop>();
 		Debug.Log("SETTING ASSIGNED BOARD :  " + kBoard);
 		loop.init(kBoard);
-
 		switch (myOS)
 		{
 			case OS.DESKTOP:
@@ -33,33 +38,28 @@ public class GameSetting : MonoBehaviour
 				break;
 		}
 	}
-	static void destoryPreviousGame()
+
+	void destoryPreviousGame()
 	{
 		Debug.Log("GameSetting : Destroyed Previous Game");
-		foreach (var o in objectsInitiated) Destroy(o);
+		foreach (var o in objectsInitiated) MonoBehaviour.Destroy(o);
 		objectsInitiated = new List<GameObject>();
 	}
-	static Board initBoard(int w, int h)
+	Board initBoard(int w, int h)
 	{
-		var kBoard = (Instantiate(KLevelComponents.me.board, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<Board>();
+		var kBoard = (MonoBehaviour.Instantiate(KLevelComponents.BOARD, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<Board>();
 		kBoard.transform.localScale = new Vector3(w,h, 1);
 		kBoard.reset(w,h);
 		return kBoard;
 	}
-	static void initUnits(List<Vector4> units)
+
+	private void initUnits(KLevel_Unit u)
 	{
-
-		Dictionary<int, IEnumerable<GameObject>> dic = new Dictionary<int, IEnumerable<GameObject>>(){
-		{(int)KEnums.UNIT.PLAYER ,new GameObject[]{KLevelComponents.me.UNIT_PLAYER }},
-		{(int)KEnums.UNIT.ENEMY  ,KLevelComponents.DicUntiEnemy} };
-		foreach (var data in units)
-		{
-			var PREFAB = dic[(int)data.x].ElementAt((int)data.y);
-			var u =( Instantiate(PREFAB, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<UnitBase>();
-			u.pos = new Vector2(data.z, data.w);
-
-		}
+		var PREFAB = KLevelComponents.dicUnits[u.type00][u.type01];
+		GameObject obj = MonoBehaviour.Instantiate(PREFAB, Vector3.zero, Quaternion.identity) as GameObject;
+		obj.GetComponent<UnitBase>().pos = new Vector2(u.position[0], u.position[1]);
 	}
+
 	static void initWorldInfo(int width, int height)
 	{
 		WorldInfo.worldSize = new Vector2(width,height);

@@ -14,13 +14,9 @@ public class UI_Menu : UIOrganizer
 	
 	void Awake()
 	{
-		
-		BTTN_start.EVENT_CLICK += EVENTHDR_CLICK_START;
+
+		BTTN_start.EVENT_CLICK += EVENT_REQUEST_GAME_START;
 		myItems.AddRange(new UIItem[] { ICN_title, BTTN_start, BTTN_exit });
-	}
-	void EVENTHDR_CLICK_START()
-	{
-		EVENT_REQUEST_GAME_START();
 	}
 	public override void positionReset()
 	{

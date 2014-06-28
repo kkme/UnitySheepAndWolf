@@ -7,8 +7,7 @@ using ExtensionsUnityVectors;
 
 public class UIItem : UIOrganizer
 {
-	public delegate void DEL_CLICK();
-	public DEL_CLICK EVENT_CLICK = delegate { };
+	public KDels.EVENTHDR_REQUEST_SIMPLE EVENT_CLICK = delegate { };
  
 	public void position(Vector2 leftTop, Vector2 rightBottom)
 	{position(leftTop.y, rightBottom.y, leftTop.x, rightBottom.x);}
