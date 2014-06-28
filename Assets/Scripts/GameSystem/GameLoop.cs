@@ -5,15 +5,22 @@ using System.Text;
 
 class GameLoop : MonoBehaviour
 {
-	public static KDels.EVENTHDR_REQUEST_SIMPLE EVENT_GAME_OVER = delegate { };
+	public static KDels.EVENTHDR_REQUEST_SIMPLE
+		EVENT_GAME_OVER = delegate { },
+		EVENT_GAME_WIN = delegate { };
 
 	Board myBoard;
 	bool isPlaying = true;
 	public void init(Board b)
 	{
-		Debug.Log("GAME LOOP BOARD SET " + b);
+		Debug.Log("GAMELOOP : Initiated, Board is " + b);
 		myBoard = b;
-		UnitEnemy.EVENT_HIT_PLAYER += EVENTHDR_PlayerGotHit;
+
+		EVENT_GAME_WIN += EVENTHDR_GAME_WIN;
+		EVENT_GAME_OVER += EVENTHDR_GAME_OVER;
+		UnitPlayer.EVENT_REACHEED_GOAL += EVENT_GAME_WIN;
+		UnitEnemy.EVENT_HIT_PLAYER += EVENT_GAME_OVER;
+
 		foreach (var u in WorldInfo.units)
 		{
 			u.IsUpdated = false;
@@ -30,17 +37,14 @@ class GameLoop : MonoBehaviour
 		
 		turn_record();
 	}
-
-	void EVENTHDR_PlayerGotHit()
+	void EVENTHDR_GAME_WIN()
 	{
-		Debug.Log("Player got hit ");
-		gameOver();
+		isPlaying = false;
 	}
-	void gameOver()
+	void EVENTHDR_GAME_OVER()
 	{
 		Debug.Log("GameLoop : gameOver");
 		isPlaying = false;
-		EVENT_GAME_OVER();
 	}
 
 	bool turn_player(Vector2 dir)
@@ -54,6 +58,7 @@ class GameLoop : MonoBehaviour
 		
 		foreach (var unit in WorldInfo.units)
 		{
+			Debug.Log(unit);
 			if(!unit.IsUpdated) unit.KUpdate();
 		}
 	

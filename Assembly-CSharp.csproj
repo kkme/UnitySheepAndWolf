@@ -56,19 +56,21 @@
      <Compile Include="Assets\Scripts\Extensions\ExtensionsTransform.cs" />
      <Compile Include="Assets\Scripts\Extensions\ExtensionsUnityVectors.cs" />
      <Compile Include="Assets\Scripts\Game\Board.cs" />
-     <Compile Include="Assets\Scripts\Game\Unit\HazardBase.cs" />
      <Compile Include="Assets\Scripts\Game\Unit\UnitBase.cs" />
-     <Compile Include="Assets\Scripts\Game\Unit\UnitBaseController.cs" />
      <Compile Include="Assets\Scripts\Game\Unit\UnitEnemy.cs" />
      <Compile Include="Assets\Scripts\Game\Unit\UnitNonPlayer.cs" />
      <Compile Include="Assets\Scripts\Game\Unit\UnitPlayer.cs" />
      <Compile Include="Assets\Scripts\Game\Unit\UnitySheep.cs" />
-     <Compile Include="Assets\Scripts\GameSystem\Data\KLevel.cs" />
-     <Compile Include="Assets\Scripts\GameSystem\Data\KLevelComponents.cs" />
-     <Compile Include="Assets\Scripts\GameSystem\Data\KLevel_Unit.cs" />
-     <Compile Include="Assets\Scripts\GameSystem\Data\Level00.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit_Hazard\HazardBase.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit_Objective\UnitObj.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit_Objective\UnitObjTemp.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit_Objective\UnitObjTemp_goal.cs" />
      <Compile Include="Assets\Scripts\GameSystem\GameLoop.cs" />
      <Compile Include="Assets\Scripts\GameSystem\GameSetting.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Level\KLevel.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Level\KLevelComponents.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Level\KLevel_Unit.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Level\Level00.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Main.cs" />
      <Compile Include="Assets\Scripts\GameSystem\WorldInfo.cs" />
      <Compile Include="Assets\Scripts\OS\OS_DeskTOp.cs" />
@@ -78,13 +80,15 @@
      <Compile Include="Assets\Scripts\UI\UI_Game.cs" />
      <Compile Include="Assets\Scripts\UI\UI_GameFinished.cs" />
      <Compile Include="Assets\Scripts\UI\UI_Menu.cs" />
-     <None Include="Assets\Scripts\GameSystem\Data\Level00.txt" />
+     <None Include="Assets\TEST_FILE.txt" />
+     <None Include="Assets\Data\level01.txt" />
+     <None Include="Assets\Data\level00.txt" />
      <None Include="Assets\Plugins\Newtonsoft.Json.xml" />
- <Reference Include="ICSharpCode.SharpZipLib">
- <HintPath>Assets\Scripts\00Utility\plugins\ICSharpCode.SharpZipLib.dll</HintPath>
- </Reference>
  <Reference Include="Newtonsoft.Json">
  <HintPath>Assets\Plugins\Newtonsoft.Json.dll</HintPath>
+ </Reference>
+ <Reference Include="ICSharpCode.SharpZipLib">
+ <HintPath>Assets\Scripts\00Utility\plugins\ICSharpCode.SharpZipLib.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

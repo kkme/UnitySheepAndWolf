@@ -4,8 +4,7 @@ using System.Collections;
 using ExtensionsUnityVectors;
 
 public class UnitEnemy : UnitNonPlayer {
-	public delegate void EVENTHDR_HIT_PLAYER();
-	static public event EVENTHDR_HIT_PLAYER EVENT_HIT_PLAYER = delegate { };
+	static public event KDels.EVENTHDR_REQUEST_SIMPLE EVENT_HIT_PLAYER = delegate { };
 
 	bool isPlayerNextTo(Vector2 pos)
 	{

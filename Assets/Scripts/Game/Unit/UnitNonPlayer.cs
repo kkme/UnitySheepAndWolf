@@ -3,12 +3,17 @@ using System.Collections;
 
 public class UnitNonPlayer : UnitBase
 {
-	void Awake()
+
+	public override void Awake()
 	{
 		WorldInfo.units.Add(this);
-		//lets do it for now
 	}
-	void Start () {}
+	public void kill()
+	{
+		base.kill();
+		WorldInfo.units.Remove(this);
+	}
+
 	
 	
 	void Update () {

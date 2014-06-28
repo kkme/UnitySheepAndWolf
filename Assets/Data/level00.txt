@@ -1,0 +1,6 @@
+{"size":[5,1],
+"units":[
+{"type00":0,"type01":0,"position":[0,0]},
+{"type00":2,"type01":0,"position":[4,0]}
+],
+"WIDTH":3,"HEIGHT":3}

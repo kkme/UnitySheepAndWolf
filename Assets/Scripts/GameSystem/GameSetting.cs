@@ -20,19 +20,22 @@ public class GameSetting
 		if (isInitiated) destoryPreviousGame();
 		isInitiated = true;
 
-		initWorldInfo(level.WIDTH, level.HEIGHT);
+		WorldInfo.init(level.WIDTH, level.HEIGHT);
 		var kBoard = initBoard(level.WIDTH, level.HEIGHT);
-		foreach (var u in level.units) initUnits(u);
-		//initUnits(level.units);
-
 		var loop = new GameObject("	GameSystem : GameLoop", typeof(GameLoop)).GetComponent<GameLoop>();
+		foreach (var u in level.units) initUnits(u);
+
+		objectsInitiated.Add(kBoard.gameObject);
+		objectsInitiated.Add(loop.gameObject);
+		
 		Debug.Log("SETTING ASSIGNED BOARD :  " + kBoard);
 		loop.init(kBoard);
 		switch (myOS)
 		{
 			case OS.DESKTOP:
-				new GameObject("GameSystem : OS_DeskTop", typeof(OS_DeskTOp)).GetComponent<OS_DeskTOp>()
-					.gameLoop = loop;
+				var os = new GameObject("GameSystem : OS_DeskTop", typeof(OS_DeskTOp));
+				os.GetComponent<OS_DeskTOp>().gameLoop = loop;
+				objectsInitiated.Add(os);
 				break;
 			case OS.ANDROID:
 				break;
@@ -43,7 +46,10 @@ public class GameSetting
 	{
 		Debug.Log("GameSetting : Destroyed Previous Game");
 		foreach (var o in objectsInitiated) MonoBehaviour.Destroy(o);
+		foreach (var o in WorldInfo.units) MonoBehaviour.Destroy(o.gameObject);
+
 		objectsInitiated = new List<GameObject>();
+		WorldInfo.init((int)WorldInfo.WORLD_SIZE.x, (int)WorldInfo.WORLD_SIZE.y);
 	}
 	Board initBoard(int w, int h)
 	{
@@ -60,11 +66,4 @@ public class GameSetting
 		obj.GetComponent<UnitBase>().pos = new Vector2(u.position[0], u.position[1]);
 	}
 
-	static void initWorldInfo(int width, int height)
-	{
-		WorldInfo.worldSize = new Vector2(width,height);
-		WorldInfo.gridUnits = new UnitBase[width,height];
-		WorldInfo.gridHazard = new HazardBase[width, height];
-		WorldInfo.gridUnitsDisregard = new KEnums.UNIT?[width, height];
-	}
 }

@@ -6,12 +6,14 @@ using Newtonsoft.Json;
 
 class Main : MonoBehaviour
 {
+	static string PATH_DATA = "Assets\\Data\\";
 	public
 		UIOrganizer myUI_menu, myUI_game, myUI_gameFinished;
 	KDels.EVENTHDR_REQUEST_SIMPLE
 		EVENT_GAME_OVER = delegate { },
 		EVENT_GAME_RESTART = delegate { },
-		EVENT_GAME_NEXT = delegate { }; 	
+		EVENT_GAME_NEXT = delegate { },
+		EVENT_GAME_WIN = delegate { };
 
 	int level = 0;
 	Board myBoard;
@@ -20,53 +22,44 @@ class Main : MonoBehaviour
 	public void Awake()	
 	{
 		EVENT_GAME_OVER += EVENTHDR_GAME_OVER;
+		EVENT_GAME_WIN += EVENTHDR_GAME_WIN;
 
 		UI_Menu.EVENT_REQUEST_GAME_START += EVENTHDR_INIT_GAME;
-		UI_GameFinished.EVENT_REQUEST_RESTART_LEVEL += EVENT_GAME_RESTART;
+		UI_GameFinished.EVENT_REQUEST_RESTART_LEVEL += EVENTHDR_INIT_GAME;
 		UI_GameFinished.EVENT_REQUEST_NEXT_LEVEL += EVENT_GAME_NEXT;
-		
-		GameLoop.EVENT_GAME_OVER += EVENT_GAME_OVER;
 
-		//var level = new KLevel(3, 3);
-		//var a = new KLevel_Unit(KEnums.UNIT.PLAYER,0, 0, 0);
-		//var b = new KLevel_Unit(KEnums.UNIT.ENEMY, 0, 0, 1);
-		//var c = new KLevel_Unit(KEnums.UNIT.ENEMY, 0, 0, 2);
-		//level.units.Add(a);
-		//level.units.Add(b);
-		//level.units.Add(c);
-		//var serialized = JsonConvert.SerializeObject(level);
-		//Debug.Log(serialized);
+		GameLoop.EVENT_GAME_OVER	+= EVENT_GAME_OVER;
+		GameLoop.EVENT_GAME_WIN		+= EVENT_GAME_WIN;
 	}
 	void Start()
 	{
 		hideAll();
 		myUI_menu.show();
 	}
+	void helperInitGame(int lv = 0)
+	{
+		string fileName = (lv < 10) ? ("level0" + lv) : ("level" + lv);
+		fileName += ".txt";
+		using (var reader = new System.IO.StreamReader(PATH_DATA + fileName))
+		{
+			var level = JsonConvert.DeserializeObject<KLevel>(reader.ReadToEnd());
+			setting.initGame(level);
+		}
+	}
 	public void EVENTHDR_INIT_GAME()
 	{
 		hideAll();
 		myUI_game.show();
-		var level = new KLevel(3, 3);
-		var a = new KLevel_Unit(KEnums.UNIT.PLAYER,0, 0, 0);
-		var b = new KLevel_Unit(KEnums.UNIT.ENEMY, 0, 0, 1);
-		var c = new KLevel_Unit(KEnums.UNIT.ENEMY, 0, 0, 2);
-		level.units.Add(a);
-		level.units.Add(b);
-		level.units.Add(c);
-		var serialized = JsonConvert.SerializeObject(level);
-		using (System.IO.StreamWriter writer = new System.IO.StreamWriter("TEST_FILE.txt", true))
-		{
-
-			writer.Write("HELLOW");
-			writer.Write(serialized);
-		}
-		Debug.Log("WRITING " + serialized);
-
-		//level.units.Add(c);
-		setting.initGame(level);
+		helperInitGame();
+	}
+	void EVENTHDR_GAME_WIN()
+	{
+		Debug.Log("MAIN : EVENTHDR_GAME_WIN");
+		myUI_gameFinished.show();
 	}
 	void EVENTHDR_GAME_OVER()
 	{
+		Debug.Log("MAIN : EVENTHDR_GAME_OVER");
 		myUI_gameFinished.show();
 	}
 	void hideAll()

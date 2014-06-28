@@ -3,9 +3,8 @@ using System.Collections;
 
 public class UnitPlayer : UnitBase
 {
-	public delegate void EVENTHDR_PlayerMoved();
-	static public event EVENTHDR_PlayerMoved EVENT_PlayerMoved = delegate { };
-
+	static public event KDels.EVENTHDR_REQUEST_SIMPLE EVENT_MOVED = delegate { };
+	static public event KDels.EVENTHDR_REQUEST_SIMPLE EVENT_REACHEED_GOAL = delegate { };
 	void Awake()
 	{
 		WorldInfo.units.Add(this);
@@ -17,11 +16,17 @@ public class UnitPlayer : UnitBase
 	{
 		Debug.Log("OH MY GOD I GOT HIT");
 	}
+	bool isReachedGoal()
+	{
+		return (pos.x == WorldInfo.PLAYER_GOAL.x && pos.y == WorldInfo.PLAYER_GOAL.y) ;
+	}
 	public override bool move(int x, int y, bool tryAgain = true)
 	{
 		IsUpdated = true;
 		if (!base.move(x, y, false)) return false;
-		EVENT_PlayerMoved();
+		
+		if (isReachedGoal()) EVENT_REACHEED_GOAL();
+		else EVENT_MOVED();
 		return true;
 	}
 	

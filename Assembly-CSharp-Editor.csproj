@@ -47,8 +47,13 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Editor\CreatePlane.cs" />
-     <None Include="Assets\Scripts\GameSystem\Data\Level00.txt" />
+     <None Include="Assets\TEST_FILE.txt" />
+     <None Include="Assets\Data\level01.txt" />
+     <None Include="Assets\Data\level00.txt" />
      <None Include="Assets\Plugins\Newtonsoft.Json.xml" />
+ <Reference Include="Newtonsoft.Json">
+ <HintPath>Assets\Plugins\Newtonsoft.Json.dll</HintPath>
+ </Reference>
  <Reference Include="ICSharpCode.SharpZipLib">
  <HintPath>Assets\Scripts\00Utility\plugins\ICSharpCode.SharpZipLib.dll</HintPath>
  </Reference>
@@ -69,9 +74,6 @@
  </Reference>
  <Reference Include="UnityEditor.Android.Extensions">
  <HintPath>C:\Program Files (x86)\Unity\Editor\Data\PlaybackEngines\AndroidPlayer\EditorExtensions\UnityEditor.Android.Extensions.dll</HintPath>
- </Reference>
- <Reference Include="Newtonsoft.Json">
- <HintPath>Assets\Plugins\Newtonsoft.Json.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

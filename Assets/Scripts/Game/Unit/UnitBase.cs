@@ -6,6 +6,7 @@ using ExtensionsUnityVectors;
 
 public class UnitBase : MonoBehaviour
 {
+	static bool IsDebug = false;
 	public Vector2	pos = new Vector2(0, 0), 
 					posBefore = new Vector2(0, 0);
 	public Vector2 POS { get { return pos; } }
@@ -15,15 +16,17 @@ public class UnitBase : MonoBehaviour
 	protected KEnums.UNIT myType = KEnums.UNIT.BASIC;
 	public KEnums.UNIT TYPE { get { return myType;  } }
 	public bool IsUpdated { get { return isUpdated; } set { isUpdated = value; } }
-		
-	void Start()
+
+	public virtual void  Awake()
+	{}
+	public virtual void  Start()
 	{
 		registerOnGrid();
 	}
 	protected bool helperIsIndexValid(int x, int y)
 	{
 		return !(x < 0 || y < 0 ||
-			x >= WorldInfo.worldSize.x || y >= WorldInfo.worldSize.y);
+			x >= WorldInfo.WORLD_SIZE.x || y >= WorldInfo.WORLD_SIZE.y);
 	}
 	protected bool? helperIsGridAvailable<T>(T[,] grid, int x, int y)
 	{
@@ -50,13 +53,13 @@ public class UnitBase : MonoBehaviour
 	public void move(float x, float y) { move((int)x, (int)y, true); }
 	public void moveBack()
 	{
-		Debug.Log(myType + "Moving Back	"); 
+		if(IsDebug)Debug.Log(myType + "Moving Back	"); 
 		unRegisterOnGrid();
 		pos = posBefore;
 		registerOnGrid();
 	}
 	bool moveTry(int x, int y){
-		Debug.Log(myType + " Move trying");
+		if (IsDebug) Debug.Log(myType + " Move trying");
 		var at = helperGetGrid()[x,y] as UnitBase;
 		if (at == null) return move(x, y,true);
 		if (at.isUpdated) return false;
@@ -72,12 +75,12 @@ public class UnitBase : MonoBehaviour
 		if (!isAvailable.Value)
 		{
 			if (!tryAgain) return false;
-			Debug.Log(myType + " " + "NOT AVAILALBE ");
+			if (IsDebug) Debug.Log(myType + " " + "NOT AVAILALBE ");
 			bool resultTry = moveTry(x,y);
-			Debug.Log(myType + " MOVE TRYING RESULT : " + resultTry);
+			if (IsDebug) Debug.Log(myType + " MOVE TRYING RESULT : " + resultTry);
 			return resultTry;
 		}
-		Debug.Log(myType + " " + "AVAILALBE");
+		if (IsDebug) Debug.Log(myType + " " + "AVAILALBE");
 		unRegisterOnGrid();
 		posBefore = pos;
 		pos = new Vector2(x,y);
