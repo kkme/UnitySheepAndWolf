@@ -6,6 +6,11 @@ using ExtensionsUnityVectors;
 public class UnitEnemy : UnitNonPlayer {
 	static public event KDels.EVENTHDR_REQUEST_SIMPLE EVENT_HIT_PLAYER = delegate { };
 
+	public override void Awake()
+	{
+		base.Awake();
+		myType = KEnums.UNIT.ENEMY;
+	}
 	bool isPlayerNextTo(Vector2 pos)
 	{
 		Vector2[] dics =new Vector2[]{new Vector2(1,0), new Vector2(-1,0), new Vector2(0,1), new Vector2(0,-1)};
@@ -29,7 +34,7 @@ public class UnitEnemy : UnitNonPlayer {
 		var diff = pos - WorldInfo.unitPlayer.POS;
 		return Mathf.Abs(diff.x) <= rangeW && Mathf.Abs(diff.y) <= rangeH;
 	}
-	Vector2 helperGetDir(UnitBase unit)
+	protected Vector2 helperGetDir(UnitBase unit)
 	{
 		var dir = (unit.POS - pos).dir();
 		int index = Random.Range(1, 2);
@@ -40,16 +45,12 @@ public class UnitEnemy : UnitNonPlayer {
 		}
 		return dir;
 	}
-
 	public override void KUpdate(){
 		IsUpdated = true;
-		if (isPlayerClose(5, 5)){
-			var dir = helperGetDir(WorldInfo.unitPlayer);
-			move(dir);
-		}
 	}
 	public override bool move(int x, int y, bool tryAgain = true)
 	{
+		Debug.Log("MOVE CALLED");
 		if (!base.move(x, y, true))
 		{
 			if (isPlayerNextTo(pos)) EVENT_HIT_PLAYER();

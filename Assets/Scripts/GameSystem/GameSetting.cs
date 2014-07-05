@@ -20,8 +20,9 @@ public class GameSetting
 		if (isInitiated) destoryPreviousGame();
 		isInitiated = true;
 
-		WorldInfo.init(level.WIDTH, level.HEIGHT);
-		var kBoard = initBoard(level.WIDTH, level.HEIGHT);
+		//add 2 for "edges" 
+		WorldInfo.init(level.WIDTH+2, level.HEIGHT+2); 
+		var kBoard = initBoard(level.WIDTH + 2, level.HEIGHT +2);
 		var loop = new GameObject("	GameSystem : GameLoop", typeof(GameLoop)).GetComponent<GameLoop>();
 		foreach (var u in level.units) initUnits(u);
 
@@ -63,7 +64,7 @@ public class GameSetting
 	{
 		var PREFAB = KLevelComponents.dicUnits[u.type00][u.type01];
 		GameObject obj = MonoBehaviour.Instantiate(PREFAB, Vector3.zero, Quaternion.identity) as GameObject;
-		obj.GetComponent<UnitBase>().pos = new Vector2(u.position[0], u.position[1]);
+		obj.GetComponent<UnitBase>().POS = new Vector2(u.position[0], u.position[1]);
 	}
 
 }

@@ -7,26 +7,26 @@ using ExtensionsUnityVectors;
 public class UnitBase : MonoBehaviour
 {
 	static bool IsDebug = false;
-	public Vector2	pos = new Vector2(0, 0), 
-					posBefore = new Vector2(0, 0);
-	public Vector2 POS { get { return pos; } }
-	
-	
-	bool isUpdated = false;
+
+	protected int dirFacing = 0;
+	protected bool isUpdated = false;
 	protected KEnums.UNIT myType = KEnums.UNIT.BASIC;
-	public KEnums.UNIT TYPE { get { return myType;  } }
+	protected Vector2	pos = new Vector2(0, 0), 
+					posBefore = new Vector2(0, 0);
+
+	public Vector2 POS { get { return pos; } set { pos = value; } }
+	public KEnums.UNIT TYPE { get { return myType; } }
 	public bool IsUpdated { get { return isUpdated; } set { isUpdated = value; } }
 
-	public virtual void  Awake()
-	{}
+	public virtual void  Awake(){}
 	public virtual void  Start()
 	{
 		registerOnGrid();
 	}
 	protected bool helperIsIndexValid(int x, int y)
 	{
-		return !(x < 0 || y < 0 ||
-			x >= WorldInfo.WORLD_SIZE.x || y >= WorldInfo.WORLD_SIZE.y);
+		return !(x < 1 || y < 1 ||
+			x >= WorldInfo.WORLD_SIZE.x-1 || y >= WorldInfo.WORLD_SIZE.y-1);
 	}
 	protected bool? helperIsGridAvailable<T>(T[,] grid, int x, int y)
 	{
@@ -81,11 +81,15 @@ public class UnitBase : MonoBehaviour
 			return resultTry;
 		}
 		if (IsDebug) Debug.Log(myType + " " + "AVAILALBE");
+		helperSetPosition(x, y);
+		return true;
+	}
+	protected void helperSetPosition(int x, int y)
+	{
 		unRegisterOnGrid();
 		posBefore = pos;
-		pos = new Vector2(x,y);
+		pos = new Vector2(x, y);
 		registerOnGrid();
-		return true;
 	}
 	public void kill()
 	{
@@ -95,9 +99,5 @@ public class UnitBase : MonoBehaviour
 	public virtual void KUpdate()
 	{
 		isUpdated = true;
-	}
-	public virtual void KUpdateEnd()
-	{
-
 	}
 }

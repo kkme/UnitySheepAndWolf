@@ -15,7 +15,7 @@ class Main : MonoBehaviour
 		EVENT_GAME_NEXT = delegate { },
 		EVENT_GAME_WIN = delegate { };
 
-	int level = 0;
+	int levelSelected = 0;
 	Board myBoard;
 	GameSetting setting = new GameSetting();
 
@@ -26,7 +26,7 @@ class Main : MonoBehaviour
 
 		UI_Menu.EVENT_REQUEST_GAME_START += EVENTHDR_INIT_GAME;
 		UI_GameFinished.EVENT_REQUEST_RESTART_LEVEL += EVENTHDR_INIT_GAME;
-		UI_GameFinished.EVENT_REQUEST_NEXT_LEVEL += EVENT_GAME_NEXT;
+		UI_GameFinished.EVENT_REQUEST_NEXT_LEVEL += EVENTHDR_NEXT_LEVEL;
 
 		GameLoop.EVENT_GAME_OVER	+= EVENT_GAME_OVER;
 		GameLoop.EVENT_GAME_WIN		+= EVENT_GAME_WIN;
@@ -50,7 +50,13 @@ class Main : MonoBehaviour
 	{
 		hideAll();
 		myUI_game.show();
-		helperInitGame();
+		helperInitGame(levelSelected);
+	}
+	public void EVENTHDR_NEXT_LEVEL()
+	{
+		hideAll();
+		myUI_game.show();
+		helperInitGame(++levelSelected);
 	}
 	void EVENTHDR_GAME_WIN()
 	{

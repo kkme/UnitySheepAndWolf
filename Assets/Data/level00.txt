@@ -1,6 +1,10 @@
-{"size":[5,1],
+{"size":[7,3],
 "units":[
-{"type00":0,"type01":0,"position":[0,0]},
-{"type00":2,"type01":0,"position":[4,0]}
+{"type00":1,"type01":0,"position":[1,2]},
+{"type00":2,"type01":0,"position":[4,1]},
+{"type00":2,"type01":0,"position":[4,2]},
+{"type00":2,"type01":0,"position":[4,3]},
+{"type00":0,"type01":0,"position":[6,2]},
+{"type00":0,"type01":0,"position":[6,3]}
 ],
 "WIDTH":3,"HEIGHT":3}

@@ -28,6 +28,11 @@ class GameLoop : MonoBehaviour
 			u.registerOnGrid();
 		}	
 	}
+	void OnDestroy()
+	{
+		UnitPlayer.EVENT_REACHEED_GOAL -= EVENT_GAME_WIN;
+		UnitEnemy.EVENT_HIT_PLAYER -= EVENT_GAME_OVER;
+	}
 
 	//player has initiated a turn with new input
 	public void turn(Vector2 dir)
