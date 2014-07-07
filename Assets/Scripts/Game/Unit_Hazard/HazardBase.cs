@@ -6,8 +6,4 @@ using System.Text;
 public class HazardBase : UnitBase
 {
 	KEnums.Hazard myType;
-	public override object[,] helperGetGrid()
-	{
-		return WorldInfo.gridHazard;
-	}
 }

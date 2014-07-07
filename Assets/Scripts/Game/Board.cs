@@ -7,9 +7,8 @@ using ExtensionsUnityVectors;
 public class Board : UIItem
 {
 
-	public GameObject
-			PREFAB_TILE_CORNER,
-			PREFAB_TILE_GREEN;
+	public GameObject TILE_DEFAULT;
+	public UnitBase TILE_EDGE;
 	
 	Vector2 count;
 	Vector2 sizeCell;
@@ -18,29 +17,43 @@ public class Board : UIItem
 	{
 		renderer.enabled = false;
 	}
-	void helperInstantiate(GameObject PREFAB, int x, int y)
+	GameObject helperInstantiate(GameObject PREFAB, int x, int y)
 	{
 		var posFrom = transform.getPosBottomLeft();
 		var pos = posFrom + sizeCell.mult(.5f + x, .5f + y).XYZ(.1f);
 		var obj = Instantiate(PREFAB, pos, Quaternion.identity) as GameObject;
 		obj.transform.localScale = sizeCell.XYZ(1);
 		obj.transform.parent = transform;
+		return obj;
+	}
+	void helperInstantiateUnitbase(UnitBase u, int x, int y)
+	{
+		if (WorldInfo.gridUnits[x, y] != null) return;
+		var obj = helperInstantiate(u.gameObject,x,y).GetComponent<UnitBase>();
+		obj.pos = new Vector2(x, y);
 	}
 	void initTiles()
 	{
-		for (int i = 0; i < count.x; i++) for (int j = 0; j < count.y; j++)
-				helperInstantiate(PREFAB_TILE_GREEN, i, j);
+		for (int i = 0; i < count.x; i++) for (int j = 0; j < count.y; j++) {
+			int n = (int)(i * count.y + j);
+			if (n % 2 == 0) continue;
+			helperInstantiate(TILE_DEFAULT, i, j);
+		}
+	}
 
-		for (int x = 1; x < count.x-1; x++)
+	public void initCorners()
+	{
+		Debug.Log("InitTIels");
+		for (int x = 1; x < count.x - 1; x++)
 		{
-			helperInstantiate(PREFAB_TILE_CORNER, x, 0);
-			helperInstantiate(PREFAB_TILE_CORNER, x, (int)(count.y - 1));
+			helperInstantiateUnitbase(TILE_EDGE, x, 0);
+			helperInstantiateUnitbase(TILE_EDGE, x, (int)(count.y - 1));
 
 		}
 		for (int y = 0; y < count.y; y++)
 		{
-			helperInstantiate(PREFAB_TILE_CORNER, 0, y);
-			helperInstantiate(PREFAB_TILE_CORNER, (int)(count.x - 1), y);
+			helperInstantiateUnitbase(TILE_EDGE, 0, y);
+			helperInstantiateUnitbase(TILE_EDGE, (int)(count.x - 1), y);
 		}
 	}
 
@@ -53,9 +66,10 @@ public class Board : UIItem
 	}
 	public void positionUnit(UnitBase unit)
 	{
-		var posNew = transform.getPosBottomLeft() + (sizeCell.mult(.5f,.5f) + unit.POS.mult(sizeCell)).XYZ();
+		var posNew = transform.getPosBottomLeft() + (sizeCell.mult(.5f,.5f) + unit.pos.mult(sizeCell)).XYZ();
 		unit.transform.position = posNew;
 	}
 	// Update is called once per frame
-	
+
+
 }

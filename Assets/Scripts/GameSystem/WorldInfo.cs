@@ -10,8 +10,6 @@ public class WorldInfo
 	public static Vector2 PLAYER_GOAL;
 
 	static public UnitBase[,]		gridUnits;
-	static public HazardBase[,]		gridHazard;
-	static public UnitObj[,]	gridObjectives;
 
 
 	static public List<UnitBase> units;
@@ -25,8 +23,6 @@ public class WorldInfo
 		unitPlayer = null;
 
 		gridUnits = new UnitBase[width, height];
-		gridHazard = new HazardBase[width, height];
-		gridObjectives = new UnitObj[width, height];
 	}
 
 }

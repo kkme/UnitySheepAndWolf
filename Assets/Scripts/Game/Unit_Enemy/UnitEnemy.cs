@@ -3,12 +3,13 @@ using System.Collections;
 
 using ExtensionsUnityVectors;
 
-public class UnitEnemy : UnitNonPlayer {
+public class UnitEnemy : UnitUpdated {
 	static public event KDels.EVENTHDR_REQUEST_SIMPLE EVENT_HIT_PLAYER = delegate { };
 
 	public override void Awake()
 	{
 		base.Awake();
+		isAttackable = true;
 		myType = KEnums.UNIT.ENEMY;
 	}
 	bool isPlayerNextTo(Vector2 pos)
@@ -31,12 +32,12 @@ public class UnitEnemy : UnitNonPlayer {
 	}
 	public bool isPlayerClose(int rangeW,int rangeH)
 	{
-		var diff = pos - WorldInfo.unitPlayer.POS;
+		var diff = pos - WorldInfo.unitPlayer.pos;
 		return Mathf.Abs(diff.x) <= rangeW && Mathf.Abs(diff.y) <= rangeH;
 	}
 	protected Vector2 helperGetDir(UnitBase unit)
 	{
-		var dir = (unit.POS - pos).dir();
+		var dir = (unit.pos - pos).dir();
 		int index = Random.Range(1, 2);
 		for (int i = 0; i < 2; i++)
 		{

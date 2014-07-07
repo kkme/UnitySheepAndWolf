@@ -32,14 +32,10 @@ public class UnitPlayer : UnitBase
 	public bool moveAttack(int x, int y)
 	{
 		Debug.Log(x + " " + y);
-		Debug.Log("PLAYER : move attack " + isEnemyAt(x, y) + " WHICH WAS " + helperIsIndexValid(x, y));
-		if (isEnemyAt(x, y))
-		{
-			(helperGetGrid()[x, y] as UnitEnemy).kill();
-			helperSetPosition(x, y);
-			return true;
-		}
-		return false;
+		var u = (helperGetGrid()[x, y] as UnitBase);
+		if (u == null || !u.attacked()) return false;
+		helperSetPosition(x, y);
+		return true;
 	}
 	public override bool move(int x, int y, bool tryAgain = true)
 	{

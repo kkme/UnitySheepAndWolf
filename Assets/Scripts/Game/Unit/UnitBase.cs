@@ -6,51 +6,43 @@ using ExtensionsUnityVectors;
 
 public class UnitBase : MonoBehaviour
 {
+	public KEnums.UNIT TYPE { get { return myType; } }
 	static bool IsDebug = false;
 
-	protected int dirFacing = 0;
-	protected bool isUpdated = false;
+	protected bool 
+		isUpdated = false,
+		isPushable = false,
+		isAttackable = false;
+	protected int health = 0;
+	protected int dirFacing = 0; 
 	protected KEnums.UNIT myType = KEnums.UNIT.BASIC;
-	protected Vector2	pos = new Vector2(0, 0), 
-					posBefore = new Vector2(0, 0);
+	public Vector2	pos = new Vector2(0, 0), 
+						posBefore = new Vector2(0, 0);
 
-	public Vector2 POS { get { return pos; } set { pos = value; } }
-	public KEnums.UNIT TYPE { get { return myType; } }
 	public bool IsUpdated { get { return isUpdated; } set { isUpdated = value; } }
 
-	public virtual void  Awake(){}
-	public virtual void  Start()
+	public virtual void init() { }
+	public virtual void Awake(){}
+	public virtual void Start()
 	{
 		registerOnGrid();
 	}
+	//helper methods 
 	protected bool helperIsIndexValid(int x, int y)
 	{
-		return !(x < 1 || y < 1 ||
-			x >= WorldInfo.WORLD_SIZE.x-1 || y >= WorldInfo.WORLD_SIZE.y-1);
+		return !(x < 0 || y < 0 ||
+			x >= WorldInfo.WORLD_SIZE.x || y >= WorldInfo.WORLD_SIZE.y);
 	}
 	protected bool? helperIsGridAvailable<T>(T[,] grid, int x, int y)
 	{
 		if (!helperIsIndexValid(x, y)) return null;
-
 		return grid[x, y] == null;
 	}
 
-	public virtual System.Object[,] helperGetGrid(){
-		return WorldInfo.gridUnits;
-	}
-	public void registerOnGrid()
-	{
-		helperGetGrid()	[(int)pos.x, (int)pos.y] = this;
-	}
-	public void unRegisterOnGrid()
-	{
-		helperGetGrid()[(int)pos.x, (int)pos.y] = null;
-	}
-	public bool move(Vector2 dir, bool moveTry = true)
-	{
-		return move((int)(pos.x + dir.x), (int)(pos.y + dir.y), moveTry);
-	}
-	public void move(float x, float y) { move((int)x, (int)y, true); }
+	//methods
+	public virtual UnitBase[,] helperGetGrid(){return WorldInfo.gridUnits;}
+	public void registerOnGrid(){helperGetGrid()	[(int)pos.x, (int)pos.y] = this;}
+	public void unRegisterOnGrid(){helperGetGrid()[(int)pos.x, (int)pos.y] = null;}
 	public void moveBack()
 	{
 		if(IsDebug)Debug.Log(myType + "Moving Back	"); 
@@ -68,6 +60,7 @@ public class UnitBase : MonoBehaviour
 		if (helperGetGrid()[x,y] != null) return false;
 		return move(x, y,true);
 	}
+	public bool move(Vector2 dir, bool moveTry = true) {return move((int)(pos.x + dir.x), (int)(pos.y + dir.y), moveTry);}
 	public virtual bool move(int x, int y, bool tryAgain = true)
 	{
 		var isAvailable = helperIsGridAvailable(helperGetGrid(), x, y);
@@ -91,7 +84,17 @@ public class UnitBase : MonoBehaviour
 		pos = new Vector2(x, y);
 		registerOnGrid();
 	}
-	public void kill()
+	public bool push(int dirX, int dirY )//direction to pushed
+	{
+		return false;
+	}
+	public virtual bool attacked()
+	{
+		if (!isAttackable) return false;
+		kill();
+		return true;
+	}
+	public virtual void kill()
 	{
 		unRegisterOnGrid();
 		GameObject.Destroy(gameObject);

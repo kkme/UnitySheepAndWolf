@@ -9,7 +9,6 @@ class KLevelComponents : MonoBehaviour
 
 	public List<GameObject> dicUnitPlayer, //there is going to be only one unit
 							dicUnitEnemy,
-							dicUnitObjective,
 							dicUnitEnvironment;
 
 	//public static KLevelComponents me;
@@ -21,7 +20,7 @@ class KLevelComponents : MonoBehaviour
 	{
 		KLevelComponents.dicUnits = new Dictionary<KEnums.UNIT, List<GameObject>>() 
 		{{KEnums.UNIT.PLAYER, dicUnitPlayer}, {KEnums.UNIT.ENEMY , dicUnitEnemy },
-		{KEnums.UNIT.OBJECTIVE , dicUnitObjective},{KEnums.UNIT.ENVIRONMENT,dicUnitEnvironment}
+		{KEnums.UNIT.ENVIRONMENT,dicUnitEnvironment}
 		};
 		KLevelComponents.BOARD = board;
 	}

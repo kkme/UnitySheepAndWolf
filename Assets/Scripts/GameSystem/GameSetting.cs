@@ -24,8 +24,8 @@ public class GameSetting
 		WorldInfo.init(level.WIDTH+2, level.HEIGHT+2); 
 		var kBoard = initBoard(level.WIDTH + 2, level.HEIGHT +2);
 		var loop = new GameObject("	GameSystem : GameLoop", typeof(GameLoop)).GetComponent<GameLoop>();
-		foreach (var u in level.units) initUnits(u);
-
+		foreach (var u in level.units) initUnits(kBoard,u);
+		kBoard.initCorners();
 		objectsInitiated.Add(kBoard.gameObject);
 		objectsInitiated.Add(loop.gameObject);
 		
@@ -60,11 +60,14 @@ public class GameSetting
 		return kBoard;
 	}
 
-	private void initUnits(KLevel_Unit u)
+	private void initUnits(Board b,KLevel_Unit u)
 	{
 		var PREFAB = KLevelComponents.dicUnits[u.type00][u.type01];
 		GameObject obj = MonoBehaviour.Instantiate(PREFAB, Vector3.zero, Quaternion.identity) as GameObject;
-		obj.GetComponent<UnitBase>().POS = new Vector2(u.position[0], u.position[1]);
+		var uBase = obj.GetComponent<UnitBase>();
+		uBase.pos = new Vector2(u.position[0],u.position[1]) ;
+		uBase.init();
+		b.positionUnit(uBase);
 	}
 
 }

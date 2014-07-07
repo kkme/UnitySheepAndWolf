@@ -59,15 +59,11 @@ class GameLoop : MonoBehaviour
 
 	void turn_others()
 	{
-		Debug.Log("turn others " + WorldInfo.units.Count);
-		
 		foreach (var unit in WorldInfo.units)
 		{
-			Debug.Log(unit);
+			//Debug.Log(unit);
 			if(!unit.IsUpdated) unit.KUpdate();
-		}
-	
-		
+		}		
 	}
 	void turn_record()
 	{

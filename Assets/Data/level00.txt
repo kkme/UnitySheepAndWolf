@@ -4,7 +4,7 @@
 {"type00":2,"type01":0,"position":[4,1]},
 {"type00":2,"type01":0,"position":[4,2]},
 {"type00":2,"type01":0,"position":[4,3]},
-{"type00":0,"type01":0,"position":[6,2]},
-{"type00":0,"type01":0,"position":[6,3]}
+{"type00":0,"type01":1,"position":[6,2]},
+{"type00":0,"type01":0,"position":[8,2]}
 ],
 "WIDTH":3,"HEIGHT":3}
