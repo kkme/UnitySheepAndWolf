@@ -54,7 +54,7 @@ class GameLoop : MonoBehaviour
 
 	bool turn_player(Vector2 dir)
 	{
-		return WorldInfo.unitPlayer.move(dir);
+		return WorldInfo.unitPlayer.turn(dir);
 	}
 
 	void turn_others()

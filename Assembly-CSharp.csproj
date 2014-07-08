@@ -58,13 +58,14 @@
     <Compile Include="Assets\Scripts\Extensions\ExtensionsUnityVectors.cs" />
     <Compile Include="Assets\Scripts\Game\Board.cs" />
     <Compile Include="Assets\Scripts\Game\Unit\UnitBase.cs" />
+    <Compile Include="Assets\Scripts\Game\Unit\UnitPlayer.cs" />
     <Compile Include="Assets\Scripts\Game\Unit\UnitStatic.cs" />
     <Compile Include="Assets\Scripts\Game\Unit\UnitUpdated.cs" />
-    <Compile Include="Assets\Scripts\Game\Unit\UnitPlayer.cs" />
     <Compile Include="Assets\Scripts\Game\Unit\UnitySheep.cs" />
     <Compile Include="Assets\Scripts\Game\Unit_Enemy\UnitEnemy.cs" />
     <Compile Include="Assets\Scripts\Game\Unit_Enemy\UnitEnemy_Follow.cs" />
     <Compile Include="Assets\Scripts\Game\Unit_Enemy\UnitEnemy_SimpleFollow02.cs" />
+    <Compile Include="Assets\Scripts\Game\Unit_Enemy\UnitEnemy_Trap.cs" />
     <Compile Include="Assets\Scripts\Game\Unit_Enemy\UnitEnemy_wall.cs" />
     <Compile Include="Assets\Scripts\Game\Unit_Hazard\HazardBase.cs" />
     <Compile Include="Assets\Scripts\Game\Unit_Objective\UnitObj.cs" />

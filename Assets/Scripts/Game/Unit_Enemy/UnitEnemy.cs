@@ -25,10 +25,14 @@ public class UnitEnemy : UnitUpdated {
 		}
 		return false;
 	}
-	bool isPlayerAt(int x, int y)
+	protected bool isPlayerAt(int x, int y)
 	{
 		var g = helperGetGrid()[x,y] as UnitBase;
 		return (g != null && g.TYPE == KEnums.UNIT.PLAYER);
+	}
+	protected bool isPlayerAt(Vector2 v)
+	{
+		return isPlayerAt( (int)v.x,(int)v.y );
 	}
 	public bool isPlayerClose(int rangeW,int rangeH)
 	{

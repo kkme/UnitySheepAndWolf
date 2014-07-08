@@ -77,6 +77,17 @@ public class UnitBase : MonoBehaviour
 		helperSetPosition(x, y);
 		return true;
 	}
+	public bool moveAttack(Vector2 dir)
+	{
+		return moveAttack((int)(pos.x + dir.x), (int)(pos.y + dir.y));
+	}
+	public virtual bool moveAttack(int x, int y)
+	{
+		var u = helperGetGrid()[x, y];
+		if (u == null) return move(x, y);
+		if (u.attacked()) move(x, y);
+		return true;
+	}
 	protected void helperSetPosition(int x, int y)
 	{
 		unRegisterOnGrid();

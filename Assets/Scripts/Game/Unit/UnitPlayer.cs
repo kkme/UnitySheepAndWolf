@@ -29,25 +29,29 @@ public class UnitPlayer : UnitBase
 		Debug.Log(u.TYPE);
 		return u.TYPE == KEnums.UNIT.ENEMY;
 	}
-	public bool moveAttack(int x, int y)
+	public bool turn(Vector2 dir)
 	{
-		Debug.Log(x + " " + y);
-		var u = (helperGetGrid()[x, y] as UnitBase);
-		if (u == null || !u.attacked()) return false;
-		helperSetPosition(x, y);
-		return true;
-	}
-	public override bool move(int x, int y, bool tryAgain = true)
-	{
-		IsUpdated = true;
-		if (!base.move(x, y, false))
+		isUpdated = true;
+		if (moveAttack(dir))
 		{
-			if (moveAttack(x, y)) return true;
-			return false;
+			if (isReachedGoal()) EVENT_REACHEED_GOAL();
+			else EVENT_MOVED();
+			return true;
 		}
-		if (isReachedGoal()) EVENT_REACHEED_GOAL();
-		else EVENT_MOVED();
-		return true;
+		return false;
+
 	}
+	//public override bool move(int x, int y, bool tryAgain = true)
+	//{
+	//	IsUpdated = true;
+	//	bool r = false;
+	//	if (!base.move(x, y, false))
+	//	{
+	//		r = moveAttack(x, y);
+	//	}
+	//	if (isReachedGoal()) EVENT_REACHEED_GOAL();
+	//	else EVENT_MOVED();
+	//	return r;
+	//}
 	
 }
