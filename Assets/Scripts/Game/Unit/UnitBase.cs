@@ -13,6 +13,8 @@ public class UnitBase : MonoBehaviour
 		isUpdated = false,
 		isPushable = false,
 		isAttackable = false;
+	public bool
+		isAlive = true;
 	protected int health = 0;
 	protected int dirFacing = 0; 
 	protected KEnums.UNIT myType = KEnums.UNIT.BASIC;
@@ -28,14 +30,14 @@ public class UnitBase : MonoBehaviour
 		registerOnGrid();
 	}
 	//helper methods 
-	protected bool helperIsIndexValid(int x, int y)
+	protected bool isIndexValid(int x, int y)
 	{
 		return !(x < 0 || y < 0 ||
 			x >= WorldInfo.WORLD_SIZE.x || y >= WorldInfo.WORLD_SIZE.y);
 	}
 	protected bool? helperIsGridAvailable<T>(T[,] grid, int x, int y)
 	{
-		if (!helperIsIndexValid(x, y)) return null;
+		if (!isIndexValid(x, y)) return null;
 		return grid[x, y] == null;
 	}
 
@@ -84,8 +86,9 @@ public class UnitBase : MonoBehaviour
 	public virtual bool moveAttack(int x, int y)
 	{
 		var u = helperGetGrid()[x, y];
-		if (u == null) return move(x, y);
-		if (u.attacked()) move(x, y);
+		if (u == null) {return move(x, y);}
+		u.attacked();
+		move(x, y);
 		return true;
 	}
 	protected void helperSetPosition(int x, int y)
@@ -109,6 +112,7 @@ public class UnitBase : MonoBehaviour
 	{
 		unRegisterOnGrid();
 		GameObject.Destroy(gameObject);
+		isAlive = false;
 	}
 	public virtual void KUpdate()
 	{

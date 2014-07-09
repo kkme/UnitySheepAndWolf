@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UnitPlayer : UnitBase
+public class UnitPlayer : UnitUpdated
 {
 	static public event	KDels.EVENTHDR_REQUEST_SIMPLE 
 							EVENT_MOVED = delegate { },
 							EVENT_ATTACKED = delegate { },
 							EVENT_REACHEED_GOAL = delegate { };
-	void Awake()
+	public override void Awake()
 	{
-		WorldInfo.units.Add(this);
-		WorldInfo.unitPlayer = this;
+		base.Awake();
 		myType = KEnums.UNIT.PLAYER;
-		//UnitEnemy.EVENT_HIT_PLAYER += EVENT_GOT_HIT;
+		WorldInfo.unitPlayer = this;
+		isAttackable = true;
+		isPushable = true;
 	}
 	void EVENT_GOT_HIT()
 	{
@@ -24,7 +25,7 @@ public class UnitPlayer : UnitBase
 	}
 	bool isEnemyAt(int x, int y)
 	{
-		if (!helperIsIndexValid(x, y)) return false;
+		if (!isIndexValid(x, y)) return false;
 		var u = helperGetGrid()[x, y] as UnitBase;
 		Debug.Log(u.TYPE);
 		return u.TYPE == KEnums.UNIT.ENEMY;
@@ -39,7 +40,16 @@ public class UnitPlayer : UnitBase
 			return true;
 		}
 		return false;
-
+	}
+	public override bool attacked()
+	{
+		EVENT_ATTACKED();
+		return base.attacked();
+	}
+	public override void kill()
+	{
+		base.kill();
+		//EVENT_ATTACKED();
 	}
 	//public override bool move(int x, int y, bool tryAgain = true)
 	//{

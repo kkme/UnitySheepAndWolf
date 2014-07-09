@@ -19,7 +19,7 @@ public class UnitEnemy : UnitUpdated {
 		{
 			
 			var at = pos + dics[i];
-			if (!helperIsIndexValid((int)at.x, (int)at.y)) continue;
+			if (!isIndexValid((int)at.x, (int)at.y)) continue;
 			if ( isPlayerAt((int)at.x, (int)at.y ) ) return true;
 
 		}
@@ -27,9 +27,11 @@ public class UnitEnemy : UnitUpdated {
 	}
 	protected bool isPlayerAt(int x, int y)
 	{
+		if (!isIndexValid(x, y)) return false;
 		var g = helperGetGrid()[x,y] as UnitBase;
 		return (g != null && g.TYPE == KEnums.UNIT.PLAYER);
 	}
+
 	protected bool isPlayerAt(Vector2 v)
 	{
 		return isPlayerAt( (int)v.x,(int)v.y );
@@ -52,14 +54,5 @@ public class UnitEnemy : UnitUpdated {
 	}
 	public override void KUpdate(){
 		IsUpdated = true;
-	}
-	public override bool move(int x, int y, bool tryAgain = true)
-	{
-		Debug.Log("MOVE CALLED");
-		if (!base.move(x, y, true))
-		{
-			if (isPlayerNextTo(pos)) EVENT_HIT_PLAYER();
-		}
-		return true;
 	}
 }

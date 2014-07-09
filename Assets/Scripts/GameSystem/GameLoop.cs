@@ -19,7 +19,7 @@ class GameLoop : MonoBehaviour
 		EVENT_GAME_WIN += EVENTHDR_GAME_WIN;
 		EVENT_GAME_OVER += EVENTHDR_GAME_OVER;
 		UnitPlayer.EVENT_REACHEED_GOAL += EVENT_GAME_WIN;
-		UnitEnemy.EVENT_HIT_PLAYER += EVENT_GAME_OVER;
+		UnitPlayer.EVENT_ATTACKED += EVENT_GAME_OVER;
 
 		foreach (var u in WorldInfo.units)
 		{
@@ -59,11 +59,11 @@ class GameLoop : MonoBehaviour
 
 	void turn_others()
 	{
-		foreach (var unit in WorldInfo.units)
-		{
-			//Debug.Log(unit);
-			if(!unit.IsUpdated) unit.KUpdate();
-		}		
+
+		foreach (var u in WorldInfo.units) u.KUpdate();
+		for (int i = WorldInfo.units.Count - 1; i >= 0; i--) 
+			if (!WorldInfo.units[i].isAlive) WorldInfo.units.RemoveAt(i);
+		
 	}
 	void turn_record()
 	{

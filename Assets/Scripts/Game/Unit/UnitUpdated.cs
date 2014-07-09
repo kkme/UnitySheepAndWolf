@@ -14,9 +14,4 @@ public class UnitUpdated : UnitBase
 		base.Awake();
 		WorldInfo.units.Add(this);
 	}
-	public override void kill()
-	{
-		base.kill();
-		WorldInfo.units.Remove(this);
-	}
 }
