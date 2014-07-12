@@ -63,4 +63,5 @@ class AniMover : MonoBehaviour
 		enabled = ratio < 1.0f;
 		//Debug.Log("updating " + timeElapsed + " " + timElapsedMax + " " + isMoving + " " + isRotating + "IS ENABLED " + (!isMoving && !isRotating));
 	}
+
 }

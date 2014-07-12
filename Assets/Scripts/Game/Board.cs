@@ -31,6 +31,7 @@ public class Board : UIItem
 		if (WorldInfo.gridUnits[x, y] != null) return;
 		var obj = helperInstantiate(u.gameObject,x,y).GetComponent<UnitBase>();
 		obj.pos = new Vector2(x, y);
+		positionUnit(obj);
 	}
 	void initTiles()
 	{

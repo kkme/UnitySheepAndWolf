@@ -9,25 +9,28 @@ public class UnitBase : MonoBehaviour
 	public KEnums.UNIT TYPE { get { return myType; } }
 	static bool IsDebug = false;
 
-	public bool 
+	internal protected bool 
 		isUpdated = false,
 		isPushable = false,
 		isAttackable = false,
 		isMoved = false;
-	public bool
+	internal protected bool
 		isAlive = true;
-	protected int health = 0;
+	public int health = 0;
 	public int dirFacing = 0; 
 	protected KEnums.UNIT myType = KEnums.UNIT.BASIC;
-	public Vector2	pos = new Vector2(0, 0), 
+	internal protected Vector2	pos = new Vector2(0, 0), 
 						posBefore = new Vector2(0, 0);
 
 
 	public virtual void init() { }
-	public virtual void Awake(){}
+	public virtual void Awake(){
+	}
 	public virtual void Start()
 	{
 		registerOnGrid();
+		var r = GetComponent<KSpriteRenderer>();
+		if (r != null) r.initAnimation(pos.x,pos.y, dirFacing);
 	}
 	//helper methods 
 	protected bool isIndexValid(int x, int y)
@@ -35,10 +38,13 @@ public class UnitBase : MonoBehaviour
 		return !(x < 0 || y < 0 ||
 			x >= WorldInfo.WORLD_SIZE.x || y >= WorldInfo.WORLD_SIZE.y);
 	}
-	protected bool? helperIsGridAvailable<T>(T[,] grid, int x, int y)
+	protected bool? helperIsGridAvailable(UnitBase[,] grid, int x, int y)
 	{
-		if (!isIndexValid(x, y)) return null;
-		return grid[x, y] == null;
+
+		if (!isIndexValid(x, y)) { Debug.Log("helperIsGridAvailable"); return null; }
+		bool? r = (grid[x, y] == null);
+		Debug.Log("HELPER IS GRID AVAILABLE " + r.Value + " " + (grid[x, y] == null));
+		return r;
 	}
 
 	//methods
@@ -62,13 +68,21 @@ public class UnitBase : MonoBehaviour
 		if (helperGetGrid()[x,y] != null) return false;
 		return move(x, y,true);
 	}
+	int DebugCount = 0;
 	public bool move(Vector2 dir, bool moveTry = true) {return move((int)(pos.x + dir.x), (int)(pos.y + dir.y), moveTry);}
 	public virtual bool move(int x, int y, bool tryAgain = true)
 	{
 		var isAvailable = helperIsGridAvailable(helperGetGrid(), x, y);
-		if(isAvailable == null) return false;
-		if (!isAvailable.Value)
+		if (isAvailable == null) return false; //returned null; error.
+		if (!isAvailable.Value) //grid is currently being occupied
 		{
+			Debug.Log("HEY ME " + helperGetGrid()[x, y] + isAvailable.Value);
+			Debug.Log("HEY ME " + (helperGetGrid()[x, y] == null ));
+			isAvailable = helperIsGridAvailable(helperGetGrid(), x, y);
+			Debug.Log("HEY ME AGAIN?!" + isAvailable.Value);
+
+			if (DebugCount++ > 20) return false;
+
 			if (!tryAgain) return false;
 			if (IsDebug) Debug.Log(myType + " " + "NOT AVAILALBE ");
 			bool resultTry = moveTry(x,y);
@@ -83,15 +97,16 @@ public class UnitBase : MonoBehaviour
 	}
 	public bool moveAttack(Vector2 dir)
 	{
+		Debug.Log("trying to move attack " + pos + " " + dir);
 		return moveAttack((int)(pos.x + dir.x), (int)(pos.y + dir.y));
 	}
 	public virtual bool moveAttack(int x, int y)
 	{
+		if (!isIndexValid(x, y) || (x == (int)pos.x && y ==(int)pos.y)) return false;
 		var u = helperGetGrid()[x, y];
-		if (u == null) {return move(x, y);}
+		if (u == null) return move(x, y);
 		u.attacked();
-		move(x, y);
-		return true;
+		return move(x, y);
 	}
 	protected void helperSetPosition(int x, int y)
 	{
@@ -120,4 +135,5 @@ public class UnitBase : MonoBehaviour
 	{
 		isUpdated = true;
 	}
+
 }

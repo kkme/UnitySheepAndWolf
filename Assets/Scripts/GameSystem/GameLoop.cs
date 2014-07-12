@@ -27,7 +27,6 @@ class GameLoop : MonoBehaviour
 		foreach (var u in WorldInfo.units)
 		{
 			u.isUpdated = false;
-			myBoard.positionUnit(u);
 			u.registerOnGrid();
 		}	
 	}
@@ -52,12 +51,10 @@ class GameLoop : MonoBehaviour
 	}
 	void EVENTHDR_GAME_OVER()
 	{
-		Debug.Log("GameLoop : gameOver" + id);
 		isPlaying = false;
 	}
 
-	bool turn_player(Vector2 dir)
-	{
+	bool turn_player(Vector2 dir) { 
 		return WorldInfo.unitPlayer.turn(dir);
 	}
 
@@ -78,8 +75,9 @@ class GameLoop : MonoBehaviour
 			if (u.isMoved)
 			{
 				var ani = u.GetComponent<KSpriteRenderer>();
-				ani.move(u.pos.x + .5f, (int)u.pos.y + .5f);
-				ani.rotate((++u.dirFacing)%4);
+				ani.initAnimation(u.pos.x,u.pos.y,u.dirFacing);
+				//ani.move(u.pos.x + .5f, (int)u.pos.y + .5f);
+				//ani.rotate((++u.dirFacing)%4);
 			}
 			
 			u.isUpdated = false;

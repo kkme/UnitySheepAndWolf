@@ -28,8 +28,11 @@ class KSpriteRenderer : MonoBehaviour
 		spriteB = helperInstantiate("Sprite_Shadow", mySprite, colorShadow, new Vector3(OFFSET.x * -1, OFFSET.y * -1, +1));
 		aniA = spriteA.GetComponent<AniMover>();
 		aniB = spriteB.GetComponent<AniMover>();
-		//renderA.sprite = mySprite;
-		//renderA.color = new Color(colorMain.x,colorMain.y,colorMain.z);
+		gameObject.AddComponent<AniMover>();
+	}
+	void Start()
+	{
+		
 	}
 	public void move(float x, float y)
 	{
@@ -39,6 +42,13 @@ class KSpriteRenderer : MonoBehaviour
 	{
 		aniA.rotate(n);
 		aniB.rotate(n);
+	}
+
+	public void initAnimation(float x, float y, int dir)
+	{
+		//var u = GetComponent<UnitBase>();
+		move(x+ .5f, y + .5f);
+		rotate(dir);
 	}
 	
 }
