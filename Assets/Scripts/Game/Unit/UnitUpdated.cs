@@ -6,7 +6,6 @@ public class UnitUpdated : UnitBase
 	public override void init()
 	{
 		base.init();
-		Debug.Log("rigistering on grid");
 		registerOnGrid();
 	}
 	public override void Awake()

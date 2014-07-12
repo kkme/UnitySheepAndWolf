@@ -5,15 +5,7 @@ using System.Text;
 
 class UnitEnemy_Trap : UnitEnemy
 {
-	List<Vector2> dirs = new List<Vector2>(); //checks these directions
-	public override void init()
-	{
-		base.init();
-		dirs.Add(new Vector2(1, 0));
-		dirs.Add(new Vector2(-1, 0));
-		dirs.Add(new Vector2(0, 1));
-		dirs.Add(new Vector2(0, -1));
-	}
+	public List<Vector2> dirs; //checks these directions
 	void trapAttack(Vector2 dir)
 	{
 		

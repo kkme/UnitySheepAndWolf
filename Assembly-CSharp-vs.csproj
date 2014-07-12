@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scripts\00Utility\CameraSub.cs" />
      <Compile Include="Assets\Scripts\00Utility\KDelegates.cs" />
      <Compile Include="Assets\Scripts\00Utility\plugins\SimpleJSON.cs" />
+     <Compile Include="Assets\Scripts\AniMover.cs" />
      <Compile Include="Assets\Scripts\Enums\EnumUnitTypes.cs" />
      <Compile Include="Assets\Scripts\Extensions\ExtensionsSprite.cs" />
      <Compile Include="Assets\Scripts\Extensions\ExtensionsSpriteRenderer.cs" />
@@ -78,6 +79,7 @@
      <Compile Include="Assets\Scripts\GameSystem\Level\Level00.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Main.cs" />
      <Compile Include="Assets\Scripts\GameSystem\WorldInfo.cs" />
+     <Compile Include="Assets\Scripts\KSpriteRenderer.cs" />
      <Compile Include="Assets\Scripts\OS\OS_DeskTOp.cs" />
      <Compile Include="Assets\Scripts\UI\UIInfo.cs" />
      <Compile Include="Assets\Scripts\UI\UIItem.cs" />

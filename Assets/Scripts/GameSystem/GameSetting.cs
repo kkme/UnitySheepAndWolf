@@ -26,11 +26,11 @@ public class GameSetting
 		var loop = new GameObject("	GameSystem : GameLoop", typeof(GameLoop)).GetComponent<GameLoop>();
 		foreach (var u in level.units) initUnits(kBoard,u);
 		kBoard.initCorners();
+		loop.init(kBoard);
+
 		objectsInitiated.Add(kBoard.gameObject);
 		objectsInitiated.Add(loop.gameObject);
 		
-		Debug.Log("SETTING ASSIGNED BOARD :  " + kBoard);
-		loop.init(kBoard);
 		switch (myOS)
 		{
 			case OS.DESKTOP:
@@ -48,6 +48,7 @@ public class GameSetting
 		Debug.Log("GameSetting : Destroyed Previous Game");
 		foreach (var o in objectsInitiated) MonoBehaviour.Destroy(o);
 		foreach (var o in WorldInfo.units) MonoBehaviour.Destroy(o.gameObject);
+		foreach (var o in WorldInfo.unitsStatic) MonoBehaviour.Destroy(o.gameObject);
 
 		objectsInitiated = new List<GameObject>();
 		WorldInfo.init((int)WorldInfo.WORLD_SIZE.x, (int)WorldInfo.WORLD_SIZE.y);

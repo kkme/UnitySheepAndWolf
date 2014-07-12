@@ -17,12 +17,12 @@ public class UIOrganizer : MonoBehaviour
 	}
 	public void show()
 	{
-		Debug.Log(gameObject.name + " " + "SHOW");
+		//Debug.Log(gameObject.name + " " + "SHOW");
 		foreach (var i in myItems) i.IsEnalbed = true;
 	}
 	public void hide()
 	{
-		Debug.Log(gameObject.name + " " + "HIDING");
+		//Debug.Log(gameObject.name + " " + "HIDING");
 		foreach (var i in myItems) i.IsEnalbed = false;
 
 	}

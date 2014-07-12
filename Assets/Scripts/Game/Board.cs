@@ -19,7 +19,7 @@ public class Board : UIItem
 	}
 	GameObject helperInstantiate(GameObject PREFAB, int x, int y)
 	{
-		var posFrom = transform.getPosBottomLeft();
+		var posFrom = transform.position;
 		var pos = posFrom + sizeCell.mult(.5f + x, .5f + y).XYZ(.1f);
 		var obj = Instantiate(PREFAB, pos, Quaternion.identity) as GameObject;
 		obj.transform.localScale = sizeCell.XYZ(1);
@@ -43,7 +43,6 @@ public class Board : UIItem
 
 	public void initCorners()
 	{
-		Debug.Log("InitTIels");
 		for (int x = 1; x < count.x - 1; x++)
 		{
 			helperInstantiateUnitbase(TILE_EDGE, x, 0);
@@ -66,7 +65,7 @@ public class Board : UIItem
 	}
 	public void positionUnit(UnitBase unit)
 	{
-		var posNew = transform.getPosBottomLeft() + (sizeCell.mult(.5f,.5f) + unit.pos.mult(sizeCell)).XYZ();
+		var posNew = transform.position + (sizeCell.mult(.5f,.5f) + unit.pos.mult(sizeCell)).XYZ();
 		unit.transform.position = posNew;
 	}
 	// Update is called once per frame

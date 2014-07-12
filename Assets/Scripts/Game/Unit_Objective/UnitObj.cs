@@ -5,8 +5,9 @@ using System.Text;
 
 public class UnitObj : UnitStatic
 {
-	void Awake()
+	override public void Awake()
 	{
+		base.Awake();
 		isAttackable = false;
 		isPushable = false;
 	}

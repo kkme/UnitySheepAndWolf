@@ -5,6 +5,8 @@ using System.Text;
 
 class GameLoop : MonoBehaviour
 {
+	int id;
+	static int idCount = 0;
 	public static KDels.EVENTHDR_REQUEST_SIMPLE
 		EVENT_GAME_OVER = delegate { },
 		EVENT_GAME_WIN = delegate { };
@@ -13,9 +15,10 @@ class GameLoop : MonoBehaviour
 	bool isPlaying = true;
 	public void init(Board b)
 	{
-		Debug.Log("GAMELOOP : Initiated, Board is " + b);
+		id = idCount++;
+		Debug.Log("GAMELOOP : initiated" + id);
 		myBoard = b;
-
+			
 		EVENT_GAME_WIN += EVENTHDR_GAME_WIN;
 		EVENT_GAME_OVER += EVENTHDR_GAME_OVER;
 		UnitPlayer.EVENT_REACHEED_GOAL += EVENT_GAME_WIN;
@@ -23,15 +26,16 @@ class GameLoop : MonoBehaviour
 
 		foreach (var u in WorldInfo.units)
 		{
-			u.IsUpdated = false;
+			u.isUpdated = false;
 			myBoard.positionUnit(u);
 			u.registerOnGrid();
 		}	
 	}
 	void OnDestroy()
 	{
+		Debug.Log("GameLoop + Destroyed " + id);
 		UnitPlayer.EVENT_REACHEED_GOAL -= EVENT_GAME_WIN;
-		UnitEnemy.EVENT_HIT_PLAYER -= EVENT_GAME_OVER;
+		UnitPlayer.EVENT_ATTACKED -= EVENT_GAME_OVER;
 	}
 
 	//player has initiated a turn with new input
@@ -48,7 +52,7 @@ class GameLoop : MonoBehaviour
 	}
 	void EVENTHDR_GAME_OVER()
 	{
-		Debug.Log("GameLoop : gameOver");
+		Debug.Log("GameLoop : gameOver" + id);
 		isPlaying = false;
 	}
 
@@ -69,8 +73,17 @@ class GameLoop : MonoBehaviour
 	{
 		foreach (var u in WorldInfo.units)
 		{
-			u.IsUpdated = false;
-			myBoard.positionUnit(u);
+			//if (u.isMoved) myBoard.positionUnit(u);
+			//Debug.Log(u + " " + u.isMoved);
+			if (u.isMoved)
+			{
+				var ani = u.GetComponent<KSpriteRenderer>();
+				ani.move(u.pos.x + .5f, (int)u.pos.y + .5f);
+				ani.rotate((++u.dirFacing)%4);
+			}
+			
+			u.isUpdated = false;
+			u.isMoved = false;
 		}
 	}
 }

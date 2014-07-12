@@ -53,6 +53,6 @@ public class UnitEnemy : UnitUpdated {
 		return dir;
 	}
 	public override void KUpdate(){
-		IsUpdated = true;
+		isUpdated = true;
 	}
 }

@@ -6,7 +6,13 @@ public class UnitStatic : UnitBase
 	public override void init()
 	{
 		base.init();
-		Debug.Log("rigistering on grid");
 		registerOnGrid();
+	}
+
+	public override void Awake()
+	{
+		
+		base.Awake();
+		WorldInfo.unitsStatic.Add(this);
 	}
 }

@@ -12,7 +12,7 @@ public class WorldInfo
 	static public UnitBase[,]		gridUnits;
 
 
-	static public List<UnitBase> units;
+	static public List<UnitBase> units,unitsStatic;
 	static public UnitPlayer unitPlayer;
 
 	static public void init(int width, int height)
@@ -20,6 +20,7 @@ public class WorldInfo
 		WORLD_SIZE = new Vector2(width, height);
 		PLAYER_GOAL = new Vector2(0, 0);
 		units = new List<UnitBase>();
+		unitsStatic = new List<UnitBase>();
 		unitPlayer = null;
 
 		gridUnits = new UnitBase[width, height];

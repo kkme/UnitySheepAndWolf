@@ -9,19 +9,19 @@ public class UnitBase : MonoBehaviour
 	public KEnums.UNIT TYPE { get { return myType; } }
 	static bool IsDebug = false;
 
-	protected bool 
+	public bool 
 		isUpdated = false,
 		isPushable = false,
-		isAttackable = false;
+		isAttackable = false,
+		isMoved = false;
 	public bool
 		isAlive = true;
 	protected int health = 0;
-	protected int dirFacing = 0; 
+	public int dirFacing = 0; 
 	protected KEnums.UNIT myType = KEnums.UNIT.BASIC;
 	public Vector2	pos = new Vector2(0, 0), 
 						posBefore = new Vector2(0, 0);
 
-	public bool IsUpdated { get { return isUpdated; } set { isUpdated = value; } }
 
 	public virtual void init() { }
 	public virtual void Awake(){}
@@ -73,10 +73,12 @@ public class UnitBase : MonoBehaviour
 			if (IsDebug) Debug.Log(myType + " " + "NOT AVAILALBE ");
 			bool resultTry = moveTry(x,y);
 			if (IsDebug) Debug.Log(myType + " MOVE TRYING RESULT : " + resultTry);
+			isMoved = resultTry;
 			return resultTry;
 		}
 		if (IsDebug) Debug.Log(myType + " " + "AVAILALBE");
 		helperSetPosition(x, y);
+		isMoved = true;
 		return true;
 	}
 	public bool moveAttack(Vector2 dir)
