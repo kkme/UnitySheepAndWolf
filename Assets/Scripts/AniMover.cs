@@ -8,6 +8,7 @@ class AniMover : MonoBehaviour
 {
 	delegate void UDPATE_(float ratio);
 	UDPATE_ UpdateCalls = delegate { };
+
 	bool isMoving = false,isRotating = false;
 	Vector3 angleFrom , angleTo, angleDis;
 	Vector3 moveFrom, moveTo,moveDis;

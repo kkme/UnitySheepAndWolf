@@ -16,13 +16,13 @@ class UnitEnemy_Swing : UnitEnemy
 	{
 		var dis = WorldInfo.unitPlayer.pos - pos;
 		var n = (int)dis.x;
-		return (n == 0) ? 0 : (1-n) / 2;
+		return (n == 0) ? 0 : (1-n/Mathf.Abs(n)) / 2;
 	}
 	int helperGetPlayerDis_Y()
 	{
 		var dis = WorldInfo.unitPlayer.pos - pos;
 		var n = (int)dis.y;
-		return (n == 0) ? 0 : (1 - n) / 2;
+		return (n == 0) ? 0 : (1-n/Mathf.Abs(n)) / 2;
 	}
 	public override void Awake()
 	{
@@ -34,10 +34,7 @@ class UnitEnemy_Swing : UnitEnemy
 	{
 		base.KUpdate();
 		int d = helpGetPlayerDis();
-		Debug.Log(dirs);
-		Debug.Log(d);
 		if (!moveAttack(dirs[d]))
 			moveAttack(dirs[(d + 1) % 2]);
-		Debug.Log("SWINGOVER");
 	}
 }

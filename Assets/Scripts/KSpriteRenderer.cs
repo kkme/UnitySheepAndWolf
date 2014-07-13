@@ -50,5 +50,9 @@ class KSpriteRenderer : MonoBehaviour
 		move(x+ .5f, y + .5f);
 		rotate(dir);
 	}
+	public bool isAnimating()
+	{
+		return GetComponent<AniMover>().enabled || aniA.enabled || aniB.enabled;
+	}
 	
 }

@@ -6,6 +6,10 @@ using ExtensionsUnityVectors;
 public class UnitEnemy : UnitUpdated {
 	static public event KDels.EVENTHDR_REQUEST_SIMPLE EVENT_HIT_PLAYER = delegate { };
 
+	public override bool helperIsValidAttackTarget(KEnums.UNIT type)
+	{
+		return type == KEnums.UNIT.PLAYER;
+	}
 	public override void Awake()
 	{
 		base.Awake();

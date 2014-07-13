@@ -13,7 +13,7 @@ class OS_DeskTOp : MonoBehaviour
 	{
 		foreach (var move in dirMoves)
 		{
-			if (Input.GetKeyDown(move.Key)) { gameLoop.turn(move.Value); }
+			if (Input.GetKeyDown(move.Key)) { gameLoop.player_intput(move.Value); }
 		}
 	}
 }

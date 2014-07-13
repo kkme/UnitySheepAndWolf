@@ -41,19 +41,51 @@ public class UnitBase : MonoBehaviour
 	protected bool? helperIsGridAvailable(UnitBase[,] grid, int x, int y)
 	{
 
-		if (!isIndexValid(x, y)) { Debug.Log("helperIsGridAvailable"); return null; }
-		bool? r = (grid[x, y] == null);
-		Debug.Log("HELPER IS GRID AVAILABLE " + r.Value + " " + (grid[x, y] == null));
-		return r;
+		if (!isIndexValid(x, y)) return null;
+		return (grid[x, y] == null);
+	}
+
+	protected void helperSetPosition(int x, int y)
+	{
+		unRegisterOnGrid();
+		posBefore = pos;
+		pos = new Vector2(x, y);
+		registerOnGrid();
+	}
+	public virtual UnitBase[,] helperGetGrid() { return WorldInfo.gridUnits; }
+	public int helperToDir(Vector2 v)
+	{
+		return helperToDir((int)v.x, (int)v.y);
+	}
+	public int helperToDir(int h, int v)
+	{
+		if (h == 1) return 1;
+		if (v == -1) return 2;
+		if (h == -1) return 3;
+		return 0;//(v == 1)
+	}
+	public virtual bool helperIsValidAttackTarget(KEnums.UNIT type)
+	{
+		return true;
 	}
 
 	//methods
-	public virtual UnitBase[,] helperGetGrid(){return WorldInfo.gridUnits;}
-	public void registerOnGrid(){helperGetGrid()	[(int)pos.x, (int)pos.y] = this;}
-	public void unRegisterOnGrid(){helperGetGrid()[(int)pos.x, (int)pos.y] = null;}
-	public void moveBack()
+	
+	protected void face(Vector2 dir)
 	{
-		if(IsDebug)Debug.Log(myType + "Moving Back	"); 
+		face((int)dir.x, (int)dir.y);
+	}
+	protected void face(int h, int v){
+		face(helperToDir(h,v));
+	}
+	protected void face(int d)
+	{
+		isMoved = true;
+		dirFacing = d;
+	}
+	void moveBack()
+	{
+		if (IsDebug) Debug.Log(myType + "Moving Back	");
 		unRegisterOnGrid();
 		pos = posBefore;
 		registerOnGrid();
@@ -68,7 +100,9 @@ public class UnitBase : MonoBehaviour
 		if (helperGetGrid()[x,y] != null) return false;
 		return move(x, y,true);
 	}
-	int DebugCount = 0;
+
+	public void registerOnGrid(){helperGetGrid()	[(int)pos.x, (int)pos.y] = this;}
+	public void unRegisterOnGrid(){helperGetGrid()[(int)pos.x, (int)pos.y] = null;}
 	public bool move(Vector2 dir, bool moveTry = true) {return move((int)(pos.x + dir.x), (int)(pos.y + dir.y), moveTry);}
 	public virtual bool move(int x, int y, bool tryAgain = true)
 	{
@@ -76,13 +110,6 @@ public class UnitBase : MonoBehaviour
 		if (isAvailable == null) return false; //returned null; error.
 		if (!isAvailable.Value) //grid is currently being occupied
 		{
-			Debug.Log("HEY ME " + helperGetGrid()[x, y] + isAvailable.Value);
-			Debug.Log("HEY ME " + (helperGetGrid()[x, y] == null ));
-			isAvailable = helperIsGridAvailable(helperGetGrid(), x, y);
-			Debug.Log("HEY ME AGAIN?!" + isAvailable.Value);
-
-			if (DebugCount++ > 20) return false;
-
 			if (!tryAgain) return false;
 			if (IsDebug) Debug.Log(myType + " " + "NOT AVAILALBE ");
 			bool resultTry = moveTry(x,y);
@@ -95,30 +122,32 @@ public class UnitBase : MonoBehaviour
 		isMoved = true;
 		return true;
 	}
-	public bool moveAttack(Vector2 dir)
-	{
-		Debug.Log("trying to move attack " + pos + " " + dir);
-		return moveAttack((int)(pos.x + dir.x), (int)(pos.y + dir.y));
-	}
+	public bool moveAttack(Vector2 dir) { return moveAttack((int)(pos.x + dir.x), (int)(pos.y + dir.y)); }
 	public virtual bool moveAttack(int x, int y)
 	{
 		if (!isIndexValid(x, y) || (x == (int)pos.x && y ==(int)pos.y)) return false;
 		var u = helperGetGrid()[x, y];
 		if (u == null) return move(x, y);
-		u.attacked();
-		return move(x, y);
-	}
-	protected void helperSetPosition(int x, int y)
-	{
-		unRegisterOnGrid();
-		posBefore = pos;
-		pos = new Vector2(x, y);
-		registerOnGrid();
-	}
-	public bool push(int dirX, int dirY )//direction to pushed
-	{
+		if (helperIsValidAttackTarget(u.myType))
+		{
+			u.attacked();
+			return move(x, y);
+		}
 		return false;
 	}
+
+	bool moveAttackRotation(Vector2 direction)
+	{
+		int dir = helperToDir(direction);
+		if (dirFacing != dir)
+		{
+			face(dir);
+			return true;
+		}
+		return moveAttack(direction);
+	}
+	public virtual bool push(int dirX, int dirY)//direction to pushed
+	{return false;}
 	public virtual bool attacked()
 	{
 		if (!isAttackable) return false;
@@ -131,6 +160,12 @@ public class UnitBase : MonoBehaviour
 		GameObject.Destroy(gameObject);
 		isAlive = false;
 	}
+	public void turn()
+	{
+		if (isUpdated || !isAlive) return;
+		KUpdate();
+	}
+
 	public virtual void KUpdate()
 	{
 		isUpdated = true;

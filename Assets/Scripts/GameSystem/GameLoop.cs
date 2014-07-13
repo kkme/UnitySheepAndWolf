@@ -5,6 +5,8 @@ using System.Text;
 
 class GameLoop : MonoBehaviour
 {
+	enum State { READY, PROCESSING_PLAYER_INPUT };
+	State myState = State.READY;
 	int id;
 	static int idCount = 0;
 	public static KDels.EVENTHDR_REQUEST_SIMPLE
@@ -13,6 +15,10 @@ class GameLoop : MonoBehaviour
 
 	Board myBoard;
 	bool isPlaying = true;
+	void Awake()
+	{
+		enabled = false;
+	}
 	public void init(Board b)
 	{
 		id = idCount++;
@@ -38,12 +44,14 @@ class GameLoop : MonoBehaviour
 	}
 
 	//player has initiated a turn with new input
-	public void turn(Vector2 dir)
+	public void player_intput(Vector2 dir)
 	{
-		if (!isPlaying) return;
-		if (turn_player(dir)) turn_others();
-		
-		turn_record();
+		if (!isPlaying || myState != State.READY) return;
+
+		WorldInfo.unitPlayer.turn(dir);
+		helperInitAnimation(WorldInfo.unitPlayer);
+		myState = State.PROCESSING_PLAYER_INPUT;
+		enabled = true;
 	}
 	void EVENTHDR_GAME_WIN()
 	{
@@ -54,17 +62,19 @@ class GameLoop : MonoBehaviour
 		isPlaying = false;
 	}
 
-	bool turn_player(Vector2 dir) { 
-		return WorldInfo.unitPlayer.turn(dir);
-	}
 
 	void turn_others()
 	{
 
-		foreach (var u in WorldInfo.units) u.KUpdate();
+		foreach (var u in WorldInfo.units) u.turn();
 		for (int i = WorldInfo.units.Count - 1; i >= 0; i--) 
 			if (!WorldInfo.units[i].isAlive) WorldInfo.units.RemoveAt(i);
-		
+	}
+	void helperInitAnimation(UnitBase u)
+	{
+		var ani = u.GetComponent<KSpriteRenderer>();
+		ani.initAnimation(u.pos.x,u.pos.y,u.dirFacing);
+
 	}
 	void turn_record()
 	{
@@ -72,16 +82,21 @@ class GameLoop : MonoBehaviour
 		{
 			//if (u.isMoved) myBoard.positionUnit(u);
 			//Debug.Log(u + " " + u.isMoved);
-			if (u.isMoved)
-			{
-				var ani = u.GetComponent<KSpriteRenderer>();
-				ani.initAnimation(u.pos.x,u.pos.y,u.dirFacing);
-				//ani.move(u.pos.x + .5f, (int)u.pos.y + .5f);
-				//ani.rotate((++u.dirFacing)%4);
-			}
+			if (u.isMoved) helperInitAnimation(u);
 			
 			u.isUpdated = false;
 			u.isMoved = false;
+		}
+	}
+	void Update()
+	{
+		if (!WorldInfo.unitPlayer.GetComponent<KSpriteRenderer>().isAnimating())
+			myState = State.READY;
+		if (myState == State.READY)
+		{
+			turn_others();
+			turn_record();
+			enabled = false;
 		}
 	}
 }
