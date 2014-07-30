@@ -20,7 +20,7 @@ public class Board : UIItem
 	GameObject helperInstantiate(GameObject PREFAB, int x, int y)
 	{
 		var posFrom = transform.position;
-		var pos = posFrom + sizeCell.mult(.5f + x, .5f + y).XYZ(.1f);
+		var pos = posFrom + sizeCell.mult(x,  y).XYZ(.1f);
 		var obj = Instantiate(PREFAB, pos, Quaternion.identity) as GameObject;
 		obj.transform.localScale = sizeCell.XYZ(1);
 		obj.transform.parent = transform;
@@ -32,12 +32,13 @@ public class Board : UIItem
 		var obj = helperInstantiate(u.gameObject,x,y).GetComponent<UnitBase>();
 		obj.pos = new Vector2(x, y);
 		positionUnit(obj);
+		obj.init();
 	}
 	void initTiles()
 	{
 		for (int i = 0; i < count.x; i++) for (int j = 0; j < count.y; j++) {
-			int n = (int)(i * count.y + j);
-			if (n % 2 == 0) continue;
+			
+			if (j % 2 ==i%2) continue;
 			helperInstantiate(TILE_DEFAULT, i, j);
 		}
 	}
@@ -66,7 +67,7 @@ public class Board : UIItem
 	}
 	public void positionUnit(UnitBase unit)
 	{
-		var posNew = transform.position + (sizeCell.mult(.5f,.5f) + unit.pos.mult(sizeCell)).XYZ();
+		var posNew = transform.position + (unit.pos.mult(sizeCell)).XYZ();
 		unit.transform.position = posNew;
 	}
 	// Update is called once per frame

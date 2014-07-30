@@ -48,7 +48,7 @@ class GameLoop : MonoBehaviour
 	{
 		if (!isPlaying || myState != State.READY) return;
 
-		WorldInfo.unitPlayer.turn(dir);
+		if(!WorldInfo.unitPlayer.turn(dir)) return;
 		helperInitAnimation(WorldInfo.unitPlayer);
 		myState = State.PROCESSING_PLAYER_INPUT;
 		enabled = true;
@@ -66,13 +66,13 @@ class GameLoop : MonoBehaviour
 	void turn_others()
 	{
 
-		foreach (var u in WorldInfo.units) u.turn();
+		for (int i = 0; i < WorldInfo.units.Count; i++) WorldInfo.units[i].turn();
 		for (int i = WorldInfo.units.Count - 1; i >= 0; i--) 
 			if (!WorldInfo.units[i].isAlive) WorldInfo.units.RemoveAt(i);
 	}
 	void helperInitAnimation(UnitBase u)
 	{
-		var ani = u.GetComponent<KSpriteRenderer>();
+		var ani = u.GetComponent<RendererSprite>();
 		ani.initAnimation(u.pos.x,u.pos.y,u.dirFacing);
 
 	}
@@ -90,7 +90,7 @@ class GameLoop : MonoBehaviour
 	}
 	void Update()
 	{
-		if (!WorldInfo.unitPlayer.GetComponent<KSpriteRenderer>().isAnimating())
+		if (!WorldInfo.unitPlayer.GetComponent<RendererSprite>().isAnimating())
 			myState = State.READY;
 		if (myState == State.READY)
 		{

@@ -8,7 +8,6 @@ public class UnitObj : UnitStatic
 	override public void Awake()
 	{
 		base.Awake();
-		isAttackable = false;
-		isPushable = false;
+		isDestroyable = false;
 	}
 }

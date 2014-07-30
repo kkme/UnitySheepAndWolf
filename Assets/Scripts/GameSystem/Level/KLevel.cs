@@ -17,5 +17,4 @@ public class KLevel{
 		//units.Add(new Vector4((int)type,(int) which, x, y));
 	}
 
-	public static System.Type [] LEVELS = new System.Type[] {typeof(Level00) };
 }

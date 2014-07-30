@@ -8,7 +8,7 @@ class Main : MonoBehaviour
 {
 	static string PATH_DATA = "Assets\\Data\\";
 	public
-		UIOrganizer myUI_menu, myUI_game, myUI_gameFinished;
+		UIOrganizer myUI_menu, myUI_game, myUI_gameFinished,myUI_editor;
 	KDels.EVENTHDR_REQUEST_SIMPLE
 		EVENT_GAME_OVER = delegate { },
 		EVENT_GAME_RESTART = delegate { },
@@ -19,22 +19,26 @@ class Main : MonoBehaviour
 	Board myBoard;
 	GameSetting setting = new GameSetting();
 
-	public void Awake()	
+	public void Awake()
 	{
 		EVENT_GAME_OVER += EVENTHDR_GAME_OVER;
 		EVENT_GAME_WIN += EVENTHDR_GAME_WIN;
 
 		UI_Menu.EVENT_REQUEST_GAME_START += EVENTHDR_INIT_GAME;
+		UI_Menu.EVENT_REQUEST_MAP_EDITOR += EVENTHDR_INIT_EDITOR;
 		UI_GameFinished.EVENT_REQUEST_RESTART_LEVEL += EVENTHDR_INIT_GAME;
 		UI_GameFinished.EVENT_REQUEST_NEXT_LEVEL += EVENTHDR_NEXT_LEVEL;
 
 		GameLoop.EVENT_GAME_OVER	+= EVENT_GAME_OVER;
-		GameLoop.EVENT_GAME_WIN		+= EVENT_GAME_WIN;
+		GameLoop.EVENT_GAME_WIN += EVENT_GAME_WIN;
 	}
 	void Start()
 	{
 		hideAll();
 		myUI_menu.show();
+	}
+	void Update()
+	{
 	}
 	void helperInitGame(int lv = 0)
 	{
@@ -46,13 +50,18 @@ class Main : MonoBehaviour
 			setting.initGame(level);
 		}
 	}
-	public void EVENTHDR_INIT_GAME()
+	void EVENTHDR_INIT_GAME()
 	{
 		hideAll();
 		myUI_game.show();
 		helperInitGame(levelSelected);
 	}
-	public void EVENTHDR_NEXT_LEVEL()
+	void EVENTHDR_INIT_EDITOR()
+	{
+		hideAll();
+		myUI_editor.show();
+	}
+	void EVENTHDR_NEXT_LEVEL()
 	{
 		hideAll();
 		myUI_game.show();
@@ -73,5 +82,6 @@ class Main : MonoBehaviour
 		myUI_menu.hide();
 		myUI_game.hide();
 		myUI_gameFinished.hide();
+		myUI_editor.hide();
 	}
 }

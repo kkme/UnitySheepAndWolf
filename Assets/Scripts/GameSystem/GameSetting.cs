@@ -25,7 +25,13 @@ public class GameSetting
 		WorldInfo.init(level.WIDTH+2, level.HEIGHT+2); 
 		var kBoard = initBoard(level.WIDTH + 2, level.HEIGHT +2);
 		var loop = new GameObject("	GameSystem : GameLoop", typeof(GameLoop)).GetComponent<GameLoop>();
+		
+		//Instantiate units
 		foreach (var u in level.units) initUnits(u);
+		var spawn = helperInstantiate(Dir_GameObjects.dicUnits[KEnums.UNIT.ENEMY][10], 1, 1).GetComponent<UnitEnemy_Spawn>();
+		spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[KEnums.UNIT.ENEMY][5],2,isTrap:true);
+		spawn.init();
+
 		kBoard.initCorners();
 		loop.init(kBoard);
 
@@ -56,19 +62,25 @@ public class GameSetting
 	}
 	Board initBoard(int w, int h)
 	{
-		var kBoard = (MonoBehaviour.Instantiate(KLevelComponents.BOARD, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<Board>();
+		var kBoard = (MonoBehaviour.Instantiate(Dir_GameObjects.BOARD, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<Board>();
 		kBoard.transform.localScale = new Vector3(w,h, 1);
 		kBoard.reset(w,h);
 		return kBoard;
 	}
-	private void initUnits(KLevel_Unit u)
+	private GameObject initUnits(KLevel_Unit u)
 	{
-		var PREFAB = KLevelComponents.dicUnits[u.type00][u.type01];
+		var PREFAB = Dir_GameObjects.dicUnits[u.type00][u.type01];
+		return helperInstantiate(PREFAB, u.position[0], u.position[1]);
+	}
+	GameObject helperInstantiate(GameObject PREFAB, int x, int y)
+	{
 		GameObject obj = MonoBehaviour.Instantiate(PREFAB, Vector3.zero, Quaternion.identity) as GameObject;
+		
 		var uBase = obj.GetComponent<UnitBase>();
-		uBase.pos = new Vector2(u.position[0],u.position[1]) ;
+		uBase.pos = new Vector2(x,y);
 		uBase.init();
-		uBase.transform.position = new Vector3(.5f, .5f, 0) + uBase.pos.XYZ();
+		uBase.transform.position = uBase.pos.XYZ();
+		return obj;
 	}
 
 }

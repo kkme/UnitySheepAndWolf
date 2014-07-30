@@ -27,11 +27,11 @@ public class UIItem : UIOrganizer
 		transform.localScale = new Vector3(transform.localScale .x*r,transform.localScale .y* r, 1);
 		size = renderer.bounds.size.XY();
 	}
-	void OnMouseDown()
+	public virtual void OnMouseDown()
 	{
 		if (!enabled) return;
 		EVENT_CLICK();
-		Debug.Log("EVENT CLICK HERE " + gameObject.name);
+		//Debug.Log("EVENT CLICK HERE " + gameObject.name);
 	}
 
 	void helperIsEnabled(GameObject obj, bool b)

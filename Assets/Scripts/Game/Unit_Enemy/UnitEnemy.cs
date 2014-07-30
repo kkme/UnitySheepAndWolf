@@ -13,8 +13,8 @@ public class UnitEnemy : UnitUpdated {
 	public override void Awake()
 	{
 		base.Awake();
-		isAttackable = true;
-		myType = KEnums.UNIT.ENEMY;
+		isDestroyable = true;
+		typeMe = KEnums.UNIT.ENEMY;
 	}
 	bool isPlayerNextTo(Vector2 pos)
 	{
@@ -44,17 +44,6 @@ public class UnitEnemy : UnitUpdated {
 	{
 		var diff = pos - WorldInfo.unitPlayer.pos;
 		return Mathf.Abs(diff.x) <= rangeW && Mathf.Abs(diff.y) <= rangeH;
-	}
-	protected Vector2 helperGetDir(UnitBase unit)
-	{
-		var dir = (unit.pos - pos).dir();
-		int index = Random.Range(1, 2);
-		for (int i = 0; i < 2; i++)
-		{
-			if (dir[index] != 0) { index = (index + 1) % 2; dir[index] = 0; }
-			else index = (index + 1) % 2;
-		}
-		return dir;
 	}
 	public override void KUpdate(){
 		isUpdated = true;

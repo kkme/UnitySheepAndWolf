@@ -3,14 +3,11 @@ using System.Collections;
 
 public class UnitUpdated : UnitBase
 {
+	internal protected bool isActive = true;
 	public override void init()
 	{
 		base.init();
 		registerOnGrid();
-	}
-	public override void Awake()
-	{
-		base.Awake();
 		WorldInfo.units.Add(this);
 	}
 }

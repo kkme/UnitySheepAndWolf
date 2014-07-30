@@ -10,10 +10,9 @@ public class UnitPlayer : UnitUpdated
 	public override void Awake()
 	{
 		base.Awake();
-		myType = KEnums.UNIT.PLAYER;
+		typeMe = KEnums.UNIT.PLAYER;
 		WorldInfo.unitPlayer = this;
-		isAttackable = true;
-		isPushable = true;
+		isDestroyable = true;
 	}
 	void EVENT_GOT_HIT()
 	{
@@ -32,24 +31,27 @@ public class UnitPlayer : UnitUpdated
 	}
 	public bool turn(Vector2 dir)
 	{
+		
 		isUpdated = true;
-		if (moveAttack(dir))
+		health = 2;
+		if (moveAttack(dir, false))
 		{
 			if (isReachedGoal()) EVENT_REACHEED_GOAL();
 			else EVENT_MOVED();
+			health = 1;
 			return true;
 		}
+		health = 1;
 		return false;
 	}
 	public override bool attacked()
 	{
-		EVENT_ATTACKED();
-		return base.attacked();
-	}
-	public override void kill()
-	{
-		base.kill();
-		//EVENT_ATTACKED();
+		if (base.attacked())
+		{
+			EVENT_ATTACKED();
+			return true;
+		}
+		return false;
 	}
 	//public override bool move(int x, int y, bool tryAgain = true)
 	//{
