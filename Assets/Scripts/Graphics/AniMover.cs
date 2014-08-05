@@ -56,7 +56,7 @@ class AniMover : MonoBehaviour
 	
 	public void Update()
 	{
-		timeElapsed += Time.deltaTime;
+		timeElapsed += Mathf.Min( Time.deltaTime, .016f);
 		float ratio = Mathf.Min(1, timeElapsed / timElapsedMax);
 		//transform.position = moveFrom + moveDis * ratio;
 		

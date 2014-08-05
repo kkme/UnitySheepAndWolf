@@ -17,15 +17,15 @@ public class UIItem : UIOrganizer
 		Vector2 ratioSpace = new Vector2(right - left, top - bottom);
 		Vector2 space = ratioSpace.mult(UIInfo.WORLD_SCALE);
 
-		Vector2 pos = UIInfo.WORLD_ZERO + 
-			(new Vector2(left,bottom) + ratioSpace.mult(.5f, .5f)).mult(UIInfo.WORLD_SCALE);
+		Vector2 pos = UIInfo.WORLD_ZERO +
+			(new Vector2(left, bottom) + ratioSpace.mult(.5f, .5f)).mult(UIInfo.WORLD_SCALE);
+		transform.position = pos.XYZ();
+		if (renderer == null) return;
 		Vector2 size = renderer.bounds.size.XY();
 		Vector2 ratio = new Vector2(space.x / size.x, space.y / size.y);
 		float r = Mathf.Min(ratio.x, ratio.y);
 
-		transform.position = pos.XYZ();
 		transform.localScale = new Vector3(transform.localScale .x*r,transform.localScale .y* r, 1);
-		size = renderer.bounds.size.XY();
 	}
 	public virtual void OnMouseDown()
 	{

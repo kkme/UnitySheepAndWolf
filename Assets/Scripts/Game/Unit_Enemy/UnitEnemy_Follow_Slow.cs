@@ -7,10 +7,6 @@ public class UnitEnemy_Follow_Slow : UnitEnemy
 {
 	bool isFailed = false;
 	Vector2 dirContinue;
-	public override void Awake()
-	{
-		base.Awake();
-	}
 	public override void KUpdate()
 	{
 		base.KUpdate();
@@ -20,7 +16,7 @@ public class UnitEnemy_Follow_Slow : UnitEnemy
 			if(moveAttackRotation(dirContinue)) return;
 			
 		}
-		var dis = WorldInfo.unitPlayer.pos - pos;
+		var dis = WorldInfo.getClosestPlayerUnit(pos).pos - pos;
 		Vector2 dirFirst = Vector2.zero, dirSecond = Vector2.zero;
 		int dirAlternative = 0;
 

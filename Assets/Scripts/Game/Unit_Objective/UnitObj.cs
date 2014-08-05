@@ -8,6 +8,8 @@ public class UnitObj : UnitStatic
 	override public void Awake()
 	{
 		base.Awake();
-		isDestroyable = false;
+		typeMe = KEnums.UNIT.ENVIRONMENT;
+		isDestroyable_SimpleAttack = false;
+		isDestroyable_bomb = false;
 	}
 }

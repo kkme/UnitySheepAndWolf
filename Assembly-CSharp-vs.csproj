@@ -58,7 +58,6 @@
      <Compile Include="Assets\Scripts\Extensions\ExtensionsUnityVectors.cs" />
      <Compile Include="Assets\Scripts\Game\Board.cs" />
      <Compile Include="Assets\Scripts\Game\Unit\UnitBase.cs" />
-     <Compile Include="Assets\Scripts\Game\Unit\UnitPlayer.cs" />
      <Compile Include="Assets\Scripts\Game\Unit\UnitStatic.cs" />
      <Compile Include="Assets\Scripts\Game\Unit\UnitUpdated.cs" />
      <Compile Include="Assets\Scripts\Game\Unit\UnitySheep.cs" />
@@ -73,6 +72,9 @@
      <Compile Include="Assets\Scripts\Game\Unit_Objective\UnitObj.cs" />
      <Compile Include="Assets\Scripts\Game\Unit_Objective\UnitObjTemp.cs" />
      <Compile Include="Assets\Scripts\Game\Unit_Objective\UnitObjTemp_goal.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit_Player\UnitPlayer.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit_Player\UnitPlayer_Bush.cs" />
+     <Compile Include="Assets\Scripts\Game\Unit_Player\UnitPlayer_Mimic.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Dir_GameObjects.cs" />
      <Compile Include="Assets\Scripts\GameSystem\GameLoop.cs" />
      <Compile Include="Assets\Scripts\GameSystem\GameSetting.cs" />

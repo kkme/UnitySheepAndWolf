@@ -12,6 +12,6 @@ public class EffectManager : MonoBehaviour
 	}
 	void explosion(int x, int y)
 	{
-		Instantiate(EFFECT_EXPLOSION, new Vector3(x+.5f, y+.5f, 0), Quaternion.identity);
+		Instantiate(EFFECT_EXPLOSION, new Vector3(x, y, 0), Quaternion.identity);
 	}
 }

@@ -60,6 +60,8 @@ class Main : MonoBehaviour
 	{
 		hideAll();
 		myUI_editor.show();
+		KLevel l = new KLevel();
+		setting.initGame(l, false);
 	}
 	void EVENTHDR_NEXT_LEVEL()
 	{

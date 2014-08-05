@@ -14,11 +14,13 @@ class UnitEnemy_Trap : UnitEnemy
 	public override void Awake()
 	{
 		base.Awake();
-		for (int i = 0; i < dirs.Count; i++)
-		{
-			dirs[i] = (dirs[i] +  dirFacing ) % 4; 
-		}
 		isBomb = true;
+		
+	}
+	public override void Start()
+	{
+		base.Start();
+		for (int i = 0; i < dirs.Count; i++) dirs[i] = (dirs[i] + dirFacing) % 4;
 	}
 	public override void KUpdate()
 	{

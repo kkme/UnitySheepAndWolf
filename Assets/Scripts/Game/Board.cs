@@ -17,6 +17,14 @@ public class Board : UIItem
 	{
 		renderer.enabled = false;
 	}
+	public void init(int width, int height)
+	{
+
+		this.count = new Vector2(width, height);
+		sizeCell = transform.worldScale().divide(new Vector3(count.x, count.y, 1)).XY();
+		initTiles();
+		initCorners();
+	}
 	GameObject helperInstantiate(GameObject PREFAB, int x, int y)
 	{
 		var posFrom = transform.position;
@@ -43,7 +51,7 @@ public class Board : UIItem
 		}
 	}
 
-	public void initCorners()
+	void initCorners()
 	{
 		for (int x = 1; x < count.x - 1; x++)
 		{
@@ -58,13 +66,7 @@ public class Board : UIItem
 		}
 	}
 
-	public void reset(int width, int height)
-	{
-
-		this.count = new Vector2(width, height);
-		sizeCell = transform.worldScale().divide(new Vector3(count.x, count.y, 1)).XY();
-		initTiles();
-	}
+	
 	public void positionUnit(UnitBase unit)
 	{
 		var posNew = transform.position + (unit.pos.mult(sizeCell)).XYZ();

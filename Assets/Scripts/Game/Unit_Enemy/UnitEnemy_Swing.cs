@@ -14,13 +14,13 @@ class UnitEnemy_Swing : UnitEnemy
 	//if negative 1
 	int helperGetPlayerDis_X()
 	{
-		var dis = WorldInfo.unitPlayer.pos - pos;
+		var dis = WorldInfo.getClosestPlayerUnit(pos).pos - pos;
 		var n = (int)dis.x;
 		return (n == 0) ? 0 : (1-n/Mathf.Abs(n)) / 2;
 	}
 	int helperGetPlayerDis_Y()
 	{
-		var dis = WorldInfo.unitPlayer.pos - pos;
+		var dis = WorldInfo.getClosestPlayerUnit(pos).pos - pos;
 		var n = (int)dis.y;
 		return (n == 0) ? 0 : (1-n/Mathf.Abs(n)) / 2;
 	}

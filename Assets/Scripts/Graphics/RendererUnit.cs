@@ -9,7 +9,6 @@ using System.Text;
  * **/
 public class RendererUnit : MonoBehaviour
 {
-	public bool woke = false;
 	UnitBase unit;
 	GameObject objBomb = null, objPush = null;
 	GameObject helperInstntiate(GameObject o)
@@ -21,8 +20,6 @@ public class RendererUnit : MonoBehaviour
 	}
 	void Start()
 	{
-		if (woke) return;
-		woke = true;
 		//test first
 		var unit = (UnitBase)GetComponent<UnitBase>();
 		if (unit.isBomb) objBomb = helperInstntiate(Dir_GameObjects.GRAPHIC_BOMB);

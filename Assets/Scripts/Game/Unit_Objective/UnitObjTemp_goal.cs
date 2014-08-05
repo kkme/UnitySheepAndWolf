@@ -13,6 +13,6 @@ public class UnitObjTemp_goal : UnitObj
 	public override void Awake()
 	{
 		base.Awake();
-		isDestroyable = true;
+		isDestroyable_SimpleAttack = true;
 	}
 }

@@ -13,7 +13,7 @@ public class UnitEnemy : UnitUpdated {
 	public override void Awake()
 	{
 		base.Awake();
-		isDestroyable = true;
+		isDestroyable_SimpleAttack = true;
 		typeMe = KEnums.UNIT.ENEMY;
 	}
 	bool isPlayerNextTo(Vector2 pos)
@@ -42,7 +42,7 @@ public class UnitEnemy : UnitUpdated {
 	}
 	public bool isPlayerClose(int rangeW,int rangeH)
 	{
-		var diff = pos - WorldInfo.unitPlayer.pos;
+		var diff = pos - WorldInfo.getClosestPlayerUnit(pos).pos;
 		return Mathf.Abs(diff.x) <= rangeW && Mathf.Abs(diff.y) <= rangeH;
 	}
 	public override void KUpdate(){

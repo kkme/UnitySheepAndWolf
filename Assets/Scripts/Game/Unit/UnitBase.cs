@@ -10,8 +10,12 @@ public class UnitBase : MonoBehaviour
 	public delegate bool DEL_ATTACK(UnitBase u, int dirX, int dirY);
 	public DEL_ATTACK attack = delegate { return false; };
 	static bool attackNone(UnitBase u, int x, int y) { return false; }
-	static bool attackPush(UnitBase u, int x, int y) { return u.push(x, y); }
-	static bool attackKill(UnitBase u, int x, int y) { return u.attacked(); }
+	static bool attackPush(UnitBase u, int x, int y) { 
+		var result = u.push(x,y);
+		u.isPushed = u.isPushed || result;
+		return result;  
+	}
+	static bool attackKill(UnitBase u, int x, int y) { return u.attacked(x,y); }
 	static Dictionary<ATTACK_TYPE, DEL_ATTACK> dirAttacks = new Dictionary<ATTACK_TYPE, DEL_ATTACK>()
 	{
 		{ATTACK_TYPE.NONE,attackNone },
@@ -32,16 +36,19 @@ public class UnitBase : MonoBehaviour
 		//unit state
 		isUpdated = false,
 		isMoved = false,
+		isPushed = false,
+
 		//unit property 
-		isDestroyable = false,
-		isBomb = false;
+		isDestroyable_SimpleAttack = true,	//Can be destroyed by "attacks" || "getting squeezed"
+		isDestroyable_bomb = true,
+		isBomb = false,			//Will have "explosion" when the unit dies
+		isSwappable = false	;	// environment units count as "obstacles" when it comes to "mapping phase"
 
 	internal protected bool
 		isAlive = true;
-	public int	dirFacing = 0,
-				health=1,
-				turnCount = 0; 
-	protected KEnums.UNIT typeMe = KEnums.UNIT.BASIC;
+	public int dirFacing = 0,
+				health = 1;
+	internal protected KEnums.UNIT typeMe = KEnums.UNIT.BASIC;
 	internal protected Vector2	pos = new Vector2(0, 0), 
 						posBefore = new Vector2(0, 0);
 
@@ -56,15 +63,15 @@ public class UnitBase : MonoBehaviour
 	{
 		registerOnGrid();
 		setAttackType(typeAttack);
-
-		
+	}
+	public virtual void reset()
+	{
+		isUpdated = false;
+		isMoved = false;
+		isPushed = false;
 	}
 	public virtual void Awake(){}
-	public virtual void Start()
-	{
-		
-		
-	}
+	public virtual void Start() { }
 	//get set
 	
 
@@ -120,21 +127,14 @@ public class UnitBase : MonoBehaviour
 		isMoved = true;
 		dirFacing = d;
 	}
-	void moveBack()
-	{
-		if (IsDebug) Debug.Log(typeMe + "Moving Back	");
-		unRegisterOnGrid();
-		pos = posBefore;
-		registerOnGrid();
-	}
 	bool moveTry(int x, int y){
 		if (IsDebug) Debug.Log(typeMe + " Move trying");
 		var at = helperGetGrid()[x,y] as UnitBase;
-		if (at == null) return move(x, y,true);
 		if (at.isUpdated) return false;
-
+		int posX = (int)pos.x, posY = (int)pos.y;
 		at.KUpdate();
-		if (helperGetGrid()[x,y] != null) return false;
+		if ((int)pos.x != posX || (int)pos.y != posY)	return false;
+		if (helperGetGrid()[x,y] != null)				return false;
 		return move(x, y,true);
 	}
 
@@ -151,7 +151,7 @@ public class UnitBase : MonoBehaviour
 			if (IsDebug) Debug.Log(typeMe + " " + "NOT AVAILALBE ");
 			bool resultTry = moveTry(x,y);
 			if (IsDebug) Debug.Log(typeMe + " MOVE TRYING RESULT : " + resultTry);
-			isMoved = resultTry;
+			isMoved = isMoved || resultTry;
 			return resultTry;
 		}
 		if (IsDebug) Debug.Log(typeMe + " " + "AVAILALBE");
@@ -159,20 +159,28 @@ public class UnitBase : MonoBehaviour
 		isMoved = true;
 		return true;
 	}
-	public bool moveAttack(Vector2 dir, bool willMove = true) { return moveAttack((int)(pos.x + dir.x), (int)(pos.y + dir.y), willMove); }
-	public virtual bool moveAttack(int x, int y, bool willMove = true)
+	public bool moveAttack(Vector2 dir, bool willMove = true,bool isFirstHit = false) 
+	{ return moveAttack((int)(pos.x + dir.x), (int)(pos.y + dir.y), willMove,isFirstHit); }
+	
+	public virtual bool moveAttack(int x, int y, bool willMove = true,bool isFirstHit = false)
 	{
+		//if first hit, kill first! but otherwise, give the other one chance to runaway
 		if (!isIndexValid(x, y) || (x == (int)pos.x && y ==(int)pos.y)) return false;
 		var u = helperGetGrid()[x, y];
 		if (u == null) return move(x, y);
-		if (helperIsValidAttackTarget(u.typeMe))
+		if (!helperIsValidAttackTarget(u.typeMe)) return false;
+
+		if (!isFirstHit && !u.isUpdated)
 		{
-			if (!attack(u, helperGetUnit((int)(x - pos.x)), helperGetUnit((int)(y - pos.y))))
-				return false;
-			if (willMove) return move(x, y);
-			return true;
+			u.KUpdate();
+			u = helperGetGrid()[x, y];
+			if (u == null) return move(x, y);
 		}
-		return false;
+
+		if (!attack(u, helperGetUnit((int)(x - pos.x)), helperGetUnit((int)(y - pos.y))))
+			return false;
+		if (willMove) return move(x, y);
+		return true;
 	}
 
 	public bool moveAttackRotation(Vector2 direction)
@@ -188,42 +196,68 @@ public class UnitBase : MonoBehaviour
 	public virtual bool push(int dirX, int dirY)//direction to pushed
 	{
 		if(!move((int)(pos.x + dirX), (int)(pos.y + dirY), false)){
-			Debug.Log("I failed to get pushed " + dirX + " " + dirY);
-			attacked();
+			return attacked(dirX, dirY);
 		}
 		return true;
 	}
-	public virtual bool attacked()
+	public virtual bool attacked(int dirX, int dirY)
 	{
-		if (!isDestroyable) return false;
+
+		if (!isDestroyable_SimpleAttack) return false;
 		if (--health <= 0)
 		{
-			kill();
+			kill(dirX, dirY);
 			return true;
 		}
 		return false;
 	}
-	private void kill()
+	public virtual bool attackedBomb(int dirX, int dirY)
+	{
+
+		if (!isDestroyable_bomb) return false;
+		if (--health <= 0)
+		{
+			EVENT_EXPLOSION((int)pos.x,(int)pos.y);
+			kill(dirX, dirY);
+			return true;
+		}
+		return false;
+	}
+	public virtual void kill(int dirX, int dirY)
 	{
 		unRegisterOnGrid();
-		GameObject.Destroy(gameObject);
 		isAlive = false;
-		if (isBomb) explode();
+		if (isBomb) explode(dirX ,dirY);
 	}
 	void helperExplode(int x, int y)
 	{
 		if(!isIndexValid(x, y)) return;
 		var unit = WorldInfo.gridUnits[x, y];
-		if (unit != null) unit.attacked();
+		if (unit != null) unit.attackedBomb((int)(unit.pos.x - pos.x), (int)(unit.pos.y - pos.y));
 		else EVENT_EXPLOSION(x, y);
 	}
-	public virtual void explode()
+	public virtual void explode(int dirX, int dirY)
 	{
-		helperExplode((int)pos.x,(int) pos.y);
-		helperExplode((int)(pos.x - 1), (int)(pos.y		));
-		helperExplode((int)(pos.x + 1), (int)(pos.y		));
-		helperExplode((int)(pos.x	 ), (int)(pos.y + 1	));
-		helperExplode((int)(pos.x	 ), (int)(pos.y - 1	));
+		Debug.Log("explode " + dirX + " " + dirY);
+		helperExplode((int)pos.x, (int)pos.y);
+		helperExplode((int)(pos.x+dirX), (int)(pos.y+dirY));
+		helperExplode((int)(pos.x+dirY), (int)(pos.y+dirX));
+		helperExplode((int)(pos.x-dirY), (int)(pos.y-dirX));
+	}
+	internal bool swap(UnitBase u)
+	{
+		if (!u.isSwappable) return false;
+		var dummy = u.pos;
+		u.posBefore = u.pos;
+		u.pos = this.pos;
+		this.posBefore = pos;
+		this.pos = dummy;
+
+		registerOnGrid();
+		u.registerOnGrid();
+		u.isMoved = true;
+		WorldInfo.unitsAnimation00.Add(u);
+		return true;
 	}
 	public void turn()
 	{
@@ -234,6 +268,14 @@ public class UnitBase : MonoBehaviour
 	public virtual void KUpdate()
 	{
 		isUpdated = true;
+	}
+	public virtual void OnDestroy()
+	{
+
+	}
+	public virtual void Destroy()
+	{
+		GameObject.Destroy(this.gameObject);
 	}
 
 }
