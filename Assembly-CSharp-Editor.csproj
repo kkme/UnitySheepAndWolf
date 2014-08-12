@@ -49,7 +49,10 @@
      <Compile Include="Assets\Editor\CreatePlane.cs" />
      <None Include="Assets\TEST_FILE.txt" />
      <None Include="Assets\Data\level01.txt" />
+     <None Include="Assets\Data\LevelExample.txt" />
      <None Include="Assets\Data\level00.txt" />
+     <None Include="Assets\Data\writing here02.txt" />
+     <None Include="Assets\Data\writing here.txt" />
      <None Include="Assets\Plugins\Newtonsoft.Json.xml" />
  <Reference Include="Newtonsoft.Json">
  <HintPath>Assets\Plugins\Newtonsoft.Json.dll</HintPath>

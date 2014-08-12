@@ -3,14 +3,19 @@ using System.Collections;
 
 public class UnitPlayer : UnitUpdated
 {
-	static public event	KDels.EVENTHDR_REQUEST_SIMPLE 
+	static public event KDels.EVENTHDR_REQUEST_SIMPLE
 							EVENT_MOVED = delegate { },
-							EVENT_KILLED = delegate { },
-							EVENT_REACHEED_GOAL = delegate { };
+							EVENT_KILLED = delegate { };
+	public override KEnums.UNIT typeMe
+	{
+		get
+		{
+			return KEnums.UNIT.PLAYER;
+		}
+	}
 	public override void Awake()
 	{
 		base.Awake();
-		typeMe = KEnums.UNIT.PLAYER;
 		WorldInfo.unitsPlayers.Add(this);
 		WorldInfo.unitPlayer_real = this;
 	}
@@ -18,16 +23,12 @@ public class UnitPlayer : UnitUpdated
 	{
 		Debug.Log("OH MY GOD I GOT HIT");
 	}
-	bool isReachedGoal()
-	{
-		return (pos.x == WorldInfo.PLAYER_GOAL.x && pos.y == WorldInfo.PLAYER_GOAL.y) ;
-	}
 	bool isEnemyAt(int x, int y)
 	{
 		if (!isIndexValid(x, y)) return false;
 		var u = helperGetGrid()[x, y] as UnitBase;
-		Debug.Log(u.TYPE);
-		return u.TYPE == KEnums.UNIT.ENEMY;
+		Debug.Log(u.typeMe);
+		return u.typeMe == KEnums.UNIT.ENEMY;
 	}
 	public bool turn(Vector2 dir)
 	{
@@ -36,15 +37,14 @@ public class UnitPlayer : UnitUpdated
 		if (!isIndexValid(x, y)) return false;
 		if (moveAttack(dir, false,isFirstHit:true))
 		{
-			if (isReachedGoal()) EVENT_REACHEED_GOAL();
-			else EVENT_MOVED();
-			health = 1;
+			EVENT_MOVED();
 			return true;
 		}
 		else
 		{
 			var u = WorldInfo.gridUnits[x, y];
 			if (u != null && u.isSwappable && swap(u)) return true;
+			
 		}
 		return false;
 	}
@@ -53,7 +53,7 @@ public class UnitPlayer : UnitUpdated
 
 	public override bool helperIsValidAttackTarget(KEnums.UNIT type)
 	{
-		return type == KEnums.UNIT.ENEMY;
+		return type == KEnums.UNIT.ENEMY || type == KEnums.UNIT.ENVIRONMENT;
 	}
 	
 	public override void kill(int dirX, int dirY)

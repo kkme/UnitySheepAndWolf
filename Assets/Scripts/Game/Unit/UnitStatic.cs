@@ -3,10 +3,10 @@ using System.Collections;
 
 public class UnitStatic : UnitBase
 {
-	public override void init()
+	public override UnitBase init()
 	{
 		base.init();
-		registerOnGrid();
+		return (UnitBase)this;
 	}
 	
 	public override void Awake()

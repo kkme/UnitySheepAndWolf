@@ -16,6 +16,7 @@ class Main : MonoBehaviour
 		EVENT_GAME_WIN = delegate { };
 
 	int levelSelected = 0;
+	GameObject loopEditor = null;
 	Board myBoard;
 	GameSetting setting = new GameSetting();
 
@@ -37,17 +38,16 @@ class Main : MonoBehaviour
 		hideAll();
 		myUI_menu.show();
 	}
-	void Update()
-	{
-	}
 	void helperInitGame(int lv = 0)
 	{
 		string fileName = (lv < 10) ? ("level0" + lv) : ("level" + lv);
 		fileName += ".txt";
 		using (var reader = new System.IO.StreamReader(PATH_DATA + fileName))
 		{
-			var level = JsonConvert.DeserializeObject<KLevel>(reader.ReadToEnd());
+			var level = JsonConvert.DeserializeObject<List<DataUnit>> (reader.ReadToEnd());
+			Debug.Log(level);
 			setting.initGame(level);
+			//setting.initGame(level);
 		}
 	}
 	void EVENTHDR_INIT_GAME()
@@ -58,10 +58,13 @@ class Main : MonoBehaviour
 	}
 	void EVENTHDR_INIT_EDITOR()
 	{
+		if (loopEditor != null) GameObject.Destroy(loopEditor.gameObject);
 		hideAll();
 		myUI_editor.show();
-		KLevel l = new KLevel();
-		setting.initGame(l, false);
+		setting.initGame(new List<DataUnit>(), false);
+		loopEditor = new GameObject("	EditorLoop", new System.Type[] { typeof(EditorLoop) });
+		loopEditor.GetComponent<EditorLoop>()
+			.init(myUI_editor.gameObject.GetComponent<UI_Editor>());
 	}
 	void EVENTHDR_NEXT_LEVEL()
 	{
@@ -85,5 +88,18 @@ class Main : MonoBehaviour
 		myUI_game.hide();
 		myUI_gameFinished.hide();
 		myUI_editor.hide();
+	}
+	void Update()
+	{
+
+		if (Input.GetKeyDown(KeyCode.M))
+		{
+			var data = WorldInfo.toData();
+			JsonConvert.SerializeObject(data);
+			using (var t = new System.IO.StreamWriter(PATH_DATA + "level00.txt"))
+			{
+				t.Write(JsonConvert.SerializeObject(data));
+			}
+		}
 	}
 }

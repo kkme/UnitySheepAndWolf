@@ -9,6 +9,25 @@ public class UnitBase : MonoBehaviour
 	public enum ATTACK_TYPE { NONE, KILL,PUSH };
 	public delegate bool DEL_ATTACK(UnitBase u, int dirX, int dirY);
 	public DEL_ATTACK attack = delegate { return false; };
+	//cast 
+	static public explicit operator UnitBase(DataUnit data)
+	{
+		var obj = (Instantiate(Dir_GameObjects.dicUnits[data.typeUnit][data.id]) as GameObject).GetComponent<UnitBase>();
+		obj.pos = new Vector2(data.x,data.y);
+		obj.isBomb = data.isBomb;
+		obj.isDestroyable_bomb = data.isDestroyable_bomb;
+		obj.isDestroyable_simpleAttack = data.isDestroyable_simpleAttack;
+		obj.isSwappable = data.isSwappable;
+		//var spawn = obj.GetComponent<UnitEnemy_Spawn>();
+		var spawn = obj.gameObject.GetComponent<UnitEnemy_Spawn>();
+		if (spawn != null)
+		{
+			var dataSpawn = data.other;
+			spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[dataSpawn.typeUnit][dataSpawn.id], dataSpawn.dirFacing, dataSpawn.isBomb, dataSpawn.typeAttack, dataSpawn.isDestroyable_simpleAttack, dataSpawn.isDestroyable_bomb, dataSpawn.id >= 5);
+		}
+		
+		return obj;
+	}
 	static bool attackNone(UnitBase u, int x, int y) { return false; }
 	static bool attackPush(UnitBase u, int x, int y) { 
 		var result = u.push(x,y);
@@ -24,7 +43,7 @@ public class UnitBase : MonoBehaviour
 	};
 
 	public static KDels.EVENTHDR_REQUEST_SIMPLE_POS EVENT_EXPLOSION = delegate { };
-	public KEnums.UNIT TYPE { get { return typeMe; } }
+
 
 	
 
@@ -39,30 +58,46 @@ public class UnitBase : MonoBehaviour
 		isPushed = false,
 
 		//unit property 
-		isDestroyable_SimpleAttack = true,	//Can be destroyed by "attacks" || "getting squeezed"
-		isDestroyable_bomb = true,
 		isBomb = false,			//Will have "explosion" when the unit dies
-		isSwappable = false	;	// environment units count as "obstacles" when it comes to "mapping phase"
+		isSwappable = false,	// environment units count as "obstacles" when it comes to "mapping phase"
+		isDestroyable_simpleAttack = true,	//Can be destroyed by "attacks" || "getting squeezed"
+		isDestroyable_bomb = true;
 
 	internal protected bool
 		isAlive = true;
-	public int dirFacing = 0,
+	public int 
+				id,
+				dirFacing = 0,
 				health = 1;
-	internal protected KEnums.UNIT typeMe = KEnums.UNIT.BASIC;
 	internal protected Vector2	pos = new Vector2(0, 0), 
 						posBefore = new Vector2(0, 0);
 
 	//get set
+	public virtual KEnums.UNIT typeMe { get { return KEnums.UNIT.BASIC; } }
+
 	public void setAttackType(ATTACK_TYPE type)
 	{
 		typeAttack = type;
 		attack = dirAttacks[type];
 	}
+	//functions
 
-	public virtual void init()
+	public virtual UnitBase init()
 	{
 		registerOnGrid();
 		setAttackType(typeAttack);
+		//transform.position = new Vector3(pos.x, pos.y, 0);
+		return this;
+	}
+	internal UnitBase initPos(){
+		transform.position = new Vector3(pos.x, pos.y, 0);
+		return this;
+	}
+	public virtual UnitBase initPos(int x, int y){
+		
+		pos = new Vector2(x, y);
+		transform.position = new Vector3(x, y, 0);
+		return this;
 	}
 	public virtual void reset()
 	{
@@ -95,7 +130,7 @@ public class UnitBase : MonoBehaviour
 		pos = new Vector2(x, y);
 		registerOnGrid();
 	}
-	public virtual UnitBase[,] helperGetGrid() { return WorldInfo.gridUnits; }
+	internal UnitBase[,] helperGetGrid() { return WorldInfo.gridUnits; }
 	public int helperToDir(Vector2 v) { return helperToDir((int)v.x, (int)v.y); }
 	public int helperToDir(int h, int v)
 	{
@@ -138,8 +173,10 @@ public class UnitBase : MonoBehaviour
 		return move(x, y,true);
 	}
 
-	public void registerOnGrid(){helperGetGrid()	[(int)pos.x, (int)pos.y] = this;}
-	public void unRegisterOnGrid(){helperGetGrid()[(int)pos.x, (int)pos.y] = null;}
+	public void registerOnGrid(){
+		helperGetGrid()	[(int)pos.x, (int)pos.y] = this;}
+	public void unRegisterOnGrid(){
+		helperGetGrid()[(int)pos.x, (int)pos.y] = null;}
 	public bool move(Vector2 dir, bool moveTry = true) {return move((int)(pos.x + dir.x), (int)(pos.y + dir.y), moveTry);}
 	public virtual bool move(int x, int y, bool tryAgain = true)
 	{
@@ -203,7 +240,7 @@ public class UnitBase : MonoBehaviour
 	public virtual bool attacked(int dirX, int dirY)
 	{
 
-		if (!isDestroyable_SimpleAttack) return false;
+		if (!isDestroyable_simpleAttack) return false;
 		if (--health <= 0)
 		{
 			kill(dirX, dirY);

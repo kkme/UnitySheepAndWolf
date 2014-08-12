@@ -5,30 +5,37 @@ using System.Text;
 
 public class UnitEnemy_Spawn : UnitEnemy
 {
-	GameObject PREFAB_SPAWN = null;
+	internal GameObject PREFAB_SPAWN = null;
 	UnitBase unit;
 	ATTACK_TYPE spawnAttack;
-	int spawnDir, turnCount = 0;
+	int spawn_dirFacing, turnCount = 0;
 	bool isTrap,
-		spawnIsDestroyable, spawnIsBomb;
+		spawn_isBomb,
+		spawn_isDestroyable_simpleAttack,
+		spawn_isDestroyable_bomb;
 
-	public void setSpawnEnemy(GameObject PREFAB, int rotation = 0 , ATTACK_TYPE typeAttack = ATTACK_TYPE.KILL, bool isDestroyable = true,bool isBomb = false, bool isTrap = false)
+	
+	public void setSpawnEnemy(GameObject PREFAB, 
+		int dir, bool isBomb, UnitBase.ATTACK_TYPE typeAttack, 
+		bool isDestroyable_simpleAttack, bool isDestroyable_bomb,bool isTrap)
 	{
-		spawnDir = rotation;
 		PREFAB_SPAWN = PREFAB;
+		spawn_dirFacing = dir;
 		spawnAttack = typeAttack;
-		spawnIsDestroyable = isDestroyable;
-		spawnIsBomb = isBomb;
+		spawn_isDestroyable_simpleAttack = isDestroyable_simpleAttack;
+		spawn_isDestroyable_bomb = isDestroyable_bomb;
+		spawn_isBomb = isBomb;
 		this.isTrap = isTrap;
 	}
 	UnitBase spawn()
 	{
 		var u = (Instantiate(PREFAB_SPAWN) as GameObject).GetComponent<UnitBase>();
 		u.pos = this.pos;
-		u.dirFacing = spawnDir;
+		u.dirFacing = spawn_dirFacing;
 		u.typeAttack = spawnAttack;
-		u.isBomb = spawnIsBomb;
-		u.isDestroyable_SimpleAttack = spawnIsDestroyable;
+		u.isBomb = spawn_isBomb;
+		u.isDestroyable_simpleAttack = spawn_isDestroyable_simpleAttack;
+		u.isDestroyable_bomb = spawn_isDestroyable_bomb;
 		u.gameObject.transform.position = new Vector3( pos.x,pos.y,0);
 		u.transform.parent = this.transform;
 		return u;

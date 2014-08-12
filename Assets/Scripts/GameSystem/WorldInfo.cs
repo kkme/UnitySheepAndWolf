@@ -7,14 +7,17 @@ public class WorldInfo
 {
 
 
-	static public Vector2	WORLD_SIZE,
+	public static Camera camGame; 
+	public static Vector2	WORLD_SIZE,
 							PLAYER_GOAL, // I think this is deprecated, but let's keep it for now. Productivity > Pretty.
 							PLAYER_INPUT;
 
-	static public UnitBase[,]		gridUnits;
 
+	public static UnitBase door;//the final goal, game "success" sequence	
+	public static UnitPlayer unitPlayer_real;//static public UnitPlayer unitPlayer;
+	public static UnitBase[,] gridUnits;
 
-	static public List<UnitBase>	unitsUpdate01,
+	public static List<UnitBase>	unitsUpdate01,
 									unitsUpdate00,
 									unitsStatic,
 									unitsPlayers,
@@ -38,8 +41,6 @@ public class WorldInfo
 		}
 		return unit;
 	}
-	static public UnitPlayer unitPlayer_real;
-	//static public UnitPlayer unitPlayer;
 	static void helperDestroyAllGameObjects(List<UnitBase> l)
 	{
 		foreach (var u in l) GameObject.Destroy(u);
@@ -61,7 +62,20 @@ public class WorldInfo
 	static public void initEveryTurn()
 	{
 		unitsAnimation00 = new List<UnitBase>();
-
+	}
+	static public List<DataUnit> toData()
+	{
+		List<DataUnit> units = new List<DataUnit>(); 
+		for (int i = 1; i < 13-1; i++)
+			for (int j = 1; j < 13-1; j++)
+			{
+				var unit = gridUnits[i, j];
+				if (unit == null) continue;
+				//Debug.Log(unit + " AND " + (DataUnit)unit );
+				units.Add((DataUnit)unit);
+			}
+		units.Add((DataUnit)door);
+		return units;
 	}
 
 }

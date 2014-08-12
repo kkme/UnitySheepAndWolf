@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SimpleJSON;
 using ExtensionsUnityVectors;
 
 public class GameSetting
@@ -17,21 +16,28 @@ public class GameSetting
 	{
 		myOS = osChosen;
 	}
-	public void initGame(KLevel level, bool isGameLoopActive = true)
+	public void initGame(List<DataUnit> dataUnits, bool isGameLoopActive = true)
 	{
 		if (isInitiated) destoryPreviousGame();
 		isInitiated = true;
 		units = new GameObject("	GameSetting : Units");
-
+	
 		//add 2 for "edges" 
 		//WorldInfo.init(level.WIDTH + 2, level.HEIGHT + 2); 
 		WorldInfo.init(13,13);
-		var kBoard = initBoard(13, 13);
 		var loop = new GameObject("	GameSetting : GameLoop", typeof(GameLoop)).GetComponent<GameLoop>();
 		loop.enabled = isGameLoopActive;
 
 		//Instantiate units
-		foreach (var u in level.units) initUnits(u, units.transform);
+		foreach (var u in dataUnits)
+		{
+			var unit = ((UnitBase)u);
+			unit.transform.parent = units.transform;
+			
+			unit.init();
+			unit.initPos();
+		}
+		var kBoard = initBoard(13, 13);
 		
 		//var spawn = helperInstantiate(Dir_GameObjects.dicUnits[KEnums.UNIT.ENEMY][10], 1, 1).GetComponent<UnitEnemy_Spawn>();
 		//spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[KEnums.UNIT.ENEMY][5], 0, UnitBase.ATTACK_TYPE.PUSH, false, isTrap: true);
@@ -43,6 +49,7 @@ public class GameSetting
 
 		loop.init();
 
+		objectsInitiated.Add(units);
 		objectsInitiated.Add(kBoard.gameObject);
 		objectsInitiated.Add(loop.gameObject);
 		
@@ -62,9 +69,9 @@ public class GameSetting
 	{
 		Debug.Log("GameSetting : Destroyed Previous Game");
 		foreach (var o in objectsInitiated) if (o != null) MonoBehaviour.Destroy(o);
-		foreach (var o in WorldInfo.unitsUpdate01) if (o != null) MonoBehaviour.Destroy(o.gameObject);
-		foreach (var o in WorldInfo.unitsUpdate00) if (o != null) MonoBehaviour.Destroy(o.gameObject);
-		foreach (var o in WorldInfo.unitsStatic) if(o != null) MonoBehaviour.Destroy(o.gameObject);
+		//foreach (var o in WorldInfo.unitsUpdate01) if (o != null) MonoBehaviour.Destroy(o.gameObject);
+		//foreach (var o in WorldInfo.unitsUpdate00) if (o != null) MonoBehaviour.Destroy(o.gameObject);
+		//foreach (var o in WorldInfo.unitsStatic) if(o != null) MonoBehaviour.Destroy(o.gameObject);
 
 		objectsInitiated = new List<GameObject>();
 		WorldInfo.init((int)WorldInfo.WORLD_SIZE.x, (int)WorldInfo.WORLD_SIZE.y);

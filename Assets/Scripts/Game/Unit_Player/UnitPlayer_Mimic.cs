@@ -6,6 +6,14 @@ using System.Text;
 class UnitPlayer_Mimic : UnitUpdated
 {
 
+	public override KEnums.UNIT typeMe
+	{
+		get
+		{
+			return KEnums.UNIT.PLAYER;
+		}
+	}
+
 	public override List<List<UnitBase>> helperGetListOfUpdated()
 	{
 		return new List<List<UnitBase>>() { WorldInfo.unitsPlayers, WorldInfo.unitsUpdate00 };
@@ -18,7 +26,6 @@ class UnitPlayer_Mimic : UnitUpdated
 	{
 		base.Awake();
 		isSwappable = true;
-		typeMe = KEnums.UNIT.PLAYER;
 	}
 	public override void KUpdate()
 	{

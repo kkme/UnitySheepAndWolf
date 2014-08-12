@@ -8,18 +8,15 @@ public class UnitUpdated : UnitBase
 	{
 		return new List<List<UnitBase>>() { WorldInfo.unitsUpdate01 };
 	}
-	public override void init()
+
+	public override UnitBase init()
 	{
 		base.init();
-		registerOnGrid();
 		var l = helperGetListOfUpdated();
 		for (int i = 0; i < l.Count; i++) l[i].Add(this);
+		return (UnitBase)this;
 	}
-	public override void Destroy()
-	{
-		base.Destroy();
-		unRegisterOnGrid();
-	}
+	
 	public override void OnDestroy()
 	{
 		base.OnDestroy();

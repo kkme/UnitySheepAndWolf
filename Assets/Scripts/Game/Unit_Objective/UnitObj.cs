@@ -5,11 +5,17 @@ using System.Text;
 
 public class UnitObj : UnitStatic
 {
+	public override KEnums.UNIT typeMe
+	{
+		get
+		{
+			return KEnums.UNIT.ENVIRONMENT;
+		}
+	}
 	override public void Awake()
 	{
 		base.Awake();
-		typeMe = KEnums.UNIT.ENVIRONMENT;
-		isDestroyable_SimpleAttack = false;
+		isDestroyable_simpleAttack = false;
 		isDestroyable_bomb = false;
 	}
 }

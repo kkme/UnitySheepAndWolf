@@ -8,15 +8,16 @@ public class UIItem_Selector :UIItem
 	public KDels.EVENTHDR_REQUEST_SIMPLE_BOOL
 		EVENT_SELECTED = delegate { };
 
-	bool isSelected = false;
+	internal bool isSelected = false;
 	protected List<UIItem_Selector> others = new List<UIItem_Selector>(); // well, I don't want to expose this outside
 
 	public override void OnMouseDown()
 	{
-		base.OnMouseDown();
-		foreach (var i in others) i.setSelected(false);
 		isSelected = !isSelected;
+		foreach (var i in others) i.setSelected(false);
 		EVENT_SELECTED(isSelected);
+
+		base.OnMouseDown();
 	}
 	public void setSelected(bool b)
 	{

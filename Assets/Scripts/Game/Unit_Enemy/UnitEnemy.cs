@@ -6,6 +6,13 @@ using ExtensionsUnityVectors;
 public class UnitEnemy : UnitUpdated {
 	static public event KDels.EVENTHDR_REQUEST_SIMPLE EVENT_HIT_PLAYER = delegate { };
 
+	public override KEnums.UNIT typeMe
+	{
+		get
+		{
+			return KEnums.UNIT.ENEMY;
+		}
+	}
 	public override bool helperIsValidAttackTarget(KEnums.UNIT type)
 	{
 		return type == KEnums.UNIT.PLAYER;
@@ -13,8 +20,7 @@ public class UnitEnemy : UnitUpdated {
 	public override void Awake()
 	{
 		base.Awake();
-		isDestroyable_SimpleAttack = true;
-		typeMe = KEnums.UNIT.ENEMY;
+		isDestroyable_simpleAttack = true;	
 	}
 	bool isPlayerNextTo(Vector2 pos)
 	{
@@ -33,7 +39,7 @@ public class UnitEnemy : UnitUpdated {
 	{
 		if (!isIndexValid(x, y)) return false;
 		var g = helperGetGrid()[x,y] as UnitBase;
-		return (g != null && g.TYPE == KEnums.UNIT.PLAYER);
+		return (g != null && g.typeMe == KEnums.UNIT.PLAYER);
 	}
 
 	protected bool isPlayerAt(Vector2 v)

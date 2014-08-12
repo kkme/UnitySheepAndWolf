@@ -49,7 +49,6 @@
      <Compile Include="Assets\Scripts\00Utility\CameraSub.cs" />
      <Compile Include="Assets\Scripts\00Utility\KDelegates.cs" />
      <Compile Include="Assets\Scripts\00Utility\Prefabs.cs" />
-     <Compile Include="Assets\Scripts\00Utility\plugins\SimpleJSON.cs" />
      <Compile Include="Assets\Scripts\Enums\EnumUnitTypes.cs" />
      <Compile Include="Assets\Scripts\Extensions\ExtensionsSprite.cs" />
      <Compile Include="Assets\Scripts\Extensions\ExtensionsSpriteRenderer.cs" />
@@ -75,12 +74,16 @@
      <Compile Include="Assets\Scripts\Game\Unit_Player\UnitPlayer.cs" />
      <Compile Include="Assets\Scripts\Game\Unit_Player\UnitPlayer_Bush.cs" />
      <Compile Include="Assets\Scripts\Game\Unit_Player\UnitPlayer_Mimic.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Data\DataLevel.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\Data\DataUnit.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Dir_GameObjects.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\EditorLoop.cs" />
      <Compile Include="Assets\Scripts\GameSystem\GameLoop.cs" />
      <Compile Include="Assets\Scripts\GameSystem\GameSetting.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Level\KLevel.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Level\KLevel_Unit.cs" />
      <Compile Include="Assets\Scripts\GameSystem\Main.cs" />
+     <Compile Include="Assets\Scripts\GameSystem\WorldCamera.cs" />
      <Compile Include="Assets\Scripts\GameSystem\WorldInfo.cs" />
      <Compile Include="Assets\Scripts\Graphics\AniMover.cs" />
      <Compile Include="Assets\Scripts\Graphics\EffectManager.cs" />
@@ -98,7 +101,10 @@
      <Compile Include="Assets\Scripts\UI\UI_Menu.cs" />
      <None Include="Assets\TEST_FILE.txt" />
      <None Include="Assets\Data\level01.txt" />
+     <None Include="Assets\Data\LevelExample.txt" />
      <None Include="Assets\Data\level00.txt" />
+     <None Include="Assets\Data\writing here02.txt" />
+     <None Include="Assets\Data\writing here.txt" />
      <None Include="Assets\Plugins\Newtonsoft.Json.xml" />
  <Reference Include="Newtonsoft.Json">
  <HintPath>Assets\Plugins\Newtonsoft.Json.dll</HintPath>

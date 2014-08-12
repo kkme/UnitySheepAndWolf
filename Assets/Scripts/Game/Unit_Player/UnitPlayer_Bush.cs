@@ -5,6 +5,13 @@ using System.Text;
 
 class UnitPlayer_Bush : UnitUpdated
 {
+	public override KEnums.UNIT typeMe
+	{
+		get
+		{
+			return KEnums.UNIT.ENVIRONMENT;
+		}
+	}
 	public override List<List<UnitBase>> helperGetListOfUpdated()
 	{
 		return new List<List<UnitBase>>() { WorldInfo.unitsUpdate00 };
@@ -13,6 +20,5 @@ class UnitPlayer_Bush : UnitUpdated
 	{
 		base.Awake();
 		isSwappable = true;
-		typeMe = KEnums.UNIT.ENVIRONMENT;
 	}
 }

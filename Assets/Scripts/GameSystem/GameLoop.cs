@@ -26,7 +26,7 @@ class GameLoop : MonoBehaviour
 			
 		EVENT_GAME_WIN += EVENTHDR_GAME_WIN;
 		EVENT_GAME_OVER += EVENTHDR_GAME_OVER;
-		UnitPlayer.EVENT_REACHEED_GOAL += EVENT_GAME_WIN;
+		UnitObjTemp_goal.EVENT_DESTROYED += EVENT_GAME_WIN;
 		UnitPlayer.EVENT_KILLED += EVENT_GAME_OVER;
 
 		foreach (var u in WorldInfo.unitsUpdate01)
@@ -38,7 +38,6 @@ class GameLoop : MonoBehaviour
 	void OnDestroy()
 	{
 		Debug.Log("GameLoop + Destroyed " + id);
-		UnitPlayer.EVENT_REACHEED_GOAL -= EVENT_GAME_WIN;
 		UnitPlayer.EVENT_KILLED -= EVENT_GAME_OVER;
 	}
 
@@ -47,11 +46,11 @@ class GameLoop : MonoBehaviour
 	{
 		if (!isPlaying || myState != State.READY|| WorldInfo.unitPlayer_real == null|| !WorldInfo.unitPlayer_real.isAlive) return;
 		WorldInfo.PLAYER_INPUT = dir;
-		Debug.Log("PROCESSING USER INPUT " + dir);
-		if (!WorldInfo.unitPlayer_real.turn(dir)) return;
-		if (!WorldInfo.unitPlayer_real.isAlive) return;
+		if (!WorldInfo.unitPlayer_real.turn(dir)	||
+			!WorldInfo.unitPlayer_real.isAlive		||
+			!isPlaying
+			) return;
 		helperInitAnimation(WorldInfo.unitPlayer_real);
-
 		turn_others(WorldInfo.unitsUpdate00);
 		foreach (var u in WorldInfo.unitsUpdate00)
 		{

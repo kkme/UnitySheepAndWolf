@@ -12,7 +12,7 @@ class AniMover : MonoBehaviour
 	bool isMoving = false,isRotating = false;
 	Vector3 angleFrom , angleTo, angleDis;
 	Vector3 moveFrom, moveTo,moveDis;
-	float timeElapsed = 0, timElapsedMax = 0.15f;
+	float timeElapsed = 0, timElapsedMax = 0.13f;
 
 	void init()
 	{
@@ -56,7 +56,7 @@ class AniMover : MonoBehaviour
 	
 	public void Update()
 	{
-		timeElapsed += Mathf.Min( Time.deltaTime, .016f);
+		timeElapsed += Mathf.Min( Time.deltaTime, .025f);
 		float ratio = Mathf.Min(1, timeElapsed / timElapsedMax);
 		//transform.position = moveFrom + moveDis * ratio;
 		
