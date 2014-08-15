@@ -12,7 +12,7 @@ public class Board : UIItem
 	
 	Vector2 count;
 	Vector2 sizeCell;
-
+	GameObject[,] tiles,edges;
 	void Awake()
 	{
 		renderer.enabled = false;
@@ -34,45 +34,75 @@ public class Board : UIItem
 		obj.transform.parent = transform;
 		return obj;
 	}
-	void helperInstantiateUnitbase(UnitBase u, int x, int y)
+	GameObject helperInstantiateUnitbase(UnitBase u, int x, int y)
 	{
-		if (WorldInfo.gridUnits[x, y] != null) return;
+		if (WorldInfo.gridUnits[x, y] != null) return null;
 		var obj = helperInstantiate(u.gameObject,x,y).GetComponent<UnitBase>();
 		obj.pos = new Vector2(x, y);
 		positionUnit(obj);
 		obj.init();
+		return obj.gameObject;
 	}
 	void initTiles()
 	{
+		tiles = new GameObject[(int)count.x, (int)count.y];
 		for (int i = 0; i < count.x; i++) for (int j = 0; j < count.y; j++) {
 			
 			if (j % 2 ==i%2) continue;
-			helperInstantiate(TILE_DEFAULT, i, j);
+			tiles[i,j] = helperInstantiate(TILE_DEFAULT, i, j);
 		}
 	}
 
 	void initCorners()
 	{
+		edges = new GameObject[13, 13];
 		for (int x = 1; x < count.x - 1; x++)
 		{
-			helperInstantiateUnitbase(TILE_EDGE, x, 0);
-			helperInstantiateUnitbase(TILE_EDGE, x, (int)(count.y - 1));
+			edges[x,0]=helperInstantiateUnitbase(TILE_EDGE, x, 0);
+			edges[x,(int)(count.y - 1)]= helperInstantiateUnitbase(TILE_EDGE, x, (int)(count.y - 1));
 
 		}
 		for (int y = 0; y < count.y; y++)
 		{
-			helperInstantiateUnitbase(TILE_EDGE, 0, y);
-			helperInstantiateUnitbase(TILE_EDGE, (int)(count.x - 1), y);
+			edges[0,y]=helperInstantiateUnitbase(TILE_EDGE, 0, y);
+			edges[(int)(count.x - 1), y] = helperInstantiateUnitbase(TILE_EDGE, (int)(count.x - 1), y);
 		}
 	}
 
-	
 	public void positionUnit(UnitBase unit)
 	{
 		var posNew = transform.position + (unit.pos.mult(sizeCell)).XYZ();
 		unit.transform.position = posNew;
 	}
+
+	void recur(ref bool[,] isChecked, int x, int y){
+		if (x < 0 || y < 0 || x > 12 || y > 12 || isChecked[x,y]) return;
+		isChecked[x, y] = true;
+		if (tiles[x, y] != null) tiles[x, y].SetActive(true);
+		if (edges[x, y] != null) edges[x, y].SetActive(true);
+		var unit = WorldInfo.gridUnits[x,y];
+		if (unit != null && unit.typeMe == KEnums.UNIT.ENVIRONMENT && unit.id == 1)
+			return;//wall here don't proceed further
+		recur(ref isChecked, x+1, y);
+		recur(ref isChecked, x-1, y);
+		recur(ref isChecked, x, y + 1);
+		recur(ref isChecked, x, y - 1);
+		//corners
+		recur(ref isChecked, x+1, y + 1);
+		recur(ref isChecked, x-1, y + 1);
+		recur(ref isChecked, x+1, y - 1);
+		recur(ref isChecked, x-1, y - 1);
+	}
 	// Update is called once per frame
+	public void lightOff()
+	{
+		foreach (var t in tiles) if (t != null) t.SetActive(false);
+		foreach (var e in edges) if (e != null) e.SetActive(false);
+		bool[,] grid = new bool[13,13];
+		recur(ref grid, (int)WorldInfo.unitPlayer_real.pos.x, (int)WorldInfo.unitPlayer_real.pos.y);
+			
+	
+	}
 
 
 }

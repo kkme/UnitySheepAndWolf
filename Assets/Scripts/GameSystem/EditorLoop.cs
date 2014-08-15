@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
 
 class EditorLoop : MonoBehaviour
 {
@@ -52,20 +51,20 @@ class EditorLoop : MonoBehaviour
 	void click_inside(int x, int y)
 	{
 		var uBefore = WorldInfo.gridUnits[x, y];
-		Debug.Log(uBefore);
 		if (uBefore != null) uBefore.Destroy();
 		if (ui.isRemove) return;
 		if (ui.typeUnit == KEnums.UNIT.PLAYER && ui.unitCount == 0)
 		{
 			if (WorldInfo.unitPlayer_real != null) WorldInfo.unitPlayer_real.Destroy();
 		}
-		Debug.Log("ISBOMB " + ui.isBomb + " TYPE OF ATTACK " + ui.typeAttack + " IS SPAWN " + ui.isSpawn);
-		var unit = spawn(ui.typeUnit, ui.unitCount, ui.dirFacing, ui.isBomb, ui.typeAttack, ui.destroyed_simpleAttack, ui.destroyed_bomb,
+		//Debug.Log("ISBOMB " + ui.isBomb + " TYPE OF ATTACK " + ui.typeAttack + " IS SPAWN " +
+		//	ui.isSpawn + " IS DES BY SIMPLE ATTACK " + ui.isDestroyable_simpleAttack);
+		var unit = spawn(ui.typeUnit, ui.unitCount, ui.dirFacing, ui.isBomb, ui.typeAttack, ui.isDestroyable_simpleAttack, ui.destroyed_bomb,
 			ui.isSpawn, ui.isTrap).GetComponent<UnitBase>();
 		
 		unit.initPos(x, y).init();
 	}
-	GameObject helperSpawnNormal(KEnums.UNIT typeUnit, int count, int? dir, bool isBomb, UnitBase.ATTACK_TYPE typeAttack, bool? isDestroyable_simpleAttack, bool? isDestroyable_bomb)
+	GameObject helperSpawnNormal(KEnums.UNIT typeUnit, int count, int? dir, bool isBomb, UnitBase.TYPE_ATTACK typeAttack, bool? isDestroyable_simpleAttack, bool? isDestroyable_bomb)
 	{
 		var obj = Instantiate(Dir_GameObjects.dicUnits[typeUnit][count]) as GameObject;
 		var unit = obj.GetComponent<UnitBase>();
@@ -80,7 +79,7 @@ class EditorLoop : MonoBehaviour
 		return obj;
 	}
 	GameObject helperSpawn_Spawnner(KEnums.UNIT typeUnit, int count, 
-		int? dir, bool isBomb, UnitBase.ATTACK_TYPE typeAttack, 
+		int? dir, bool isBomb, UnitBase.TYPE_ATTACK typeAttack, 
 		bool? isDestroyable_simpleAttack, bool? isDestroyable_bomb,bool isTrap)
 	{
 		var obj = Instantiate(Dir_GameObjects.dicUnits[KEnums.UNIT.ENEMY][10]) as GameObject;
@@ -92,7 +91,7 @@ class EditorLoop : MonoBehaviour
 			isDestroyable_simpleAttack.Value,isDestroyable_bomb.Value,isTrap);
 		return obj;
 	}
-	GameObject spawn(KEnums.UNIT typeUnit, int count, int? dir, bool isBomb,UnitBase.ATTACK_TYPE typeAttack, bool? isDestroyable_simpleAttack	, bool? isDestroyable_bomb,
+	GameObject spawn(KEnums.UNIT typeUnit, int count, int? dir, bool isBomb,UnitBase.TYPE_ATTACK typeAttack, bool? isDestroyable_simpleAttack	, bool? isDestroyable_bomb,
 		bool isSpawn = false,bool isTrap =false)
 	{
 		if (isSpawn) return helperSpawn_Spawnner(typeUnit, count, dir, isBomb, typeAttack, isDestroyable_simpleAttack, isDestroyable_bomb, isTrap);
@@ -104,7 +103,7 @@ class EditorLoop : MonoBehaviour
 	}
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Space))
+		if (Input.GetKeyDown(KeyCode.Mouse1))
 		{
 			
 			event_moveCamera();

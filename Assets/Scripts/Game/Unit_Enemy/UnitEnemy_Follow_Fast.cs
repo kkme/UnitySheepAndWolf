@@ -19,7 +19,10 @@ public class UnitEnemy_Follow_Fast : UnitEnemy
 	public override void KUpdate()
 	{
 		base.KUpdate();
-		var dis = WorldInfo.getClosestPlayerUnit(pos).pos - pos;
+
+		var p = WorldInfo.getClosestPlayerUnit(pos);
+		if (!findPath((int)p.pos.x, (int)p.pos.y)) return;
+		var dis = new Vector2(closestTileX, closestTileY) - pos;
 		var dir = dis.dir();
 		if (dir.x == 0) dir.x = -1 + 2* Random.Range(0, 1);
 		if (dir.y == 0) dir.y = -1 + 2* Random.Range(0, 1);

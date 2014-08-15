@@ -5,7 +5,6 @@ using System.Text;
 
 class RendererSprite : MonoBehaviour
 {
-	public bool woke = false;
 	static Vector2 OFFSET = new Vector2(-.03f, .03f);
 	public Sprite mySprite;
 	public Color colorMain,colorShadow;
@@ -26,8 +25,6 @@ class RendererSprite : MonoBehaviour
 	}
 	public void Start()
 	{
-		if (woke) return;
-		woke = true;
 		spriteA = helperInstantiate("Sprite_Main", mySprite, colorMain, new Vector3(OFFSET.x, OFFSET.y, 0));
 		spriteB = helperInstantiate("Sprite_Shadow", mySprite, colorShadow, new Vector3(OFFSET.x * -1, OFFSET.y * -1, +1));
 		aniA = spriteA.GetComponent<AniMover>();
@@ -42,7 +39,7 @@ class RendererSprite : MonoBehaviour
 	}
 	public void move(float x, float y)
 	{
-		this.GetComponent<AniMover>().move(x, y);
+		gameObject.GetComponent<AniMover>().move(x, y);
 	}
 	public void rotate(int n)
 	{

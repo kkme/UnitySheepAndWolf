@@ -23,7 +23,7 @@ public class RendererUnit : MonoBehaviour
 		//test first
 		var unit = (UnitBase)GetComponent<UnitBase>();
 		if (unit.isBomb) objBomb = helperInstntiate(Dir_GameObjects.GRAPHIC_BOMB);
-		if (unit.typeAttack == UnitBase.ATTACK_TYPE.PUSH ) objPush =helperInstntiate(Dir_GameObjects.GRAPHIC_PUSH);
+		if (unit.typeAttack == UnitBase.TYPE_ATTACK.PUSH ) objPush =helperInstntiate(Dir_GameObjects.GRAPHIC_PUSH);
 		
 		//;
 		//Dir_GameObjects.GRAPHIC_PUSH;
@@ -35,7 +35,7 @@ public class RendererUnit : MonoBehaviour
 		if (objPush != null) Destroy(objPush);
 
 		if (unit.isBomb) objBomb = helperInstntiate(Dir_GameObjects.GRAPHIC_BOMB);
-		if (unit.typeAttack == UnitBase.ATTACK_TYPE.PUSH) objPush = helperInstntiate(Dir_GameObjects.GRAPHIC_PUSH);
+		if (unit.typeAttack == UnitBase.TYPE_ATTACK.PUSH) objPush = helperInstntiate(Dir_GameObjects.GRAPHIC_PUSH);
 	}
 	
 }

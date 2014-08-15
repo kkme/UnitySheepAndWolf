@@ -35,7 +35,7 @@ class UnitPlayer_Mimic : UnitUpdated
 
 		var at = helperGetGrid()[x,y];
 
-		if ((at == null || at.typeMe != KEnums.UNIT.ENEMY)){
+		if (at == null || at.typeMe != KEnums.UNIT.ENEMY){
 			if (!move(WorldInfo.PLAYER_INPUT) && !isPushed && at.GetComponent<UnitPlayer_Mimic>() != null) 
 				swap(at);
 		}

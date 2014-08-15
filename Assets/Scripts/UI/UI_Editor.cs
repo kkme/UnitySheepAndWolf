@@ -24,7 +24,7 @@ public class UI_Editor :UIOrganizer
 
 	internal KEnums.UNIT typeUnit= KEnums.UNIT.ENEMY;
 	internal int unitCount = 0; 
-	internal UnitBase.ATTACK_TYPE typeAttack = UnitBase.ATTACK_TYPE.NONE;
+	internal UnitBase.TYPE_ATTACK typeAttack = UnitBase.TYPE_ATTACK.NONE;
 	internal int? dirFacing = 0;
 	internal bool 
 		isBomb = false, 
@@ -33,7 +33,7 @@ public class UI_Editor :UIOrganizer
 
 	internal bool?
 		destroyed_bomb = false,
-		destroyed_simpleAttack = false;
+		isDestroyable_simpleAttack = false;
 
 
 	void Awake()
@@ -86,6 +86,7 @@ public class UI_Editor :UIOrganizer
 		//envs
 		bttn_envrionment[0].EVENT_CLICK += off_settings;
 		bttn_envrionment[1].EVENT_CLICK += delegate { bttn_setting[0].setSelected(false); bttn_setting[2].setSelected(false); };
+		bttn_envrionment[2].EVENT_CLICK += delegate { bttn_setting[0].setSelected(false); bttn_setting[2].setSelected(false); };
 		foreach (var b in bttn_envrionment){
 			b.EVENT_CLICK += off_traps;
 			b.EVENT_CLICK += off_enemies;
@@ -107,13 +108,14 @@ public class UI_Editor :UIOrganizer
 		typeUnit = KEnums.UNIT.ENVIRONMENT;
 		unitCount = n + 1;
 
+		isBomb = bttn_setting[1].isSelected;
 		isRemove = false;
 		isSpawn = false;
+		
 		destroyed_bomb = null;
-		destroyed_simpleAttack = null;
+		isDestroyable_simpleAttack = null;
 		dirFacing = null;
-		typeAttack = UnitBase.ATTACK_TYPE.KILL;
-		click_setting();
+		typeAttack = UnitBase.TYPE_ATTACK.KILL;
 
 	}
 	void click_setting()
@@ -122,13 +124,13 @@ public class UI_Editor :UIOrganizer
 		isSpawn = bttn_setting[2].isSelected;
 		if (bttn_setting[0].isSelected) //push attack
 		{
-			typeAttack = UnitBase.ATTACK_TYPE.PUSH;
-			destroyed_simpleAttack = false;
+			typeAttack = UnitBase.TYPE_ATTACK.PUSH;
+			isDestroyable_simpleAttack = false;
 		}
 		else
 		{
-			typeAttack = UnitBase.ATTACK_TYPE.KILL;
-			destroyed_simpleAttack = true;
+			typeAttack = UnitBase.TYPE_ATTACK.KILL;
+			isDestroyable_simpleAttack = true;
 		}
 	}
 	void process_dirFacing()
@@ -178,6 +180,7 @@ public class UI_Editor :UIOrganizer
 			{
 				if (matches[i] == content)
 				{
+					Debug.Log("MATCHED NOW " + i);
 					dirFacing = i;
 					unitCount = item.Value;
 					isBreak = true;
@@ -201,7 +204,7 @@ public class UI_Editor :UIOrganizer
 		isTrap = false;
 		unitCount = n;
 		destroyed_bomb = null;
-		destroyed_simpleAttack = null;
+		isDestroyable_simpleAttack = null;
 
 		click_setting();
 
@@ -259,5 +262,28 @@ public class UI_Editor :UIOrganizer
 		helperPosition(bttn_enemy, new Vector2(.0f, .3f), ICN_WITH, ICN_HEIGHT);
 		helperPosition(bttn_traps, new Vector2(.0f, .2f), ICN_WITH, ICN_HEIGHT);
 
+	}
+	void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.Alpha1))
+		{
+			dirFacing = 0;
+
+		}
+		if (Input.GetKeyDown(KeyCode.Alpha2))
+		{
+			dirFacing = 1;
+
+		}
+		if (Input.GetKeyDown(KeyCode.Alpha3))
+		{
+			dirFacing = 2;
+
+		}
+		if (Input.GetKeyDown(KeyCode.Alpha4))
+		{
+			dirFacing = 3;
+
+		}
 	}
 }

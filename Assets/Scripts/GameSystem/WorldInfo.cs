@@ -7,7 +7,7 @@ public class WorldInfo
 {
 
 
-	public static Camera camGame; 
+	public static WorldCamera camGame; 
 	public static Vector2	WORLD_SIZE,
 							PLAYER_GOAL, // I think this is deprecated, but let's keep it for now. Productivity > Pretty.
 							PLAYER_INPUT;
@@ -63,18 +63,18 @@ public class WorldInfo
 	{
 		unitsAnimation00 = new List<UnitBase>();
 	}
-	static public List<DataUnit> toData()
+	static public List<SimpleJSON.JSONNode> toData()
 	{
-		List<DataUnit> units = new List<DataUnit>(); 
+		var units = new List<SimpleJSON.JSONNode>(); 
 		for (int i = 1; i < 13-1; i++)
 			for (int j = 1; j < 13-1; j++)
 			{
 				var unit = gridUnits[i, j];
 				if (unit == null) continue;
 				//Debug.Log(unit + " AND " + (DataUnit)unit );
-				units.Add((DataUnit)unit);
+				units.Add((SimpleJSON.JSONNode)unit);
 			}
-		units.Add((DataUnit)door);
+		if (door != null) units.Add((SimpleJSON.JSONNode)door);
 		return units;
 	}
 

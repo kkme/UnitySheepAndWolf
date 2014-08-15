@@ -16,7 +16,7 @@ public class GameSetting
 	{
 		myOS = osChosen;
 	}
-	public void initGame(List<DataUnit> dataUnits, bool isGameLoopActive = true)
+	public void initGame(SimpleJSON.JSONArray dataUnits, bool isGameLoopActive = true)
 	{
 		if (isInitiated) destoryPreviousGame();
 		isInitiated = true;
@@ -29,15 +29,14 @@ public class GameSetting
 		loop.enabled = isGameLoopActive;
 
 		//Instantiate units
-		foreach (var u in dataUnits)
+		for (int i = 0; i < dataUnits.Count; i++)
 		{
-			var unit = ((UnitBase)u);
+			var unit = ((UnitBase)dataUnits[i]);
 			unit.transform.parent = units.transform;
-			
+
 			unit.init();
 			unit.initPos();
 		}
-		var kBoard = initBoard(13, 13);
 		
 		//var spawn = helperInstantiate(Dir_GameObjects.dicUnits[KEnums.UNIT.ENEMY][10], 1, 1).GetComponent<UnitEnemy_Spawn>();
 		//spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[KEnums.UNIT.ENEMY][5], 0, UnitBase.ATTACK_TYPE.PUSH, false, isTrap: true);
@@ -48,6 +47,8 @@ public class GameSetting
 
 
 		loop.init();
+		var kBoard = initBoard(13, 13);
+		if(isGameLoopActive) kBoard.lightOff();
 
 		objectsInitiated.Add(units);
 		objectsInitiated.Add(kBoard.gameObject);

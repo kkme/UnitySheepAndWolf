@@ -12,7 +12,8 @@ class AniMover : MonoBehaviour
 	bool isMoving = false,isRotating = false;
 	Vector3 angleFrom , angleTo, angleDis;
 	Vector3 moveFrom, moveTo,moveDis;
-	float timeElapsed = 0, timElapsedMax = 0.13f;
+	float timeElapsed = 0;
+	internal float timElapsedMax = 0.13f;
 
 	void init()
 	{

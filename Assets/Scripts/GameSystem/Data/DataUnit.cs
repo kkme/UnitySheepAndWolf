@@ -16,6 +16,7 @@ public class DataUnit
 			Debug.Log("OTHER SPAWN " + spawn.PREFAB_SPAWN + " , " + _u);
 			Debug.Log(_u.typeMe + " " + _u.id);
 			data.other = (DataUnit)spawn.PREFAB_SPAWN.GetComponent<UnitBase>();
+			
 		}
 		else data.other = null;
 
@@ -23,7 +24,7 @@ public class DataUnit
 		return data;
 	}
 
-	public DataUnit(KEnums.UNIT typeUnit, int id, int x, int y, int dirFacing,UnitBase.ATTACK_TYPE typeAttack, bool isBomb,bool isSwappable,
+	public DataUnit(KEnums.UNIT typeUnit, int id, int x, int y, int dirFacing,UnitBase.TYPE_ATTACK typeAttack, bool isBomb,bool isSwappable,
 		bool isDestroyable_simpleAttack, bool isDestroyable_bomb, DataUnit other = null)
 	{
 		this.typeUnit = typeUnit;
@@ -41,7 +42,7 @@ public class DataUnit
 	public KEnums.UNIT typeUnit;
 	public int x,y,
 		id,dirFacing;
-	public UnitBase.ATTACK_TYPE typeAttack;
+	public UnitBase.TYPE_ATTACK typeAttack;
 	public bool
 		isBomb,
 		isSwappable,

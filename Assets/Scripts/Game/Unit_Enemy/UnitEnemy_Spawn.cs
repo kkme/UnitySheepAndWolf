@@ -6,19 +6,22 @@ using System.Text;
 public class UnitEnemy_Spawn : UnitEnemy
 {
 	internal GameObject PREFAB_SPAWN = null;
-	UnitBase unit;
-	ATTACK_TYPE spawnAttack;
-	int spawn_dirFacing, turnCount = 0;
-	bool isTrap,
+	internal UnitBase unit;
+	internal TYPE_ATTACK spawnAttack;
+	internal int spawn_dirFacing, turnCount = 0;
+	internal bool 
+		isTrap,
+		isUpdateRotation,
 		spawn_isBomb,
 		spawn_isDestroyable_simpleAttack,
 		spawn_isDestroyable_bomb;
 
 	
 	public void setSpawnEnemy(GameObject PREFAB, 
-		int dir, bool isBomb, UnitBase.ATTACK_TYPE typeAttack, 
+		int dir, bool isBomb, UnitBase.TYPE_ATTACK typeAttack, 
 		bool isDestroyable_simpleAttack, bool isDestroyable_bomb,bool isTrap)
 	{
+		isUpdateRotation = PREFAB.GetComponent<UnitBase>().id <= 4;
 		PREFAB_SPAWN = PREFAB;
 		spawn_dirFacing = dir;
 		spawnAttack = typeAttack;
@@ -41,6 +44,17 @@ public class UnitEnemy_Spawn : UnitEnemy
 		return u;
 		// don't enable it right now since enabling it will result in "active in game" state
 	}
+	void spawnNew()
+	{
+		if (unit != null)
+		{
+			unit.transform.parent = transform.parent;
+			unit.init();
+			spawn_dirFacing = unit.dirFacing;
+		}
+		unit = spawn();
+		registerOnGrid();
+	}
 	public override void Start()
 	{
 		base.Start();
@@ -53,13 +67,15 @@ public class UnitEnemy_Spawn : UnitEnemy
 		turnCount = 0;
 		if (isTrap) UpdateTrap();
 		else unit.KUpdate();
-
 		if ((int)unit.pos.x != (int)pos.x || (int)unit.pos.y != (int)pos.y)
 		{
-			unit.transform.parent = transform.parent;
-			unit.init();
-			unit = spawn();
-			registerOnGrid();
+			spawnNew();
+		}
+		else if(isUpdateRotation)
+		{
+			if (isTrap) UpdateTrap();
+			else unit.KUpdate();
+			if ((int)unit.pos.x != (int)pos.x || (int)unit.pos.y != (int)pos.y) spawnNew();
 		}
 	}
 	void UpdateTrap()

@@ -6,7 +6,15 @@ using ExtensionsUnityVectors;
 
 public class UnitBase : MonoBehaviour
 {
-	public enum ATTACK_TYPE { NONE, KILL,PUSH };
+	public static bool isSpawn(KEnums.UNIT tpyeUnit, int id)
+	{
+		return tpyeUnit == KEnums.UNIT.ENEMY && id == 10;
+	}
+	public static bool isTrap(KEnums.UNIT tpyeUnit, int id)
+	{
+		return tpyeUnit == KEnums.UNIT.ENEMY && (id >= 5 && id <= 9);
+	}
+	public enum TYPE_ATTACK { NONE, KILL,PUSH };
 	public delegate bool DEL_ATTACK(UnitBase u, int dirX, int dirY);
 	public DEL_ATTACK attack = delegate { return false; };
 	//cast 
@@ -25,7 +33,28 @@ public class UnitBase : MonoBehaviour
 			var dataSpawn = data.other;
 			spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[dataSpawn.typeUnit][dataSpawn.id], dataSpawn.dirFacing, dataSpawn.isBomb, dataSpawn.typeAttack, dataSpawn.isDestroyable_simpleAttack, dataSpawn.isDestroyable_bomb, dataSpawn.id >= 5);
 		}
-		
+		return obj;
+	}
+	static public explicit operator UnitBase(SimpleJSON.JSONNode node)
+	{
+		var obj = (Instantiate(Dir_GameObjects.dicUnits[(KEnums.UNIT)node["typeUnit"].AsInt][node["id"].AsInt]) as GameObject).GetComponent<UnitBase>();
+		obj.pos = new Vector2(node["x"].AsInt, node["y"].AsInt);
+		obj.dirFacing =						node["dirFacing"].AsInt;
+		obj.isBomb =						node["isBomb"].AsBool;
+		obj.isDestroyable_bomb =			node["isDestroyable_bomb"].AsBool;
+		obj.isDestroyable_simpleAttack =	node["isDestroyable_simpleAttack"].AsBool;
+		obj.isSwappable =					node["isSwappable"].AsBool;
+		obj.typeAttack = (TYPE_ATTACK)node["typeAttack"].AsInt;
+		////var spawn = obj.GetComponent<UnitEnemy_Spawn>();
+		var spawn = obj.gameObject.GetComponent<UnitEnemy_Spawn>();
+		if (spawn != null)
+		{
+			var dataSpawn = node["other"].AsObject;
+			spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[(KEnums.UNIT) dataSpawn["typeUnit"].AsInt][dataSpawn["id"].AsInt], 
+				dataSpawn["dirFacing"].AsInt,dataSpawn["isBomb"].AsBool,(TYPE_ATTACK) dataSpawn["typeAttack"].AsInt, 
+				dataSpawn["isDestroyable_simpleAttack"].AsBool, dataSpawn["isDestroyable_bomb"].AsBool,
+				isTrap((KEnums.UNIT)dataSpawn["typeUnit"].AsInt, dataSpawn["id"].AsInt));
+		}
 		return obj;
 	}
 	static bool attackNone(UnitBase u, int x, int y) { return false; }
@@ -35,11 +64,11 @@ public class UnitBase : MonoBehaviour
 		return result;  
 	}
 	static bool attackKill(UnitBase u, int x, int y) { return u.attacked(x,y); }
-	static Dictionary<ATTACK_TYPE, DEL_ATTACK> dirAttacks = new Dictionary<ATTACK_TYPE, DEL_ATTACK>()
+	static Dictionary<TYPE_ATTACK, DEL_ATTACK> dirAttacks = new Dictionary<TYPE_ATTACK, DEL_ATTACK>()
 	{
-		{ATTACK_TYPE.NONE,attackNone },
-		{ATTACK_TYPE.KILL,attackKill },
-		{ATTACK_TYPE.PUSH,attackPush }
+		{TYPE_ATTACK.NONE,attackNone },
+		{TYPE_ATTACK.KILL,attackKill },
+		{TYPE_ATTACK.PUSH,attackPush }
 	};
 
 	public static KDels.EVENTHDR_REQUEST_SIMPLE_POS EVENT_EXPLOSION = delegate { };
@@ -49,7 +78,7 @@ public class UnitBase : MonoBehaviour
 
 	static bool IsDebug = false;
 
-	internal protected ATTACK_TYPE typeAttack = ATTACK_TYPE.KILL;
+	internal protected TYPE_ATTACK typeAttack = TYPE_ATTACK.KILL;
 
 	internal protected bool
 		//unit state
@@ -75,7 +104,7 @@ public class UnitBase : MonoBehaviour
 	//get set
 	public virtual KEnums.UNIT typeMe { get { return KEnums.UNIT.BASIC; } }
 
-	public void setAttackType(ATTACK_TYPE type)
+	public void setAttackType(TYPE_ATTACK type)
 	{
 		typeAttack = type;
 		attack = dirAttacks[type];
@@ -238,8 +267,7 @@ public class UnitBase : MonoBehaviour
 		return true;
 	}
 	public virtual bool attacked(int dirX, int dirY)
-	{
-
+	{	
 		if (!isDestroyable_simpleAttack) return false;
 		if (--health <= 0)
 		{
@@ -313,6 +341,11 @@ public class UnitBase : MonoBehaviour
 	public virtual void Destroy()
 	{
 		GameObject.Destroy(this.gameObject);
+	}
+	internal void UpdateAnimation()
+	{
+		var ani = GetComponent<RendererSprite>();
+		ani.initAnimation(pos.x,pos.y, dirFacing);
 	}
 
 }

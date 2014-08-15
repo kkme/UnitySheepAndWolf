@@ -19,6 +19,7 @@ class UnitPlayer_Bush : UnitUpdated
 	public override void Awake()
 	{
 		base.Awake();
+		isDestroyable_simpleAttack = false;
 		isSwappable = true;
 	}
 }

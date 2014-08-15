@@ -134,10 +134,17 @@ class GameLoop : MonoBehaviour
 			case State.PROCESSING_REACTION:
 				for (int i = WorldInfo.unitsUpdate01.Count - 1; i >= 0; i--)
 					if (WorldInfo.unitsUpdate01[i].GetComponent<RendererSprite>().isAnimating()) break;
+				if (WorldInfo.unitPlayer_real.amIStuck())
+				{
+					EVENT_GAME_OVER();
+				}
+				else
+				{
+					myState = State.READY;
+					units_animation = new List<UnitBase>();
 				
-				myState = State.READY;
+				}
 				enabled = false;
-				units_animation = new List<UnitBase>();
 				break;
 
 		}
