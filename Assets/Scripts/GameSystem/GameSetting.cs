@@ -6,6 +6,12 @@ using ExtensionsUnityVectors;
 
 public class GameSetting
 {
+
+	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT
+		EVENT_GAME_INITIATED = delegate { };
+	static public KDels.EVENTHDR_REQUEST_SIMPLE
+		EVENT_GAME_DESTROYED = delegate { };
+
 	bool isInitiated = false;
 
 	public enum OS { DESKTOP, ANDROID };
@@ -16,9 +22,16 @@ public class GameSetting
 	{
 		myOS = osChosen;
 	}
-	public void initGame(SimpleJSON.JSONArray dataUnits, bool isGameLoopActive = true)
+	public void destroy()
 	{
+		EVENT_GAME_DESTROYED();
 		if (isInitiated) destoryPreviousGame();
+		isInitiated = true;
+	}
+	public void initGame(int level, SimpleJSON.JSONArray dataUnits, bool isGameLoopActive = true)
+	{
+		EVENT_GAME_INITIATED(level);
+		if (isInitiated) destroy();
 		isInitiated = true;
 		units = new GameObject("	GameSetting : Units");
 	
@@ -58,7 +71,6 @@ public class GameSetting
 		{
 			case OS.DESKTOP:
 				var os = new GameObject("GameSystem : OS_DeskTop", typeof(OS_DeskTOp));
-				os.GetComponent<OS_DeskTOp>().gameLoop = loop;
 				objectsInitiated.Add(os);
 				break;
 			case OS.ANDROID:

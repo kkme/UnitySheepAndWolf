@@ -15,19 +15,25 @@ class GameLoop : MonoBehaviour
 
 	bool isPlaying = true;
 	List<UnitBase> units_animation = new List<UnitBase>();
+
+
+	public void EVENTHDR_INPUT_PLAYER(int n)
+	{
+		input_player(dirInputInt[n]);
+	}
 	void Awake()
 	{
 		enabled = false;
+		Main.EVENT_INTPUT_PLAYER += EVENTHDR_INPUT_PLAYER;
+		UnitObjTemp_goal.EVENT_DESTROYED += EVENTHDR_GAME_WIN;
+		UnitPlayer.EVENT_KILLED += EVENTHDR_GAME_OVER;
 	}
+
 	public void init()
 	{
 		id = idCount++;
 		Debug.Log("GAMELOOP : initiated" + id);
 			
-		EVENT_GAME_WIN += EVENTHDR_GAME_WIN;
-		EVENT_GAME_OVER += EVENTHDR_GAME_OVER;
-		UnitObjTemp_goal.EVENT_DESTROYED += EVENT_GAME_WIN;
-		UnitPlayer.EVENT_KILLED += EVENT_GAME_OVER;
 
 		foreach (var u in WorldInfo.unitsUpdate01)
 		{
@@ -37,12 +43,20 @@ class GameLoop : MonoBehaviour
 	}
 	void OnDestroy()
 	{
-		Debug.Log("GameLoop + Destroyed " + id);
-		UnitPlayer.EVENT_KILLED -= EVENT_GAME_OVER;
+		UnitObjTemp_goal.EVENT_DESTROYED -= EVENTHDR_GAME_WIN;
+		UnitPlayer.EVENT_KILLED -= EVENTHDR_GAME_OVER;
+		Main.EVENT_INTPUT_PLAYER -= EVENTHDR_INPUT_PLAYER;
 	}
+	Dictionary<int, Vector2> dirInputInt = new Dictionary<int, Vector2>()
+	{
+		{0,new Vector2(0,1)},
+		{1,new Vector2(1,0)},
+		{2,new Vector2(0,-1)},
+		{3,new Vector2(-1,0)},
 
+	};
 	//player has initiated a turn with new input
-	public void player_intput(Vector2 dir)
+	public void input_player(Vector2 dir)
 	{
 		if (!isPlaying || myState != State.READY|| WorldInfo.unitPlayer_real == null|| !WorldInfo.unitPlayer_real.isAlive) return;
 		WorldInfo.PLAYER_INPUT = dir;
@@ -65,10 +79,12 @@ class GameLoop : MonoBehaviour
 	void EVENTHDR_GAME_WIN()
 	{
 		isPlaying = false;
+		EVENT_GAME_WIN();
 	}
 	void EVENTHDR_GAME_OVER()
 	{
 		isPlaying = false;
+		EVENT_GAME_OVER();
 	}
 
 

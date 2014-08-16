@@ -31,17 +31,20 @@ public class TransitionEffect :MonoBehaviour
 		//textAfter.gameObject.SetActive(false);
 		//EVENT_TRANSITION_START += initTransition;
 	}
+	void Start()
+	{
+
+		//EVENT_FINISHED_TRANSITION(); 
+		StartCoroutine(wait());
+		//timeElapsed = 90;
+	}
+
 	IEnumerator<WaitForSeconds> wait()
 	{
 		enabled = false;
 		yield return new WaitForSeconds(1.5f);
 		enabled = true;
 	}
-	void Start()
-	{
-		StartCoroutine(wait());
-	}
-
 	public void initTransition()
 	{
 		timeElapsed = 0;

@@ -7,8 +7,8 @@ using ExtensionsUnityVectors;
 
 public class UIItem : UIOrganizer
 {
+	public TextMesh TextMesh;
 	public KDels.EVENTHDR_REQUEST_SIMPLE EVENT_CLICK = delegate { };
- 
 	public void position(Vector2 leftTop, Vector2 rightBottom)
 	{position(leftTop.y, rightBottom.y, leftTop.x, rightBottom.x);}
 	public void position(Vector4 square) { position(square.y, square.w, square.x, square.z); }

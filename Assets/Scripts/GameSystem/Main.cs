@@ -6,40 +6,41 @@ using SimpleJSON;
 
 class Main : MonoBehaviour
 {
-	static string PATH_DATA = "Assets\\Data\\";
-	
+	static string PATH_DATA = "Assets/Resources/Data/";
+	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT EVENT_INTPUT_PLAYER = delegate { };
+	public TextMesh debugScreen;
 	public
-		UIOrganizer myUI_menu, myUI_game, myUI_gameFinished,myUI_editor;
+		UIOrganizer 
+		myUI_menu, myUI_game,myUI_GameLevelSelector,
+		myUI_gameFinished,myUI_editor;
 	public TransitionEffect transition;
 
-	KDels.EVENTHDR_REQUEST_SIMPLE
-		EVENT_GAME_OVER = delegate { },
-		EVENT_GAME_RESTART = delegate { },
-		EVENT_GAME_NEXT = delegate { },
-		EVENT_GAME_WIN = delegate { };
 
-	int levelSelected = 10;
 	GameObject loopEditor = null;
 	Board myBoard;
 	GameSetting setting = new GameSetting();
 
-	enum STATE { Init, GameMode, EditorMode };
+	enum STATE { Init, GameMode, EditorMode};
 	STATE stateMe = STATE.Init;
 	public void Awake()
 	{
-		//EVENT_GAME_OVER += delegate { transition.initTransition(); stateMe = STATE.GameMode; };
-		//EVENT_GAME_WIN +=  delegate { transition.initTransition(); stateMe = STATE.EditorMode; };
+		//Manage all the player related input here
+		OS_DeskTOp.EVENT_INPUT_PLAYER += delegate (int n){ EVENT_INTPUT_PLAYER(n); };
+		UI_Game.EVENT_INPUT_PLAYER += delegate(int n){EVENT_INTPUT_PLAYER(n);};
 
-		UI_Menu.EVENT_REQUEST_GAME_START += delegate { transition.initTransition(); stateMe = STATE.GameMode; };
-		UI_Menu.EVENT_REQUEST_MAP_EDITOR += delegate { transition.initTransition(); stateMe = STATE.EditorMode; };
+		UI_Menu.EVENT_REQUEST_GAME_START += delegate { stateMe = STATE.GameMode;   transition.initTransition(); };
+		UI_Menu.EVENT_REQUEST_MAP_EDITOR += delegate { stateMe = STATE.EditorMode; transition.initTransition(); };
+		UI_Game.EVENT_REQUEST_MAP_CHANGE += delegate(int levelIncrement) { WorldInfo.level =Mathf.Max(0, WorldInfo.level+levelIncrement); helperInitLevelSelect(); };
+		UI_Game.EVENT_REQUEST_MAP_CHANGE += delegate(int dir) { };
+		UI_GameLevelSelector.EVENT_LEVEL_SELECTED += delegate(int level) { WorldInfo.level = level; stateMe = STATE.GameMode; transition.initTransition(); };
 		//UI_Menu.EVENT_REQUEST_GAME_START += EVENTHDR_INIT_GAME;
 		//UI_Menu.EVENT_REQUEST_MAP_EDITOR += EVENTHDR_INIT_EDITOR;
 
 		//UI_GameFinished.EVENT_REQUEST_RESTART_LEVEL += EVENTHDR_INIT_GAME;
 		//UI_GameFinished.EVENT_REQUEST_NEXT_LEVEL += EVENTHDR_NEXT_LEVEL;
 
-		GameLoop.EVENT_GAME_OVER	+= EVENT_GAME_OVER;
-		GameLoop.EVENT_GAME_WIN += EVENT_GAME_WIN;
+		GameLoop.EVENT_GAME_OVER += EVENTHDR_DEAD_TRYAGAIN;
+		GameLoop.EVENT_GAME_WIN += EVENTHDR_NEXT_LEVEL;
 
 		TransitionEffect.EVENT_FINISHED_TRANSITION += transitionCompleted;
 	}
@@ -70,40 +71,61 @@ class Main : MonoBehaviour
 
 		//myUI_menu.show();
 	}
-	void helperInitGame(int lv = 0)
+	void helperInitLevelSelect()
 	{
+		hideAll();
+		setting.destroy();
+		myUI_GameLevelSelector.show();
+
+	}
+	
+	void initGame(int lv = 0)
+	{
+
+		WorldInfo.level = lv;
 		string fileName = (lv < 10) ? ("level0" + lv) : ("level" + lv);
-		fileName += ".txt";
-		using (var reader = new System.IO.StreamReader(PATH_DATA + fileName))
-		{
-			var deserialized = JSONArray.Parse(reader.ReadToEnd()).AsArray;
-			setting.initGame(deserialized);
-			//var level = JsonConvert.DeserializeObject<List<DataUnit>> (reader.ReadToEnd());
-			//Debug.Log(level);
-			//setting.initGame(level);
-		}
+	
+
+		var content = (Resources.Load("Data/" + fileName) as TextAsset).text;
+
+
+		var deserialized = JSONArray.Parse(content).AsArray;
+		setting.initGame(lv, deserialized);
+		//var level = JsonConvert.DeserializeObject<List<DataUnit>> (reader.ReadToEnd());
+		//Debug.Log(level);
+		//setting.initGame(level);
 	}
 	void EVENTHDR_INIT_GAME()
 	{
 		hideAll();
 		myUI_game.show();
-		helperInitGame(levelSelected);
+		initGame(WorldInfo.level);
 	}
 	void EVENTHDR_INIT_EDITOR()
 	{
 		if (loopEditor != null) GameObject.Destroy(loopEditor.gameObject);
 		hideAll();
 		myUI_editor.show();
-		setting.initGame(JSON.Parse("[]").AsArray, false);
+		setting.initGame(-1,JSON.Parse("[]").AsArray, false);
 		loopEditor = new GameObject("	EditorLoop", new System.Type[] { typeof(EditorLoop) });
 		loopEditor.GetComponent<EditorLoop>()
 			.init(myUI_editor.gameObject.GetComponent<UI_Editor>());
 	}
-	void EVENTHDR_NEXT_LEVEL()
+	void EVENTHDR_DEAD_TRYAGAIN()
 	{
 		hideAll();
-		myUI_game.show();
-		helperInitGame(++levelSelected);
+		//pause for a second
+		stateMe = STATE.GameMode;
+		transition.initTransition();
+	}
+	void EVENTHDR_NEXT_LEVEL()
+	{
+		Debug.Log("NEXT LEVEL");
+		hideAll();
+		//pause for a second
+		WorldInfo.level++; 
+		stateMe = STATE.GameMode;
+		transition.initTransition();
 	}
 	void EVENTHDR_GAME_WIN()
 	{
@@ -121,6 +143,7 @@ class Main : MonoBehaviour
 		myUI_game.hide();
 		myUI_gameFinished.hide();
 		myUI_editor.hide();
+		myUI_GameLevelSelector.hide();
 	}
 	void Update()
 	{
@@ -135,10 +158,10 @@ class Main : MonoBehaviour
 				if (i != data.Count - 1) jsonEncoded += ",";
 			}
 			jsonEncoded += "]"; // close encoding
-
-			using (var t = new System.IO.StreamWriter(PATH_DATA + "level"+((levelSelected<10)?"0":"" ) +levelSelected+".txt"))
+			string fileName = PATH_DATA + "level" + ((WorldInfo.level < 10) ? "0" : "") + WorldInfo.level + ".txt";
+			using (var t = new System.IO.StreamWriter(fileName))
 			{
-				Debug.Log("encoding data : " + jsonEncoded);
+				Debug.Log("FILE : " + fileName + "\nencoding data : \n" + jsonEncoded);
 				t.Write(jsonEncoded);
 			}
 		}

@@ -86,7 +86,9 @@ public class UnitEnemy : UnitUpdated
 	}
 	int helperGetScore(int x, int y)
 	{
-		return Mathf.Abs(x - (int)pos.x) + Mathf.Abs(y - (int)pos.y);
+		int s = Mathf.Abs(x - (int)pos.x) + Mathf.Abs(y - (int)pos.y);
+		if (s != 0 && WorldInfo.gridUnits[x, y] != null) s++;
+		return s;
 	}
 	Dictionary<int, int[]> dirPath = new Dictionary<int, int[]>(){
 		{0, new int[2]{0,1}},{1, new int[2]{1,0}},{2, new int[2]{0,-1}},{3, new int[2]{-1,0}}

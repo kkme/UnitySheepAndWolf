@@ -35,7 +35,16 @@ public class UI_Editor :UIOrganizer
 		destroyed_bomb = false,
 		isDestroyable_simpleAttack = false;
 
-
+	public override void show()
+	{
+		base.show();
+		screen.gameObject.SetActive(true);
+	}
+	public override void hide()
+	{
+		base.hide();
+		screen.gameObject.SetActive(false);
+	}
 	void Awake()
 	{
 		myItems.AddRange(bttn_players.Select(s => (UIItem)s));
@@ -198,7 +207,7 @@ public class UI_Editor :UIOrganizer
 	void click_players()
 	{
 		int n = helperGetSelected(bttn_players);
-		if (n == -1) { isRemove = true; }
+		if (n == -1) { isRemove = true; return; }
 		typeUnit = KEnums.UNIT.PLAYER;
 		isRemove = false;
 		isTrap = false;

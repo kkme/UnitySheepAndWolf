@@ -12,6 +12,7 @@ public class UnitEnemy_Spawn : UnitEnemy
 	internal bool 
 		isTrap,
 		isUpdateRotation,
+		isSpawnAsSpawnner,
 		spawn_isBomb,
 		spawn_isDestroyable_simpleAttack,
 		spawn_isDestroyable_bomb;
@@ -21,14 +22,20 @@ public class UnitEnemy_Spawn : UnitEnemy
 		int dir, bool isBomb, UnitBase.TYPE_ATTACK typeAttack, 
 		bool isDestroyable_simpleAttack, bool isDestroyable_bomb,bool isTrap)
 	{
-		isUpdateRotation = PREFAB.GetComponent<UnitBase>().id <= 4;
+		int id = PREFAB.GetComponent<UnitBase>().id;
+		isUpdateRotation = id >0 && id<= 4;
+		if (id == 0)
+		{
+			this.isTrap = true;
+			isSpawnAsSpawnner = true;
+		}
+		else this.isTrap = isTrap;
 		PREFAB_SPAWN = PREFAB;
 		spawn_dirFacing = dir;
 		spawnAttack = typeAttack;
 		spawn_isDestroyable_simpleAttack = isDestroyable_simpleAttack;
 		spawn_isDestroyable_bomb = isDestroyable_bomb;
 		spawn_isBomb = isBomb;
-		this.isTrap = isTrap;
 	}
 	UnitBase spawn()
 	{
@@ -39,7 +46,7 @@ public class UnitEnemy_Spawn : UnitEnemy
 		u.isBomb = spawn_isBomb;
 		u.isDestroyable_simpleAttack = spawn_isDestroyable_simpleAttack;
 		u.isDestroyable_bomb = spawn_isDestroyable_bomb;
-		u.gameObject.transform.position = new Vector3( pos.x,pos.y,0);
+		u.gameObject.transform.position = transform.position;
 		u.transform.parent = this.transform;
 		return u;
 		// don't enable it right now since enabling it will result in "active in game" state
@@ -48,6 +55,25 @@ public class UnitEnemy_Spawn : UnitEnemy
 	{
 		if (unit != null)
 		{
+			if (isSpawnAsSpawnner)
+			{
+				var dummy = unit.pos;
+				unit.pos = this.pos; //reLink
+				var copy = (Instantiate(Dir_GameObjects.dicUnits[this.typeMe][this.id],
+							this.transform.position, this.transform.rotation) as GameObject)
+							.GetComponent<UnitEnemy_Spawn>();
+				copy.pos = dummy;
+				copy.isUpdated = true;
+				copy.isMoved = true;
+				copy.transform.parent = transform.parent;
+				copy.setSpawnEnemy(PREFAB_SPAWN, spawn_dirFacing, spawn_isBomb, spawnAttack, spawn_isDestroyable_simpleAttack, spawn_isDestroyable_bomb, isTrap);
+
+				copy.init();
+				registerOnGrid();
+				
+				return;
+			}
+
 			unit.transform.parent = transform.parent;
 			unit.init();
 			spawn_dirFacing = unit.dirFacing;
@@ -67,10 +93,7 @@ public class UnitEnemy_Spawn : UnitEnemy
 		turnCount = 0;
 		if (isTrap) UpdateTrap();
 		else unit.KUpdate();
-		if ((int)unit.pos.x != (int)pos.x || (int)unit.pos.y != (int)pos.y)
-		{
-			spawnNew();
-		}
+		if ((int)unit.pos.x != (int)pos.x || (int)unit.pos.y != (int)pos.y) spawnNew();
 		else if(isUpdateRotation)
 		{
 			if (isTrap) UpdateTrap();
@@ -80,24 +103,16 @@ public class UnitEnemy_Spawn : UnitEnemy
 	}
 	void UpdateTrap()
 	{
-		var dis = WorldInfo.getClosestPlayerUnit(pos).pos - pos;
-		if (
-			((int)dis.x == 1 && (int)dis.y == 0	)||
-			((int)dis.x == 0 && (int)dis.y == 1	) 
-			)return;
-		//spawn at the cloest 
-		var dirMove = (Mathf.Abs(dis.x) > Mathf.Abs(dis.y)) ?
-			new Vector2(helperGetUnit((int)dis.x), 0) : new Vector2(0,helperGetUnit((int)dis.y));
-		unit.isUpdated = true;
-		if(unit.move(dirMove,true)) return;
-
-		//has failed now lets try to move in all four direction
+		bool isPathClear = findPath((int)WorldInfo.getClosestPlayerUnit(pos).pos.x, (int)WorldInfo.getClosestPlayerUnit(pos).pos.y);
+		if (!isPathClear) return;
+		
+		unit.isUpdated = true; // to prevent recursioning back to "unit"
+		if(unit.move(closestTileX,closestTileY, true)) return;
+		//Lets try to move anywhere else since I failed that direction. 
 		if (unit.move(new Vector2(0, 1))) return;
 		else if (unit.move(new Vector2(1, 0))) return;
 		else if (unit.move(new Vector2(0, -1))) return;
 		else if (unit.move(new Vector2(0, -1))) return;
-		//try to spawn at dirSpawn
-		//if I can't, then try default spawn locations.
 
 	}
 	override public void kill(int dirX, int dirY)

@@ -80,7 +80,7 @@ namespace SimpleJSON
 			node["isSwappable"].AsBool = u.isSwappable;
 			node["isDestroyable_simpleAttack"].AsBool = u.isDestroyable_simpleAttack;
 			node["isDestroyable_bomb"].AsBool = u.isDestroyable_bomb;
-			UnityEngine.Debug.Log("DATA UNIT HAD BEEN CONVERTED " + node.ToString());
+			//UnityEngine.Debug.Log("DATA UNIT HAD BEEN CONVERTED " + node.ToString());
 			var spawn = u.GetComponent<UnitEnemy_Spawn>();
 			if (spawn != null)
 			{

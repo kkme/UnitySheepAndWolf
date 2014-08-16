@@ -5,15 +5,15 @@ using System.Text;
 
 class OS_DeskTOp : MonoBehaviour
 {
-	public GameLoop gameLoop;
-	Dictionary<KeyCode, Vector2> dirMoves =
-		new Dictionary<KeyCode, Vector2>() { {KeyCode.W, new Vector2(0,1)}, {KeyCode.S, new Vector2(0,-1)},
-											 {KeyCode.A, new Vector2(-1,0)}, {KeyCode.D, new Vector2(1,0)}};
+	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT EVENT_INPUT_PLAYER = delegate { };
+	Dictionary<KeyCode, int> dirMoves =
+		new Dictionary<KeyCode, int>() { {KeyCode.W, 0}, {KeyCode.S, 2},
+											 {KeyCode.A,3}, {KeyCode.D, 1}};
 	void Update()
 	{
 		foreach (var move in dirMoves)
 		{
-			if (Input.GetKeyDown(move.Key)) { gameLoop.player_intput(move.Value); }
+			if (Input.GetKeyDown(move.Key)) { EVENT_INPUT_PLAYER(move.Value); }
 		}
 	}
 }

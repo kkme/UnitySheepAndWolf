@@ -48,21 +48,22 @@
   <ItemGroup>
      <Compile Include="Assets\Editor\CreatePlane.cs" />
      <None Include="Assets\TEST_FILE.txt" />
-     <None Include="Assets\Data\level01.txt" />
-     <None Include="Assets\Data\level07.txt" />
-     <None Include="Assets\Data\LevelExample.txt" />
-     <None Include="Assets\Data\level10.txt" />
-     <None Include="Assets\Data\level09.txt" />
-     <None Include="Assets\Data\level03.txt" />
-     <None Include="Assets\Data\level05.txt" />
-     <None Include="Assets\Data\level02.txt" />
-     <None Include="Assets\Data\level08.txt" />
-     <None Include="Assets\Data\level00.txt" />
-     <None Include="Assets\Data\writing here02.txt" />
-     <None Include="Assets\Data\writing here.txt" />
-     <None Include="Assets\Data\level04.txt" />
-     <None Include="Assets\Data\level010.txt" />
-     <None Include="Assets\Data\level06.txt" />
+     <None Include="Assets\Resources\Data\level01.txt" />
+     <None Include="Assets\Resources\Data\level07.txt" />
+     <None Include="Assets\Resources\Data\LevelExample.txt" />
+     <None Include="Assets\Resources\Data\level10.txt" />
+     <None Include="Assets\Resources\Data\level09.txt" />
+     <None Include="Assets\Resources\Data\level03.txt" />
+     <None Include="Assets\Resources\Data\level05.txt" />
+     <None Include="Assets\Resources\Data\level02.txt" />
+     <None Include="Assets\Resources\Data\level08.txt" />
+     <None Include="Assets\Resources\Data\level11.txt" />
+     <None Include="Assets\Resources\Data\level00.txt" />
+     <None Include="Assets\Resources\Data\writing here02.txt" />
+     <None Include="Assets\Resources\Data\writing here.txt" />
+     <None Include="Assets\Resources\Data\level04.txt" />
+     <None Include="Assets\Resources\Data\level010.txt" />
+     <None Include="Assets\Resources\Data\level06.txt" />
  <Reference Include="UnityEditor.Graphs">
  <HintPath>C:\Program Files (x86)\Unity\Editor\Data\Managed\UnityEditor.Graphs.dll</HintPath>
  </Reference>

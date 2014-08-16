@@ -23,7 +23,7 @@ class RendererSprite : MonoBehaviour
 		r.color = c;
 		return obj;
 	}
-	public void Start()
+	public void Awake()
 	{
 		spriteA = helperInstantiate("Sprite_Main", mySprite, colorMain, new Vector3(OFFSET.x, OFFSET.y, 0));
 		spriteB = helperInstantiate("Sprite_Shadow", mySprite, colorShadow, new Vector3(OFFSET.x * -1, OFFSET.y * -1, +1));
