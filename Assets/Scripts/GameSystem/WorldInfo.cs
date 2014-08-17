@@ -6,7 +6,7 @@ using System.Text;
 public class WorldInfo
 {
 
-	public static int level = 10; //world id, which is level number
+	public static int level = 47; //world id, which is level number
 	public static WorldCamera camGame; 
 	public static Vector2	WORLD_SIZE,
 							PLAYER_GOAL, // I think this is deprecated, but let's keep it for now. Productivity > Pretty.
@@ -24,7 +24,7 @@ public class WorldInfo
 									//group of units for animation phase 00, right before player input 
 									unitsAnimation00;
 
-	public static UnitBase getClosestPlayerUnit(Vector2 pos)
+	public static UnitBase getClosestPlayerUnit(Vector2 pos,int dirFacing )
 	{
 		int disShortest = 99999;
 		UnitBase unit = null;
@@ -32,14 +32,25 @@ public class WorldInfo
 		foreach (var u in unitsPlayers)
 		{
 			dis = u.pos - pos;
-			var mag = Mathf.Abs(dis.x) + Mathf.Abs(dis.y);
+			var mag = u.findPathToUnit((int)pos.x, (int)pos.y);// Mathf.Abs(dis.x) + Mathf.Abs(dis.y);
+			if (mag != 0 && dirFacing != -1)
+			{
+				if ((dirFacing == 0 || dirFacing == 2) && dis.x != 0) mag++;
+				if ((dirFacing == 1 || dirFacing == 3) && dis.y != 0) mag++;
+			}
 			if (mag < disShortest)
 			{
+				//Debug.Log("Chosen "+u);
 				disShortest = (int)mag;
 				unit = u;
 			}
 		}
+		//Debug.Log("Chosen Final" + unit + " SCORE : "  + disShortest);
 		return unit;
+	}
+	public static UnitBase getClosestPlayerUnit(int x, int y,int dirFacing)
+	{
+		return getClosestPlayerUnit(new Vector2(x,y),dirFacing );
 	}
 	static void helperDestroyAllGameObjects(List<UnitBase> l)
 	{

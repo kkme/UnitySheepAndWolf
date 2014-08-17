@@ -20,24 +20,26 @@ public class UnitEnemy_Follow_Fast : UnitEnemy
 	{
 		base.KUpdate();
 
-		var p = WorldInfo.getClosestPlayerUnit(pos);
-		if (!findPath((int)p.pos.x, (int)p.pos.y)) return;
-		var dis = new Vector2(closestTileX, closestTileY) - pos;
-		var dir = dis.dir();
-		if (dir.x == 0) dir.x = -1 + 2* Random.Range(0, 1);
-		if (dir.y == 0) dir.y = -1 + 2* Random.Range(0, 1);
-		if (Mathf.Abs(dis.x) > Mathf.Abs(dis.y))
-		{
-			if (moveAttack( new Vector2(dir.x,0))||
-				moveAttack(new Vector2(0, dir.y) )||
-				moveAttack(new Vector2(0, -dir.y))||
-				moveAttack(new Vector2(-dir.x,0)))
-			return;
-		}
+		var pPos = WorldInfo.getClosestPlayerUnit(pos,-1).pos;
+		var pDis = pPos - pos;
+		dirFacing = (Mathf.Abs(pDis.x) >Mathf.Abs( pDis.y))? 
+			helperToDirFromRaw(new Vector2(pDis.x, 0)):
+			helperToDirFromRaw(new Vector2(0, pDis.y));
 
-		if (moveAttack(new Vector2(0, dir.y)) ||
-			moveAttack(new Vector2(dir.x, 0)) ||
-			moveAttack(new Vector2(-dir.x, 0)) ||
-			moveAttack(new Vector2(0, -dir.y))) return;
+		if (findPathToUnit((int)pPos.x, (int)pPos.y) == -1) return;
+		var dir = new Vector2(closestTileX, closestTileY) - pos;
+		if (moveAttack(new Vector2(closestTileX, closestTileY) - pos)) return;
+		//
+		var routes = getOptimalRoute((int)pos.x, (int)pos.y,(int)pPos.x,(int)pPos.y, dirFacing);
+		foreach (var r in routes)
+		{
+			if(moveAttack(r[0], r[1]))return;
+		}
 	}
+	public override void UpdateAnimation()
+	{
+		//ani.initAnimation(pos.x,pos.y, dirFacing);
+		rSprite.move(pos.x, pos.y);
+	}
+ 
 }

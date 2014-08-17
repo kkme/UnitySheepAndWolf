@@ -18,23 +18,7 @@ public class UnitBase : MonoBehaviour
 	public delegate bool DEL_ATTACK(UnitBase u, int dirX, int dirY);
 	public DEL_ATTACK attack = delegate { return false; };
 	//cast 
-	static public explicit operator UnitBase(DataUnit data)
-	{
-		var obj = (Instantiate(Dir_GameObjects.dicUnits[data.typeUnit][data.id]) as GameObject).GetComponent<UnitBase>();
-		obj.pos = new Vector2(data.x,data.y);
-		obj.isBomb = data.isBomb;
-		obj.isDestroyable_bomb = data.isDestroyable_bomb;
-		obj.isDestroyable_simpleAttack = data.isDestroyable_simpleAttack;
-		obj.isSwappable = data.isSwappable;
-		//var spawn = obj.GetComponent<UnitEnemy_Spawn>();
-		var spawn = obj.gameObject.GetComponent<UnitEnemy_Spawn>();
-		if (spawn != null)
-		{
-			var dataSpawn = data.other;
-			spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[dataSpawn.typeUnit][dataSpawn.id], dataSpawn.dirFacing, dataSpawn.isBomb, dataSpawn.typeAttack, dataSpawn.isDestroyable_simpleAttack, dataSpawn.isDestroyable_bomb, dataSpawn.id >= 5);
-		}
-		return obj;
-	}
+	
 	static public explicit operator UnitBase(SimpleJSON.JSONNode node)
 	{
 		var obj = (Instantiate(Dir_GameObjects.dicUnits[(KEnums.UNIT)node["typeUnit"].AsInt][node["id"].AsInt]) as GameObject).GetComponent<UnitBase>();
@@ -49,6 +33,8 @@ public class UnitBase : MonoBehaviour
 		var spawn = obj.gameObject.GetComponent<UnitEnemy_Spawn>();
 		if (spawn != null)
 		{
+
+			spawn.turnCount = node["turnCount"].AsInt;
 			var dataSpawn = node["other"].AsObject;
 			spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[(KEnums.UNIT) dataSpawn["typeUnit"].AsInt][dataSpawn["id"].AsInt], 
 				dataSpawn["dirFacing"].AsInt,dataSpawn["isBomb"].AsBool,(TYPE_ATTACK) dataSpawn["typeAttack"].AsInt, 
@@ -74,10 +60,11 @@ public class UnitBase : MonoBehaviour
 	public static KDels.EVENTHDR_REQUEST_SIMPLE_POS EVENT_EXPLOSION = delegate { };
 
 
-	
+
 
 	static bool IsDebug = false;
 
+	internal RendererSprite rSprite;
 	internal protected TYPE_ATTACK typeAttack = TYPE_ATTACK.KILL;
 
 	internal protected bool
@@ -134,7 +121,7 @@ public class UnitBase : MonoBehaviour
 		isMoved = false;
 		isPushed = false;
 	}
-	public virtual void Awake(){}
+	public virtual void Awake() { rSprite = GetComponent<RendererSprite>(); }
 	public virtual void Start() { }
 	//get set
 	
@@ -160,6 +147,7 @@ public class UnitBase : MonoBehaviour
 		registerOnGrid();
 	}
 	internal UnitBase[,] helperGetGrid() { return WorldInfo.gridUnits; }
+	public int helperToDirFromRaw(Vector2 v) { return helperToDir (helperGetUnit((int)v.x),helperGetUnit((int)v.y) ) ;}
 	public int helperToDir(Vector2 v) { return helperToDir((int)v.x, (int)v.y); }
 	public int helperToDir(int h, int v)
 	{
@@ -303,7 +291,6 @@ public class UnitBase : MonoBehaviour
 	}
 	public virtual void explode(int dirX, int dirY)
 	{
-		Debug.Log("explode " + dirX + " " + dirY);
 		helperExplode((int)pos.x, (int)pos.y);
 		helperExplode((int)(pos.x+dirX), (int)(pos.y+dirY));
 		helperExplode((int)(pos.x+dirY), (int)(pos.y+dirX));
@@ -330,6 +317,10 @@ public class UnitBase : MonoBehaviour
 		KUpdate(); return;
 	}
 
+	public virtual bool processLocation(int x, int y)
+	{
+		return false;
+	}
 	public virtual void KUpdate()
 	{
 		isUpdated = true;
@@ -342,10 +333,111 @@ public class UnitBase : MonoBehaviour
 	{
 		GameObject.Destroy(this.gameObject);
 	}
-	internal void UpdateAnimation()
+	public virtual void UpdateAnimation()
 	{
 		var ani = GetComponent<RendererSprite>();
-		ani.initAnimation(pos.x,pos.y, dirFacing);
+		//ani.initAnimation(pos.x,pos.y, dirFacing);
+		rSprite.move(pos.x, pos.y);
+		rSprite.rotate(dirFacing);
+	}
+	bool helperIsClearPathHere(int xNew, int yNew)
+	{
+		if (!isIndexValid(xNew, yNew)) return false;
+		var unit = WorldInfo.gridUnits[xNew, yNew];
+		return
+			unit == null ||
+			(unit.typeMe != KEnums.UNIT.ENVIRONMENT
+			//&&!(unit.typeMe == KEnums.UNIT.ENEMY && (unit.id == 0 || (unit.id > 4 && unit.id < 10)))
+			);
+	}
+	void helperMarkMap(ref bool[,] map, int x, int y, bool b)
+	{
+		if (!isIndexValid(x, y)) return;
+		map[x, y] = b;
+	}
+	protected List<int[]> getOptimalRoute(int x, int y, int xTo, int yTo, int dirStart = 0)
+	{
+		List<int[]> l = new List<int[]>();
+		int scoreMin = 99999999;
+		for (int i = 0; i < 4; i++)
+		{
+			int dir = (dirStart + i) % 4;
+			int[] xy = new int[4] { x + dirPath[dir][0], y + dirPath[dir][1], dir, 0 };
+			xy[3] = helperGetScore(xy[0], xy[1], xTo, yTo);
+			if (!isIndexValid(xy[0], xy[1])) continue;
+			if (xy[3] < scoreMin)
+			{
+				scoreMin = xy[3];
+				l.Insert(0, xy);
+			}
+			else if (xy[3] == scoreMin)
+			{
+
+				l.Insert(1, xy);
+			}
+			else l.Add(xy);
+		}
+		return l;
+	}
+
+	public int findPathToUnit(int destX, int destY)
+	{
+		int unitX = (int)pos.x, unitY = (int)pos.y;
+
+		if ((Mathf.Abs(unitX - destX) == 1 && Mathf.Abs(unitY - destY) == 0) ||
+			(Mathf.Abs(unitX - destX) == 0 && Mathf.Abs(unitY - destY) == 1))
+		{
+			closestTileX = destX; closestTileY = destY;
+			return 1;
+		}
+
+		bool[,] map = new bool[13, 13];
+		var routes = getOptimalRoute(unitX, unitY, destX, destY, dirFacing);
+		foreach (var r in routes) map[r[0], r[1]] = true;
+		foreach (var r in routes)
+		{
+			if (!helperIsClearPathHere(r[0], r[1]) ) continue;
+			int cost = recursivePath(ref map, r[0], r[1], destX, destY, r[2]);
+			if (cost == -1) continue;
+			closestTileX = r[0];
+			closestTileY = r[1];
+			return cost;
+		}
+		return -1;
+	}
+	protected int helperGetScore(int x, int y, int destX, int destY)
+	{
+		//int disX = Mathf.Abs(x - (int)WorldInfo.unitPlayer_real.pos.x), disY = Mathf.Abs(y - (int)WorldInfo.unitPlayer_real.pos.y);
+		int s = Mathf.Abs(x - destX) +
+				Mathf.Abs(y - destY);
+		if (s == 0) return s;
+		var unit = WorldInfo.gridUnits[x, y];
+		if (unit != null)
+		{
+			//if(isTrap(unit.typeMe,unit.id))s+=2;
+			if (unit.typeMe == KEnums.UNIT.ENVIRONMENT) s += 100;
+		}
+		return s;
+	}
+	protected Dictionary<int, int[]> dirPath = new Dictionary<int, int[]>(){
+		{0, new int[2]{0,1}},{1, new int[2]{1,0}},{2, new int[2]{0,-1}},{3, new int[2]{-1,0}}
+	};
+	protected int closestTileX = 0, closestTileY = 0;
+
+	int recursivePath(ref bool[,] map, int x, int y, int xTo, int yTo, int dirBefore)
+	{
+		map[x, y] = true;
+		List<int> dirsAvailable = new List<int>();
+		var routes = getOptimalRoute(x, y, xTo, yTo, dirBefore);
+		foreach (var r in routes)
+		{
+			if (map[r[0], r[1]] || !helperIsClearPathHere(r[0], r[1])) continue;
+			if (r[3] == 0)
+			{ return r[3]+1; } // found it
+			var cost = recursivePath(ref map, r[0], r[1], xTo, yTo, r[2]);
+			if (cost != -1) return 1 + r[3];
+		}
+		return -1;
 	}
 
 }

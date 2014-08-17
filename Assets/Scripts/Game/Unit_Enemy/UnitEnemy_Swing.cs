@@ -12,23 +12,29 @@ class UnitEnemy_Swing : UnitEnemy
 	public Vector2[] dirs = new Vector2[2];
 	//if positive 0
 	//if negative 1
-	int helperGetPlayerDis_X()
-	{
-		var dis = WorldInfo.getClosestPlayerUnit(pos).pos - pos;
-		var n = (int)dis.x;
-		return (n == 0) ? 0 : (1-n/Mathf.Abs(n)) / 2;
-	}
-	int helperGetPlayerDis_Y()
-	{
-		var dis = WorldInfo.getClosestPlayerUnit(pos).pos - pos;
-		var n = (int)dis.y;
-		return (n == 0) ? 0 : (1-n/Mathf.Abs(n)) / 2;
-	}
+
 	public override void Awake()
 	{
 		base.Awake();
 		if (isX) helpGetPlayerDis = helperGetPlayerDis_X;
 		else helpGetPlayerDis = helperGetPlayerDis_Y;
+	}
+	public override void Start()
+	{
+		base.Start();
+		isX = dirFacing == 1;
+	}
+	int helperGetPlayerDis_X()
+	{
+		var dis = WorldInfo.getClosestPlayerUnit(pos, dirFacing).pos - pos;
+		var n = (int)dis.x;
+		return (n == 0) ? 0 : (1-n/Mathf.Abs(n)) / 2;
+	}
+	int helperGetPlayerDis_Y()
+	{
+		var dis = WorldInfo.getClosestPlayerUnit(pos, dirFacing).pos - pos;
+		var n = (int)dis.y;
+		return (n == 0) ? 0 : (1-n/Mathf.Abs(n)) / 2;
 	}
 	public override void KUpdate()
 	{

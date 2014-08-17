@@ -106,7 +106,14 @@ class Main : MonoBehaviour
 		if (loopEditor != null) GameObject.Destroy(loopEditor.gameObject);
 		hideAll();
 		myUI_editor.show();
-		setting.initGame(-1,JSON.Parse("[]").AsArray, false);
+
+		string fileName = (WorldInfo.level < 10) ? ("level0" + WorldInfo.level) : ("level" + WorldInfo.level);
+		var file = Resources.Load("Data/" + fileName);
+		string c = "[]";
+		if (file != null) c = (file as TextAsset).text;
+
+
+		setting.initGame(-1,JSON.Parse(c).AsArray, false);
 		loopEditor = new GameObject("	EditorLoop", new System.Type[] { typeof(EditorLoop) });
 		loopEditor.GetComponent<EditorLoop>()
 			.init(myUI_editor.gameObject.GetComponent<UI_Editor>());

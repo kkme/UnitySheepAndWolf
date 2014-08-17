@@ -42,13 +42,10 @@ public class UnitPlayer : UnitUpdated
 		isUpdated = true;
 		int x =(int)( pos.x + dir.x), y = (int)(pos.y + dir.y);
 		if (!isIndexValid(x, y)) return false;
-		if (moveAttack(dir, false, isFirstHit: true)) return true;
-		else
-		{
-			var u = WorldInfo.gridUnits[x, y];
-			if (u != null && u.isSwappable && swap(u)) return true;
-			
-		}
+		var u = WorldInfo.gridUnits[x, y];
+		if (u != null && u.isSwappable && swap(u))
+			return true;
+		else if (moveAttack(dir, false, isFirstHit: true)) return true;
 		return false;
 	}
 	public override bool move(int x, int y, bool tryAgain = true)

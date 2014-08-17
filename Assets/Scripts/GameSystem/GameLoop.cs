@@ -64,12 +64,12 @@ class GameLoop : MonoBehaviour
 			!WorldInfo.unitPlayer_real.isAlive		||
 			!isPlaying
 			) return;
-		helperInitAnimation(WorldInfo.unitPlayer_real);
+		WorldInfo.unitPlayer_real.UpdateAnimation();
 		turn_others(WorldInfo.unitsUpdate00);
 		foreach (var u in WorldInfo.unitsUpdate00)
 		{
 			//if (u.isPushed) { units_animation.Add(u); helperInitAnimation(u); continue; }
-			helperInitAnimation(u);
+			u.UpdateAnimation();
 		}
 		//turn_record(WorldInfo.unitsUpdate00);
 
@@ -87,27 +87,29 @@ class GameLoop : MonoBehaviour
 		EVENT_GAME_OVER();
 	}
 
+	bool isCloseEnoughToPlayer(UnitBase u, int disMinX = 5, int disMinY = 5)
+	{
+		return Mathf.Abs((int)(u.pos.x - WorldInfo.unitPlayer_real.pos.x)) <= disMinX && Mathf.Abs((int)(u.pos.y - WorldInfo.unitPlayer_real.pos.y)) <= disMinY;
 
+	}
 	void turn_others(List<UnitBase> l)
 	{
 
-		for (int i = 0; i < l.Count; i++) l[i].turn();
+		for (int i = 0; i < l.Count; i++)
+		{
+			if (isCloseEnoughToPlayer(l[i])) l[i].turn();
+		}
 		for (int i = l.Count - 1; i >= 0; i--)
 			if (!l[i].isAlive)
 			{
 				l[i].Destroy();
 			}
 	}
-	void helperInitAnimation(UnitBase u)
-	{
-		var ani = u.GetComponent<RendererSprite>();
-		ani.initAnimation(u.pos.x,u.pos.y,u.dirFacing);
-	}
 	void turn_playAni_reset(List<UnitBase> l)
 	{
 		foreach (var u in l)
 		{
-			if (u.isMoved) helperInitAnimation(u);
+			if (u.isMoved) u.UpdateAnimation();
 			u.reset();
 		}
 	}
@@ -141,9 +143,7 @@ class GameLoop : MonoBehaviour
 				turn_playAni_reset(WorldInfo.unitsUpdate01);
 				for (int i = WorldInfo.unitsUpdate00.Count - 1; i >= 0; i--)
 					if (!WorldInfo.unitsUpdate00[i].isAlive)
-					{
 						WorldInfo.unitsUpdate00[i].Destroy();
-					}
 
 				myState = State.PROCESSING_REACTION;
 				break;

@@ -23,7 +23,7 @@ public class UI_Editor :UIOrganizer
 	internal bool isRemove = true; //just remove everything
 
 	internal KEnums.UNIT typeUnit= KEnums.UNIT.ENEMY;
-	internal int unitCount = 0; 
+	internal int turnCount=0,unitCount = 0; 
 	internal UnitBase.TYPE_ATTACK typeAttack = UnitBase.TYPE_ATTACK.NONE;
 	internal int? dirFacing = 0;
 	internal bool 
@@ -198,6 +198,7 @@ public class UI_Editor :UIOrganizer
 			}
 			if (isBreak) break;
 		}
+		click_setting();
 	}
 	void disable_players()
 	{
@@ -292,6 +293,30 @@ public class UI_Editor :UIOrganizer
 		if (Input.GetKeyDown(KeyCode.Alpha4))
 		{
 			dirFacing = 3;
+
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha5))
+		{
+			turnCount = 0;
+
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha6))
+		{
+			turnCount = 1;
+
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha7))
+		{
+			turnCount = 2;
+
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha8))
+		{
+			turnCount = 3;
 
 		}
 	}

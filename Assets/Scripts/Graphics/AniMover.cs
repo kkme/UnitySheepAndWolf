@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using ExtensionsUnityVectors;
 
-class AniMover : MonoBehaviour
+public class AniMover : MonoBehaviour
 {
 	delegate void UDPATE_(float ratio);
 	UDPATE_ UpdateCalls = delegate { };

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-class RendererSprite : MonoBehaviour
+public class RendererSprite : MonoBehaviour
 {
 	static Vector2 OFFSET = new Vector2(-.03f, .03f);
 	public Sprite mySprite;
@@ -31,8 +31,12 @@ class RendererSprite : MonoBehaviour
 		aniB = spriteB.GetComponent<AniMover>();
 		gameObject.AddComponent<AniMover>();
 		
+		
+	}
+	void Start()
+	{
 		var unit = gameObject.GetComponent<UnitBase>();
-		if(unit == null) return;
+		if (unit == null) return;
 		int angle = (360 - 90 * unit.dirFacing);
 		spriteA.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 		spriteB.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));

@@ -30,7 +30,7 @@ class UnitEnemy_Trap : UnitEnemy
 		{
 			var at = pos + dir[d];
 			if (isPlayerAt(pos+dir[d])) {
-				moveAttack(dir[d]); 
+				moveAttack(dir[d],typeAttack == TYPE_ATTACK.PUSH ); 
 				return; 
 			}
 		}

@@ -84,6 +84,7 @@ namespace SimpleJSON
 			var spawn = u.GetComponent<UnitEnemy_Spawn>();
 			if (spawn != null)
 			{
+				node["turnCount"].AsInt = spawn.turnCount;
 				//add spawn here
 				var node01 = JSON.Parse("{}");
 				var prefab = spawn.PREFAB_SPAWN.GetComponent<UnitBase>();

@@ -89,6 +89,7 @@ class EditorLoop : MonoBehaviour
 		int dirFacing = (dir == null) ? unitSpawnned.GetComponent<UnitBase>().dirFacing : dir.Value;
 		unit.setSpawnEnemy(unitSpawnned, dirFacing, isBomb, typeAttack,
 			isDestroyable_simpleAttack.Value,isDestroyable_bomb.Value,isTrap);
+		unit.turnCount = ui.turnCount;
 		return obj;
 	}
 	GameObject spawn(KEnums.UNIT typeUnit, int count, int? dir, bool isBomb,UnitBase.TYPE_ATTACK typeAttack, bool? isDestroyable_simpleAttack	, bool? isDestroyable_bomb,

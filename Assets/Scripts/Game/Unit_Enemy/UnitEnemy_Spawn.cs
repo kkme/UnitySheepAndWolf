@@ -5,10 +5,11 @@ using System.Text;
 
 public class UnitEnemy_Spawn : UnitEnemy
 {
+	internal int turnCount;
 	internal GameObject PREFAB_SPAWN = null;
 	internal UnitBase unit;
 	internal TYPE_ATTACK spawnAttack;
-	internal int spawn_dirFacing, turnCount = 0;
+	internal int spawn_dirFacing;
 	internal bool 
 		isTrap,
 		isUpdateRotation,
@@ -30,6 +31,8 @@ public class UnitEnemy_Spawn : UnitEnemy
 			isSpawnAsSpawnner = true;
 		}
 		else this.isTrap = isTrap;
+		this.isDestroyable_simpleAttack = typeAttack != TYPE_ATTACK.PUSH;
+		this.isBomb = isBomb;
 		PREFAB_SPAWN = PREFAB;
 		spawn_dirFacing = dir;
 		spawnAttack = typeAttack;
@@ -89,30 +92,32 @@ public class UnitEnemy_Spawn : UnitEnemy
 	public override void KUpdate()
 	{
 		base.KUpdate();
+		var pPos = WorldInfo.getClosestPlayerUnit(pos, -1).pos;
+		bool isPathClear = findPathToUnit((int)pPos.x, (int)pPos.y) != -1;
+		if (!isPathClear) return;
+
 		if (++turnCount % 4 != 0) return;
 		turnCount = 0;
-		if (isTrap) UpdateTrap();
+		if (isTrap) UpdateTrap((int)pPos.x,(int)pPos.y);
 		else unit.KUpdate();
 		if ((int)unit.pos.x != (int)pos.x || (int)unit.pos.y != (int)pos.y) spawnNew();
 		else if(isUpdateRotation)
 		{
-			if (isTrap) UpdateTrap();
+			if (isTrap) UpdateTrap((int)pPos.x,(int)pPos.y);
 			else unit.KUpdate();
 			if ((int)unit.pos.x != (int)pos.x || (int)unit.pos.y != (int)pos.y) spawnNew();
 		}
 	}
-	void UpdateTrap()
+	void UpdateTrap(int pPosX, int pPosY)
 	{
-		bool isPathClear = findPath((int)WorldInfo.getClosestPlayerUnit(pos).pos.x, (int)WorldInfo.getClosestPlayerUnit(pos).pos.y);
-		if (!isPathClear) return;
 		
 		unit.isUpdated = true; // to prevent recursioning back to "unit"
 		if(unit.move(closestTileX,closestTileY, true)) return;
-		//Lets try to move anywhere else since I failed that direction. 
-		if (unit.move(new Vector2(0, 1))) return;
-		else if (unit.move(new Vector2(1, 0))) return;
-		else if (unit.move(new Vector2(0, -1))) return;
-		else if (unit.move(new Vector2(0, -1))) return;
+		var routes = getOptimalRoute((int)pos.x, (int)pos.y, (int)pPosX, (int)pPosY);
+		foreach (var r in routes)
+		{
+			if(unit.move(r[0], r[1])) return;
+		}
 
 	}
 	override public void kill(int dirX, int dirY)
