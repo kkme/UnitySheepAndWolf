@@ -9,9 +9,12 @@ public class AniMover : MonoBehaviour
 	delegate void UDPATE_(float ratio);
 	UDPATE_ UpdateCalls = delegate { };
 
-	bool isMoving = false,isRotating = false;
+	bool	isMoving = false,
+			isRotating = false,
+			isSwinging = false;
 	Vector3 angleFrom , angleTo, angleDis;
 	Vector3 moveFrom, moveTo,moveDis;
+	Vector3 swingFrom,swingDis;
 	float timeElapsed = 0;
 	internal float timElapsedMax = 0.13f;
 
@@ -43,26 +46,51 @@ public class AniMover : MonoBehaviour
 		if (!isMoving) UpdateCalls += updateMove;
 		isMoving = true;
 		moveFrom = transform.position;
+		swingFrom = transform.position;
 		moveTo = new Vector3(x, y, moveFrom.z);
 		moveDis = moveTo - moveFrom;
 	}
-	public void updateMove(float ratio)
+	public void swing(float magnitudeX, float magnitudeY)
+	{
+		timeElapsed = 0;
+		enabled = true;
+		if (!isSwinging)
+		{
+			UpdateCalls += updateSwing;
+			swingFrom = transform.position;
+		}
+		isSwinging = true;
+		swingDis = new Vector3( magnitudeX, magnitudeY, 0);
+	}
+	//update calls
+	void updateMove(float ratio)
 	{
 		transform.position = moveFrom + moveDis * ratio;
+		swingFrom = transform.position;
 	}
 	void updateRotate(float ratio)
 	{
 		transform.rotation = Quaternion.Euler(angleFrom + angleDis * ratio);
 	}
-	
+	void updateSwing(float ratio)
+	{
+		float ratioNew = Mathf.Sin(ratio * 3.14f);
+		transform.position = swingFrom + swingDis * ratioNew;
+	}
 	public void Update()
 	{
 		timeElapsed += Mathf.Min( Time.deltaTime, .025f);
 		float ratio = Mathf.Min(1, timeElapsed / timElapsedMax);
 		//transform.position = moveFrom + moveDis * ratio;
-		
 		UpdateCalls(ratio);
-		enabled = ratio < 1.0f;
+		if (ratio >= 1.0f)
+		{
+			isMoving = false;
+			isRotating = false;
+			isSwinging = false;
+			enabled = false;
+			UpdateCalls = delegate { };
+		}
 		//Debug.Log("updating " + timeElapsed + " " + timElapsedMax + " " + isMoving + " " + isRotating + "IS ENABLED " + (!isMoving && !isRotating));
 	}
 

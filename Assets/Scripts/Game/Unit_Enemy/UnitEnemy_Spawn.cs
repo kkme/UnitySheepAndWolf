@@ -5,10 +5,11 @@ using System.Text;
 
 public class UnitEnemy_Spawn : UnitEnemy
 {
+	internal KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT EVENT_SPAWN = delegate { };
 	internal int turnCount;
 	internal GameObject PREFAB_SPAWN = null;
 	internal UnitBase unit;
-	internal TYPE_ATTACK spawnAttack;
+	internal TYPE_ATTACK spawn_Attack;
 	internal int spawn_dirFacing;
 	internal bool 
 		isTrap,
@@ -35,7 +36,7 @@ public class UnitEnemy_Spawn : UnitEnemy
 		this.isBomb = isBomb;
 		PREFAB_SPAWN = PREFAB;
 		spawn_dirFacing = dir;
-		spawnAttack = typeAttack;
+		spawn_Attack = typeAttack;
 		spawn_isDestroyable_simpleAttack = isDestroyable_simpleAttack;
 		spawn_isDestroyable_bomb = isDestroyable_bomb;
 		spawn_isBomb = isBomb;
@@ -45,7 +46,7 @@ public class UnitEnemy_Spawn : UnitEnemy
 		var u = (Instantiate(PREFAB_SPAWN) as GameObject).GetComponent<UnitBase>();
 		u.pos = this.pos;
 		u.dirFacing = spawn_dirFacing;
-		u.typeAttack = spawnAttack;
+		u.typeAttack = UnitBase.TYPE_ATTACK.NONE ;
 		u.isBomb = spawn_isBomb;
 		u.isDestroyable_simpleAttack = spawn_isDestroyable_simpleAttack;
 		u.isDestroyable_bomb = spawn_isDestroyable_bomb;
@@ -56,6 +57,7 @@ public class UnitEnemy_Spawn : UnitEnemy
 	}
 	void spawnNew()
 	{
+		EVENT_SPAWN((int)pos.x, (int)pos.y);
 		if (unit != null)
 		{
 			if (isSpawnAsSpawnner)
@@ -69,14 +71,14 @@ public class UnitEnemy_Spawn : UnitEnemy
 				copy.isUpdated = true;
 				copy.isMoved = true;
 				copy.transform.parent = transform.parent;
-				copy.setSpawnEnemy(PREFAB_SPAWN, spawn_dirFacing, spawn_isBomb, spawnAttack, spawn_isDestroyable_simpleAttack, spawn_isDestroyable_bomb, isTrap);
+				copy.setSpawnEnemy(PREFAB_SPAWN, spawn_dirFacing, spawn_isBomb, spawn_Attack, spawn_isDestroyable_simpleAttack, spawn_isDestroyable_bomb, isTrap);
 
 				copy.init();
 				registerOnGrid();
 				
 				return;
 			}
-
+			unit.typeAttack = spawn_Attack;
 			unit.transform.parent = transform.parent;
 			unit.init();
 			spawn_dirFacing = unit.dirFacing;
@@ -87,7 +89,7 @@ public class UnitEnemy_Spawn : UnitEnemy
 	public override void Start()
 	{
 		base.Start();
-		unit = spawn(); 
+		spawnNew(); 
 	}
 	public override void KUpdate()
 	{

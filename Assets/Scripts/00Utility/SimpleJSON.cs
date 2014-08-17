@@ -91,7 +91,7 @@ namespace SimpleJSON
 				//var prefab = spawn.
 
 				node01["typeUnit"].AsInt = (int)prefab.typeMe;
-				node01["typeAttack"].AsInt = (int)spawn.spawnAttack;
+				node01["typeAttack"].AsInt = (int)spawn.spawn_Attack;
 				node01["x"].AsInt = (int)u.pos.x;
 				node01["y"].AsInt = (int)u.pos.y;
 				node01["id"].AsInt = prefab.id;

@@ -6,28 +6,41 @@ using ExtensionsUnityVectors;
 
 public class UnitBase : MonoBehaviour
 {
-	public static bool isSpawn(KEnums.UNIT tpyeUnit, int id)
+	static bool IsDebug = false;
+	static Dictionary<TYPE_ATTACK, DEL_ATTACK> dicAttacks = new Dictionary<TYPE_ATTACK, DEL_ATTACK>()
+	{
+		{TYPE_ATTACK.NONE,attackNone },
+		{TYPE_ATTACK.KILL,attackKill },
+		{TYPE_ATTACK.PUSH,attackPush }
+	};
+	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT EVENT_EXPLOSION = delegate { };
+	static public bool isSpawn(KEnums.UNIT tpyeUnit, int id)
 	{
 		return tpyeUnit == KEnums.UNIT.ENEMY && id == 10;
 	}
-	public static bool isTrap(KEnums.UNIT tpyeUnit, int id)
+	static public bool isTrap(KEnums.UNIT tpyeUnit, int id)
 	{
 		return tpyeUnit == KEnums.UNIT.ENEMY && (id >= 5 && id <= 9);
 	}
-	public enum TYPE_ATTACK { NONE, KILL,PUSH };
-	public delegate bool DEL_ATTACK(UnitBase u, int dirX, int dirY);
-	public DEL_ATTACK attack = delegate { return false; };
-	//cast 
-	
+	//attacks
+	static bool attackNone(UnitBase u, int x, int y) { return false; }
+	static bool attackPush(UnitBase u, int x, int y)
+	{
+		var result = u.push(x, y);
+		u.isPushed = u.isPushed || result;
+		return result;
+	}
+	static bool attackKill(UnitBase u, int x, int y) { return u.attacked(x, y); }
+	//cast
 	static public explicit operator UnitBase(SimpleJSON.JSONNode node)
 	{
 		var obj = (Instantiate(Dir_GameObjects.dicUnits[(KEnums.UNIT)node["typeUnit"].AsInt][node["id"].AsInt]) as GameObject).GetComponent<UnitBase>();
 		obj.pos = new Vector2(node["x"].AsInt, node["y"].AsInt);
-		obj.dirFacing =						node["dirFacing"].AsInt;
-		obj.isBomb =						node["isBomb"].AsBool;
-		obj.isDestroyable_bomb =			node["isDestroyable_bomb"].AsBool;
-		obj.isDestroyable_simpleAttack =	node["isDestroyable_simpleAttack"].AsBool;
-		obj.isSwappable =					node["isSwappable"].AsBool;
+		obj.dirFacing = node["dirFacing"].AsInt;
+		obj.isBomb = node["isBomb"].AsBool;
+		obj.isDestroyable_bomb = node["isDestroyable_bomb"].AsBool;
+		obj.isDestroyable_simpleAttack = node["isDestroyable_simpleAttack"].AsBool;
+		obj.isSwappable = node["isSwappable"].AsBool;
 		obj.typeAttack = (TYPE_ATTACK)node["typeAttack"].AsInt;
 		////var spawn = obj.GetComponent<UnitEnemy_Spawn>();
 		var spawn = obj.gameObject.GetComponent<UnitEnemy_Spawn>();
@@ -36,33 +49,28 @@ public class UnitBase : MonoBehaviour
 
 			spawn.turnCount = node["turnCount"].AsInt;
 			var dataSpawn = node["other"].AsObject;
-			spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[(KEnums.UNIT) dataSpawn["typeUnit"].AsInt][dataSpawn["id"].AsInt], 
-				dataSpawn["dirFacing"].AsInt,dataSpawn["isBomb"].AsBool,(TYPE_ATTACK) dataSpawn["typeAttack"].AsInt, 
+			spawn.setSpawnEnemy(Dir_GameObjects.dicUnits[(KEnums.UNIT)dataSpawn["typeUnit"].AsInt][dataSpawn["id"].AsInt],
+				dataSpawn["dirFacing"].AsInt, dataSpawn["isBomb"].AsBool, (TYPE_ATTACK)dataSpawn["typeAttack"].AsInt,
 				dataSpawn["isDestroyable_simpleAttack"].AsBool, dataSpawn["isDestroyable_bomb"].AsBool,
 				isTrap((KEnums.UNIT)dataSpawn["typeUnit"].AsInt, dataSpawn["id"].AsInt));
 		}
 		return obj;
 	}
-	static bool attackNone(UnitBase u, int x, int y) { return false; }
-	static bool attackPush(UnitBase u, int x, int y) { 
-		var result = u.push(x,y);
-		u.isPushed = u.isPushed || result;
-		return result;  
-	}
-	static bool attackKill(UnitBase u, int x, int y) { return u.attacked(x,y); }
-	static Dictionary<TYPE_ATTACK, DEL_ATTACK> dirAttacks = new Dictionary<TYPE_ATTACK, DEL_ATTACK>()
-	{
-		{TYPE_ATTACK.NONE,attackNone },
-		{TYPE_ATTACK.KILL,attackKill },
-		{TYPE_ATTACK.PUSH,attackPush }
-	};
-
-	public static KDels.EVENTHDR_REQUEST_SIMPLE_POS EVENT_EXPLOSION = delegate { };
 
 
+	//now nonStatic
+	public enum TYPE_ATTACK { NONE, KILL,PUSH };
+	public delegate bool DEL_ATTACK(UnitBase u, int dirX, int dirY);
 
+	//internal DEL_ATTACK attack = delegate { return false; };
 
-	static bool IsDebug = false;
+	//EVENTS
+	internal KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT
+		EVENT_ATTACK = delegate { },//return direction attacked
+		EVENT_ATTACK_PUSH = delegate { },
+		EVENT_ATTACKED = delegate { },
+		EVENT_MOVED = delegate { },
+		EVENT_DEAD = delegate { };
 
 	internal RendererSprite rSprite;
 	internal protected TYPE_ATTACK typeAttack = TYPE_ATTACK.KILL;
@@ -91,17 +99,12 @@ public class UnitBase : MonoBehaviour
 	//get set
 	public virtual KEnums.UNIT typeMe { get { return KEnums.UNIT.BASIC; } }
 
-	public void setAttackType(TYPE_ATTACK type)
-	{
-		typeAttack = type;
-		attack = dirAttacks[type];
-	}
+	
 	//functions
 
 	public virtual UnitBase init()
 	{
 		registerOnGrid();
-		setAttackType(typeAttack);
 		//transform.position = new Vector3(pos.x, pos.y, 0);
 		return this;
 	}
@@ -166,7 +169,13 @@ public class UnitBase : MonoBehaviour
 	}
 
 	//methods
-	
+	internal bool attack(UnitBase u, int dirX, int dirY)
+	{
+		if (typeAttack == TYPE_ATTACK.KILL) EVENT_ATTACK(dirX, dirY);
+		else if (typeAttack == TYPE_ATTACK.PUSH) EVENT_ATTACK_PUSH(dirX, dirY);
+		return UnitBase.dicAttacks[typeAttack](u, dirX, dirY);
+		//return false;
+	}
 	protected void face(Vector2 dir)
 	{
 		face((int)dir.x, (int)dir.y);
@@ -209,6 +218,7 @@ public class UnitBase : MonoBehaviour
 			return resultTry;
 		}
 		if (IsDebug) Debug.Log(typeMe + " " + "AVAILALBE");
+		EVENT_MOVED((int)(x-pos.x),(int)( y-pos.y));
 		helperSetPosition(x, y);
 		isMoved = true;
 		return true;
@@ -231,7 +241,7 @@ public class UnitBase : MonoBehaviour
 			if (u == null) return move(x, y);
 		}
 
-		if (!attack(u, helperGetUnit((int)(x - pos.x)), helperGetUnit((int)(y - pos.y))))
+		if (!attack(u,helperGetUnit((int)(x - pos.x)), helperGetUnit((int)(y - pos.y))))
 			return false;
 		if (willMove) return move(x, y);
 		return true;
@@ -255,7 +265,8 @@ public class UnitBase : MonoBehaviour
 		return true;
 	}
 	public virtual bool attacked(int dirX, int dirY)
-	{	
+	{
+		EVENT_ATTACKED(dirX, dirY);
 		if (!isDestroyable_simpleAttack) return false;
 		if (--health <= 0)
 		{
@@ -280,6 +291,7 @@ public class UnitBase : MonoBehaviour
 	{
 		unRegisterOnGrid();
 		isAlive = false;
+		EVENT_DEAD(dirX, dirY);
 		if (isBomb) explode(dirX ,dirY);
 	}
 	void helperExplode(int x, int y)
@@ -307,6 +319,7 @@ public class UnitBase : MonoBehaviour
 
 		registerOnGrid();
 		u.registerOnGrid();
+		isMoved = true;
 		u.isMoved = true;
 		WorldInfo.unitsAnimation00.Add(u);
 		return true;
@@ -335,7 +348,7 @@ public class UnitBase : MonoBehaviour
 	}
 	public virtual void UpdateAnimation()
 	{
-		var ani = GetComponent<RendererSprite>();
+		
 		//ani.initAnimation(pos.x,pos.y, dirFacing);
 		rSprite.move(pos.x, pos.y);
 		rSprite.rotate(dirFacing);
@@ -394,16 +407,26 @@ public class UnitBase : MonoBehaviour
 		bool[,] map = new bool[13, 13];
 		var routes = getOptimalRoute(unitX, unitY, destX, destY, dirFacing);
 		foreach (var r in routes) map[r[0], r[1]] = true;
+		List<int[]> validPaths = new List<int[]>() { new int[]{0,0,-1,0} };
+		int costMin = 9999999;
 		foreach (var r in routes)
 		{
 			if (!helperIsClearPathHere(r[0], r[1]) ) continue;
 			int cost = recursivePath(ref map, r[0], r[1], destX, destY, r[2]);
 			if (cost == -1) continue;
-			closestTileX = r[0];
-			closestTileY = r[1];
-			return cost;
+			if (cost < costMin)
+			{
+				costMin = cost;
+				validPaths.Insert(0, r);
+			}
+			if (cost == costMin)
+			{
+				validPaths.Insert(1, r);
+			}
 		}
-		return -1;
+		closestTileX = validPaths[0][0];
+		closestTileY = validPaths[0][1];
+		return validPaths[0][2];
 	}
 	protected int helperGetScore(int x, int y, int destX, int destY)
 	{

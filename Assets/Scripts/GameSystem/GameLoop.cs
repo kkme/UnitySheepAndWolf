@@ -60,24 +60,31 @@ class GameLoop : MonoBehaviour
 	{
 		if (!isPlaying || myState != State.READY|| WorldInfo.unitPlayer_real == null|| !WorldInfo.unitPlayer_real.isAlive) return;
 		WorldInfo.PLAYER_INPUT = dir;
-		if (!WorldInfo.unitPlayer_real.turn(dir)	||
-			!WorldInfo.unitPlayer_real.isAlive		||
+
+		myState = State.PROCESSING_PLAYER_INPUT;
+
+		if (!WorldInfo.unitPlayer_real.turn(dir) ||
+			!WorldInfo.unitPlayer_real.isAlive ||
 			!isPlaying
-			) return;
-		WorldInfo.unitPlayer_real.UpdateAnimation();
+			) {myState = State.READY; return;}
+		if (WorldInfo.unitPlayer_real.isMoved) WorldInfo.unitPlayer_real.UpdateAnimation();
 		turn_others(WorldInfo.unitsUpdate00);
 		foreach (var u in WorldInfo.unitsUpdate00)
 		{
+			Debug.Log("UPDATING ANI OF " + u);
 			//if (u.isPushed) { units_animation.Add(u); helperInitAnimation(u); continue; }
 			u.UpdateAnimation();
 		}
 		//turn_record(WorldInfo.unitsUpdate00);
 
-		myState = State.PROCESSING_PLAYER_INPUT;
 		enabled = true;
 	}
 	void EVENTHDR_GAME_WIN()
 	{
+		if (WorldInfo.unitPlayer_real != null)
+		{
+			WorldInfo.unitPlayer_real.UpdateAnimation();
+		}
 		isPlaying = false;
 		EVENT_GAME_WIN();
 	}

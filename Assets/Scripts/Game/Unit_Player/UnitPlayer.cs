@@ -5,7 +5,7 @@ public class UnitPlayer : UnitUpdated
 {
 	static public event KDels.EVENTHDR_REQUEST_SIMPLE
 							EVENT_KILLED = delegate { };
-	static public event KDels.EVENTHDR_REQUEST_SIMPLE_POS 
+	static public event KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT 
 		EVENT_CREATED = delegate{},
 		EVENT_MOVED = delegate { };
 	public override KEnums.UNIT typeMe
@@ -43,9 +43,20 @@ public class UnitPlayer : UnitUpdated
 		int x =(int)( pos.x + dir.x), y = (int)(pos.y + dir.y);
 		if (!isIndexValid(x, y)) return false;
 		var u = WorldInfo.gridUnits[x, y];
-		if (u != null && u.isSwappable && swap(u))
+		if ((u == null || u.typeMe == KEnums.UNIT.ENEMY || 
+			(u.typeMe == KEnums.UNIT.ENVIRONMENT && u.id != 0 && u.id != 3 ))) { 
+			if (moveAttack(dir, false, isFirstHit: true))
+				return true;
+		}
+		else if ( u.isSwappable && swap(u))
 			return true;
-		else if (moveAttack(dir, false, isFirstHit: true)) return true;
+		else if (u.typeMe == KEnums.UNIT.ENVIRONMENT && u.id == 0){
+			pos += dir * .75f;
+			isMoved = true;
+			u.attacked((int)dir.x, (int)dir.y);
+			return true;
+		}
+
 		return false;
 	}
 	public override bool move(int x, int y, bool tryAgain = true)

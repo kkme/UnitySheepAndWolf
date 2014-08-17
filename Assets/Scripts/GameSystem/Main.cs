@@ -51,6 +51,9 @@ class Main : MonoBehaviour
 		{
 			case STATE.Init:
 				myUI_menu.show();
+				//lets skip editor mode for now
+				//stateMe = STATE.GameMode;
+				//transitionCompleted();
 				break;
 			case STATE.GameMode:
 				EVENTHDR_INIT_GAME();
@@ -106,8 +109,8 @@ class Main : MonoBehaviour
 		if (loopEditor != null) GameObject.Destroy(loopEditor.gameObject);
 		hideAll();
 		myUI_editor.show();
-
 		string fileName = (WorldInfo.level < 10) ? ("level0" + WorldInfo.level) : ("level" + WorldInfo.level);
+		Debug.Log("FILE : " + fileName	);
 		var file = Resources.Load("Data/" + fileName);
 		string c = "[]";
 		if (file != null) c = (file as TextAsset).text;

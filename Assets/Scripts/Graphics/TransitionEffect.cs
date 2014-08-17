@@ -42,7 +42,7 @@ public class TransitionEffect :MonoBehaviour
 	IEnumerator<WaitForSeconds> wait()
 	{
 		enabled = false;
-		yield return new WaitForSeconds(1.5f);
+		yield return new WaitForSeconds(2.5f);
 		enabled = true;
 	}
 	public void initTransition()

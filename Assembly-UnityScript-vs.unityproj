@@ -48,15 +48,22 @@
   <ItemGroup>
      <Compile Include="Assets\Unitbae.js" />
      <None Include="Assets\Resources\Data\level31.txt" />
+     <None Include="Assets\Resources\Data\level53.txt" />
      <None Include="Assets\Resources\Data\level36.txt" />
      <None Include="Assets\TEST_FILE.txt" />
      <None Include="Assets\Resources\Data\level01.txt" />
+     <None Include="Assets\Resources\Data\level58.txt" />
      <None Include="Assets\Resources\Data\level28.txt" />
+     <None Include="Assets\Resources\Data\level59.txt" />
+     <None Include="Assets\Resources\Data\level55.txt" />
      <None Include="Assets\Resources\Data\level07.txt" />
      <None Include="Assets\Resources\Data\level40.txt" />
+     <None Include="Assets\Resources\Data\level49.txt" />
      <None Include="Assets\Resources\Data\LevelExample.txt" />
+     <None Include="Assets\Resources\Data\level48.txt" />
      <None Include="Assets\Resources\Data\level10.txt" />
      <None Include="Assets\Resources\Data\level09.txt" />
+     <None Include="Assets\Resources\Data\level51.txt" />
      <None Include="Assets\Resources\Data\level16.txt" />
      <None Include="Assets\Resources\Data\level43.txt" />
      <None Include="Assets\Resources\Data\level46.txt" />
@@ -68,7 +75,10 @@
      <None Include="Assets\Resources\Data\level35.txt" />
      <None Include="Assets\Resources\Data\level12.txt" />
      <None Include="Assets\Resources\Data\level37.txt" />
+     <None Include="Assets\Resources\Data\level54.txt" />
      <None Include="Assets\Resources\Data\level41.txt" />
+     <None Include="Assets\Resources\Data\level57.txt" />
+     <None Include="Assets\Resources\Data\level56.txt" />
      <None Include="Assets\Resources\Data\level42.txt" />
      <None Include="Assets\Resources\Data\level30.txt" />
      <None Include="Assets\Resources\Data\level19.txt" />
@@ -79,8 +89,10 @@
      <None Include="Assets\Resources\Data\level11.txt" />
      <None Include="Assets\Resources\Data\level00.txt" />
      <None Include="Assets\Resources\Data\level29.txt" />
+     <None Include="Assets\Resources\Data\level52.txt" />
      <None Include="Assets\Resources\Data\level15.txt" />
      <None Include="Assets\Resources\Data\level33.txt" />
+     <None Include="Assets\Resources\Data\level50.txt" />
      <None Include="Assets\Resources\Data\writing here02.txt" />
      <None Include="Assets\Resources\Data\level44.txt" />
      <None Include="Assets\Resources\Data\level22.txt" />
@@ -91,6 +103,7 @@
      <None Include="Assets\Resources\Data\level010.txt" />
      <None Include="Assets\Resources\Data\level38.txt" />
      <None Include="Assets\Resources\Data\level34.txt" />
+     <None Include="Assets\Resources\Data\level47.txt" />
      <None Include="Assets\Resources\Data\level06.txt" />
      <None Include="Assets\Resources\Data\level32.txt" />
      <None Include="Assets\Resources\Data\level18.txt" />

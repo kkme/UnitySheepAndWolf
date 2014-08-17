@@ -9,7 +9,8 @@ public class RendererSprite : MonoBehaviour
 	public Sprite mySprite;
 	public Color colorMain,colorShadow;
 	GameObject spriteA, spriteB;
-	public AniMover aniA, aniB; //for some reason setting them public works
+	public AniMover ani,
+		aniA, aniB; //for some reason setting them public works
 
 	GameObject helperInstantiate(string name, Sprite s, Color c ,Vector3 offset)
 	{
@@ -29,8 +30,10 @@ public class RendererSprite : MonoBehaviour
 		spriteB = helperInstantiate("Sprite_Shadow", mySprite, colorShadow, new Vector3(OFFSET.x * -1, OFFSET.y * -1, +1));
 		aniA = spriteA.GetComponent<AniMover>();
 		aniB = spriteB.GetComponent<AniMover>();
-		gameObject.AddComponent<AniMover>();
-		
+		ani = gameObject.AddComponent<AniMover>();
+		var unit = GetComponent<UnitBase>();
+		if (unit == null) return;
+		unit.EVENT_ATTACK += swing;
 		
 	}
 	void Start()
@@ -43,7 +46,7 @@ public class RendererSprite : MonoBehaviour
 	}
 	public void move(float x, float y)
 	{
-		gameObject.GetComponent<AniMover>().move(x, y);
+		ani.move(x, y);
 	}
 	public void rotate(int n)
 	{
@@ -59,7 +62,12 @@ public class RendererSprite : MonoBehaviour
 	}
 	public bool isAnimating()
 	{
-		return GetComponent<AniMover>().enabled || aniA.enabled || aniB.enabled;
+		return ani.enabled || aniA.enabled || aniB.enabled;
+	}
+	float RATIO_SHAKE = .3f;
+	public void swing(int x, int y)
+	{
+		ani.swing(x * RATIO_SHAKE, y * RATIO_SHAKE);
 	}
 	
 }
