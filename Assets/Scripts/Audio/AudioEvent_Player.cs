@@ -10,6 +10,6 @@ public class AudioEvent_Player :MonoBehaviour
 		var u = GetComponent<UnitBase>();
 		u.EVENT_ATTACK += delegate { AudioManager.Play_Attack(); };
 		u.EVENT_MOVED += delegate { AudioManager.Play_PlayerMoved(); };
-		u.EVENT_DEAD += delegate { AudioManager.Play_DeadPlayer(); };
+		u.EVENT_DEAD += delegate { AudioManager.Play_DeadEnemy();  AudioManager.Play_DeadPlayer(); };
 	}
 }

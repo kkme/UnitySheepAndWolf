@@ -5,14 +5,22 @@ using ExtensionsUnityVectors;
 
 public class UnitEnemy : UnitUpdated
 {
+	
 	static public event KDels.EVENTHDR_REQUEST_SIMPLE EVENT_HIT_PLAYER = delegate { };
-
+	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT EVENT_EXPLOSION = delegate { };
+	
 	public override KEnums.UNIT typeMe
 	{
 		get
 		{
 			return KEnums.UNIT.ENEMY;
 		}
+	}
+	public override bool helperExplode(int x, int y)
+	{
+		var result = base.helperExplode(x, y);
+		if (result) EVENT_EXPLOSION(x, y);
+		return result;
 	}
 	public override bool helperIsValidAttackTarget(KEnums.UNIT type)
 	{
@@ -55,6 +63,11 @@ public class UnitEnemy : UnitUpdated
 	public override void KUpdate()
 	{
 		isUpdated = true;
+	}
+	public override void kill(int dirX, int dirY)
+	{
+		base.kill(dirX, dirY);
+		gameObject.SetActive(false);
 	}
 	
 }

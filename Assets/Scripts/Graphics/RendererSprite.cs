@@ -33,6 +33,7 @@ public class RendererSprite : MonoBehaviour
 		ani = gameObject.AddComponent<AniMover>();
 		var unit = GetComponent<UnitBase>();
 		if (unit == null) return;
+		if (unit.typeMe == KEnums.UNIT.ENEMY) RATIO_SHAKE *= 2.0f;
 		unit.EVENT_ATTACK += swing;
 		
 	}

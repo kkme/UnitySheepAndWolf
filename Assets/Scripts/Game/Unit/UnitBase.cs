@@ -13,7 +13,9 @@ public class UnitBase : MonoBehaviour
 		{TYPE_ATTACK.KILL,attackKill },
 		{TYPE_ATTACK.PUSH,attackPush }
 	};
-	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT EVENT_EXPLOSION = delegate { };
+	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT 
+		EVENT_EXPLOSION = delegate { },
+		EVENT_SWAPPING = delegate { };
 	static public bool isSpawn(KEnums.UNIT tpyeUnit, int id)
 	{
 		return tpyeUnit == KEnums.UNIT.ENEMY && id == 10;
@@ -124,6 +126,7 @@ public class UnitBase : MonoBehaviour
 		isMoved = false;
 		isPushed = false;
 	}
+
 	public virtual void Awake() { rSprite = GetComponent<RendererSprite>(); }
 	public virtual void Start() { }
 	//get set
@@ -171,7 +174,7 @@ public class UnitBase : MonoBehaviour
 	//methods
 	internal bool attack(UnitBase u, int dirX, int dirY)
 	{
-		if (typeAttack == TYPE_ATTACK.KILL) EVENT_ATTACK(dirX, dirY);
+		if (typeAttack == TYPE_ATTACK.KILL) { Debug.Log("ME ATTACK " + this + " " + dirX + " " +dirY); EVENT_ATTACK(dirX, dirY); }
 		else if (typeAttack == TYPE_ATTACK.PUSH) EVENT_ATTACK_PUSH(dirX, dirY);
 		return UnitBase.dicAttacks[typeAttack](u, dirX, dirY);
 		//return false;
@@ -281,7 +284,6 @@ public class UnitBase : MonoBehaviour
 		if (!isDestroyable_bomb) return false;
 		if (--health <= 0)
 		{
-			EVENT_EXPLOSION((int)pos.x,(int)pos.y);
 			kill(dirX, dirY);
 			return true;
 		}
@@ -294,12 +296,16 @@ public class UnitBase : MonoBehaviour
 		EVENT_DEAD(dirX, dirY);
 		if (isBomb) explode(dirX ,dirY);
 	}
-	void helperExplode(int x, int y)
+	public virtual bool helperExplode(int x, int y)
 	{
-		if(!isIndexValid(x, y)) return;
+		if(!isIndexValid(x, y)) return false;
 		var unit = WorldInfo.gridUnits[x, y];
-		if (unit != null) unit.attackedBomb((int)(unit.pos.x - pos.x), (int)(unit.pos.y - pos.y));
-		else EVENT_EXPLOSION(x, y);
+		if (unit != null) {
+			if (unit.attackedBomb((int)(unit.pos.x - pos.x), (int)(unit.pos.y - pos.y))){ EVENT_EXPLOSION(x, y); return true;}
+			return false;
+		}
+		else  EVENT_EXPLOSION(x, y); 
+		return true;
 	}
 	public virtual void explode(int dirX, int dirY)
 	{
@@ -308,9 +314,10 @@ public class UnitBase : MonoBehaviour
 		helperExplode((int)(pos.x+dirY), (int)(pos.y+dirX));
 		helperExplode((int)(pos.x-dirY), (int)(pos.y-dirX));
 	}
-	internal bool swap(UnitBase u)
+	public virtual bool swap(UnitBase u)
 	{
 		if (!u.isSwappable) return false;
+		EVENT_SWAPPING((int)u.pos.x, (int)u.pos.y);
 		var dummy = u.pos;
 		u.posBefore = u.pos;
 		u.pos = this.pos;
@@ -350,8 +357,9 @@ public class UnitBase : MonoBehaviour
 	{
 		
 		//ani.initAnimation(pos.x,pos.y, dirFacing);
-		rSprite.move(pos.x, pos.y);
-		rSprite.rotate(dirFacing);
+		if(isMoved){ rSprite.move(pos.x, pos.y);
+		rSprite.rotate(dirFacing);}
+		isMoved = false;
 	}
 	bool helperIsClearPathHere(int xNew, int yNew)
 	{

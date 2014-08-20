@@ -5,9 +5,11 @@ public class UnitPlayer : UnitUpdated
 {
 	static public event KDels.EVENTHDR_REQUEST_SIMPLE
 							EVENT_KILLED = delegate { };
-	static public event KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT 
-		EVENT_CREATED = delegate{},
-		EVENT_MOVED = delegate { };
+	static public event KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT
+		EVENT_CREATED = delegate { },
+		EVENT_MOVED = delegate { },
+		EVENT_EXPLOSION = delegate { };
+	
 	public override KEnums.UNIT typeMe
 	{
 		get
@@ -15,10 +17,20 @@ public class UnitPlayer : UnitUpdated
 			return KEnums.UNIT.PLAYER;
 		}
 	}
+	
+	public override bool helperExplode(int x, int y)
+	{
+		var result = base.helperExplode(x, y);
+		if (result) EVENT_EXPLOSION(x, y);
+		return result;
+	}
+	public override System.Collections.Generic.List<System.Collections.Generic.List<UnitBase>> helperGetListOfUpdated()
+	{
+		return new System.Collections.Generic.List<System.Collections.Generic.List<UnitBase>>() { WorldInfo.unitsPlayers };
+	}
 	public override void Awake()
 	{
 		base.Awake();
-		WorldInfo.unitsPlayers.Add(this);
 		WorldInfo.unitPlayer_real = this;
 	}
 	public override void Start()
@@ -76,6 +88,7 @@ public class UnitPlayer : UnitUpdated
 	public override void kill(int dirX, int dirY)
 	{
 		EVENT_KILLED();
+		gameObject.SetActive(false);
 		base.kill(dirX, dirY);
 	}
 	bool helperIsStuck(int x, int y)
@@ -92,6 +105,11 @@ public class UnitPlayer : UnitUpdated
 			helperIsStuck(x, y+1) &&
 			helperIsStuck(x, y-1);
 
+	}
+	public override void Destroy()
+	{
+		Debug.Log("DESTORTYED");
+		base.OnDestroy();
 	}
 	//public override bool move(int x, int y, bool tryAgain = true)
 	//{

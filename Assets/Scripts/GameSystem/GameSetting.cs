@@ -30,8 +30,8 @@ public class GameSetting
 	}
 	public void initGame(int level, SimpleJSON.JSONArray dataUnits, bool isGameLoopActive = true)
 	{
-		EVENT_GAME_INITIATED(level);
 		if (isInitiated) destroy();
+		EVENT_GAME_INITIATED(level);
 		isInitiated = true;
 		units = new GameObject("	GameSetting : Units");
 	

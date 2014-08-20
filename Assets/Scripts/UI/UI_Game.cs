@@ -9,8 +9,10 @@ public class UI_Game : UIOrganizer
 		EVENT_REQUEST_MAP_CHANGE = delegate { },
 		EVENT_INPUT_PLAYER = delegate { };
 	public UIItem 
+		keyMove,
 		keyUp,keyDown,keyLeft,keyRight,
 		bttn_back,bttn_forward;
+	bool isPlayerTryingToMove = false;
 	public override void Awake()
 	{
 		base.Awake();
@@ -20,8 +22,11 @@ public class UI_Game : UIOrganizer
 		myItems.Add(keyRight);
 		myItems.Add(bttn_forward);
 		myItems.Add(bttn_back);
-		bttn_forward.EVENT_CLICK += delegate { EVENT_REQUEST_MAP_CHANGE(1); };
-		bttn_back.EVENT_CLICK += delegate { EVENT_REQUEST_MAP_CHANGE(-1); };
+		myItems.Add(keyMove);
+
+		keyMove.EVENT_CLICK += moveInitiated;
+		bttn_forward.EVENT_CLICK += delegate { AudioManager.Play_Button01(); EVENT_REQUEST_MAP_CHANGE(1); };
+		bttn_back.EVENT_CLICK += delegate { AudioManager.Play_Button00(); EVENT_REQUEST_MAP_CHANGE(-1); };
 
 		//keyUp.rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 		//keyDown.rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
@@ -38,10 +43,15 @@ public class UI_Game : UIOrganizer
 		Debug.Log("dir " + dir);
 		EVENT_INPUT_PLAYER(dir);
 	}
+	void moveInitiated()
+	{
+		center = Input.mousePosition;
+		isPlayerTryingToMove = true;
+	}
 	void helperSetSize(Transform  t, float width, float height)
 	{
 		var p = t.parent;
-		width *= WorldInfo.camGame.camera.aspect;
+		width *= Camera.main.aspect;
 		t.parent = null;
 		t.localScale = new Vector3(width, height, 1);
 		t.parent = p;
@@ -52,8 +62,8 @@ public class UI_Game : UIOrganizer
 		float	height = .08f,
 				widthRatio = 1/ WorldInfo.camGame.camera.aspect,
 				width = height * widthRatio,
-				_Height = .45f,
-				_width = .45f;
+				_Height = .05f,
+				_width = .05f;
 
 		bttn_forward.position(new Vector4(1 - width, height, 1, .0f));
 		bttn_back.position(new Vector4(.0f, height, width, .0f));
@@ -62,12 +72,37 @@ public class UI_Game : UIOrganizer
 		helperSetSize(keyDown.transform, _Height, _width);
 		helperSetSize(keyLeft.transform, _width, _Height);
 		helperSetSize(keyRight.transform, _width, _Height);
+		helperSetSize(keyMove.transform, .9f, .9f);
 
+		keyMove.position(new Vector4(.05f, .95f, .95f,.05f));
 		keyLeft.position(new Vector4(0, .5f + _Height * .5f, _width, .5f - _Height * .5f));
 		keyRight.position(new Vector4(1 - _width, .5f + _Height * .5f, 1, .5f - _Height * .5f));
 		//
 		keyUp.position(new Vector4(.5f - _Height * .5f, 1, .5f + _Height * .5f, 1 - _width));
 		keyDown.position(new Vector4(.5f - _Height * .5f, _width, .5f + _Height * .5f, 0));
+	}
+	Vector3 center = new Vector3();
+	void Update()
+	{
+		if (isPlayerTryingToMove && Input.GetMouseButtonUp(0))
+		{
+			var pos = Input.mousePosition - center;
+			if (Mathf.Abs(pos.y) >Mathf.Abs( pos.x ) )
+			{
+				if (pos.y > 0) EVENT_INPUT_PLAYER(0);
+				else EVENT_INPUT_PLAYER(2);
+			}
+			else
+			{
+
+				if (pos.x > 0) EVENT_INPUT_PLAYER(1);
+				else EVENT_INPUT_PLAYER(3);
+
+			}
+			isPlayerTryingToMove = false;
+			//Debug.Log(Input.mousePosition- new Vector3(Screen.width*.5f,Screen.height*.5f,0) );
+			
+		}
 	}
 
 }

@@ -20,7 +20,7 @@ class Main : MonoBehaviour
 	Board myBoard;
 	GameSetting setting = new GameSetting();
 
-	enum STATE { Init, GameMode, EditorMode};
+	enum STATE { Init, GameModeDelay, GameModeNoDelay, EditorMode };
 	STATE stateMe = STATE.Init;
 	public void Awake()
 	{
@@ -28,11 +28,11 @@ class Main : MonoBehaviour
 		OS_DeskTOp.EVENT_INPUT_PLAYER += delegate (int n){ EVENT_INTPUT_PLAYER(n); };
 		UI_Game.EVENT_INPUT_PLAYER += delegate(int n){EVENT_INTPUT_PLAYER(n);};
 
-		UI_Menu.EVENT_REQUEST_GAME_START += delegate { stateMe = STATE.GameMode;   transition.initTransition(); };
+		UI_Menu.EVENT_REQUEST_GAME_START += delegate { stateMe = STATE.GameModeNoDelay;  transition.initTransition(); };
 		UI_Menu.EVENT_REQUEST_MAP_EDITOR += delegate { stateMe = STATE.EditorMode; transition.initTransition(); };
 		UI_Game.EVENT_REQUEST_MAP_CHANGE += delegate(int levelIncrement) { WorldInfo.level =Mathf.Max(0, WorldInfo.level+levelIncrement); helperInitLevelSelect(); };
 		UI_Game.EVENT_REQUEST_MAP_CHANGE += delegate(int dir) { };
-		UI_GameLevelSelector.EVENT_LEVEL_SELECTED += delegate(int level) { WorldInfo.level = level; stateMe = STATE.GameMode; transition.initTransition(); };
+		UI_GameLevelSelector.EVENT_LEVEL_SELECTED += delegate(int level) { WorldInfo.level = level; stateMe = STATE.GameModeNoDelay; transition.initTransition(); };
 		//UI_Menu.EVENT_REQUEST_GAME_START += EVENTHDR_INIT_GAME;
 		//UI_Menu.EVENT_REQUEST_MAP_EDITOR += EVENTHDR_INIT_EDITOR;
 
@@ -45,8 +45,41 @@ class Main : MonoBehaviour
 		TransitionEffect.EVENT_FINISHED_TRANSITION += transitionCompleted;
 	}
 
+	IEnumerator<WaitForSeconds> handleTransition()
+	{
+
+
+		yield return new WaitForSeconds(.001f);
+		switch (stateMe)
+		{
+			case STATE.Init:
+				//myUI_menu.show();
+				//lets skip editor mode for now
+				stateMe = STATE.GameModeNoDelay;
+				transitionCompleted();
+				break;
+
+			case STATE.GameModeDelay:
+				yield return new WaitForSeconds(1.0f);
+				EVENTHDR_INIT_GAME();
+				break;
+			case STATE.GameModeNoDelay:
+				EVENTHDR_INIT_GAME();
+				break;
+
+			case STATE.EditorMode:
+				EVENTHDR_INIT_EDITOR();
+				break;
+		}
+		TransitionEffect.EVENT_RESUME();
+
+	}
+
 	void transitionCompleted() //after finishing playing logo
 	{
+		StartCoroutine(handleTransition());
+		/**
+		 * TransitionEffect.EVENT_RESUME();
 		switch (stateMe)
 		{
 			case STATE.Init:
@@ -62,6 +95,7 @@ class Main : MonoBehaviour
 				EVENTHDR_INIT_EDITOR();
 				break;
 		}
+		 * **/
 	}
 	void Start()
 	{
@@ -123,19 +157,35 @@ class Main : MonoBehaviour
 	}
 	void EVENTHDR_DEAD_TRYAGAIN()
 	{
+		StartCoroutine(COROUTINE_EVENTHDR_DEAD_TRYAGAIN());
+		//hideAll();
+		////pause for a second
+		//stateMe = STATE.GameModeNoDelay;
+		//transition.initTransition();
+	}
+	IEnumerator<WaitForSeconds> COROUTINE_EVENTHDR_DEAD_TRYAGAIN()
+	{
+
 		hideAll();
 		//pause for a second
-		stateMe = STATE.GameMode;
+		yield return new WaitForSeconds(.4f);
+		stateMe = STATE.GameModeNoDelay;
 		transition.initTransition();
+
+
+		//
+		//StartCoroutine(COROUTINE_EVENTHDR_NEXT_LEVEL());
+
 	}
+
 	void EVENTHDR_NEXT_LEVEL()
 	{
 		Debug.Log("NEXT LEVEL");
 		hideAll();
 		//pause for a second
-		WorldInfo.level++; 
-		stateMe = STATE.GameMode;
-		transition.initTransition();
+		WorldInfo.level++;
+		stateMe = STATE.GameModeDelay;
+		transition.initTransition(WorldInfo.level);
 	}
 	void EVENTHDR_GAME_WIN()
 	{

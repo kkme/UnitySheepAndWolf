@@ -6,7 +6,7 @@ using System.Text;
 public class WorldInfo
 {
 
-	public static int level = 0; //world id, which is level number
+	public static int level = 22; //world id, which is level number
 	public static WorldCamera camGame; 
 	public static Vector2	WORLD_SIZE,
 							PLAYER_GOAL, // I think this is deprecated, but let's keep it for now. Productivity > Pretty.

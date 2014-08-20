@@ -5,6 +5,7 @@ using System.Text;
 
 public class TransitionEffect :MonoBehaviour
 {
+	static TransitionEffect me;
 	enum STATE { STARTED, NOTHING_TO_WHITE,WHITE_TO_NOTHING, TRANSITION, NOTHING };
 	public delegate void UpdateFunction(float ratio);
 	public delegate void StartTransition(string textNow, string textBefore="");
@@ -12,6 +13,7 @@ public class TransitionEffect :MonoBehaviour
 	public static KDels.EVENTHDR_REQUEST_SIMPLE
 		EVENT_FINISHED_TRANSITION = delegate { } ;
 
+	public TextMesh tMesh;
 	public MeshRenderer background;
 	public SpriteRenderer logo; //one time usage but still very useful
 	float timeElapsed = 0, timeElapsedMax = .3f;
@@ -24,6 +26,7 @@ public class TransitionEffect :MonoBehaviour
 
 	void Awake()
 	{
+		me = this;
 		background.gameObject.SetActive(true);
 		logo.gameObject.SetActive(true);
 
@@ -42,11 +45,13 @@ public class TransitionEffect :MonoBehaviour
 	IEnumerator<WaitForSeconds> wait()
 	{
 		enabled = false;
-		yield return new WaitForSeconds(2.5f);
+		yield return new WaitForSeconds(1.5f);
 		enabled = true;
 	}
-	public void initTransition()
+	public void initTransition(int n) { initTransition("" + n); }
+	public void initTransition(string t = "")
 	{
+		tMesh.text = t;
 		timeElapsed = 0;
 		stateMe = STATE.NOTHING_TO_WHITE;
 		enabled = true;
@@ -65,9 +70,11 @@ public class TransitionEffect :MonoBehaviour
 			EVENT_FINISHED_TRANSITION();
 		}
 	}
+	static public void EVENT_RESUME() { me.enabled = true; }
 	void UpdateFromWhiteToNothing(float ratio)
 	{
 		background.material.color = new Color(1, 1, 1, 1 - ratio);
+		tMesh.color = new Color(tMesh.color.r, tMesh.color.g, tMesh.color.b, 1 - ratio);
 		if ((int)ratio == 1)
 		{
 			timeElapsed = 0;
@@ -78,11 +85,13 @@ public class TransitionEffect :MonoBehaviour
 	void UpdateFromNothingToWhite(float ratio)
 	{
 		background.material.color = new Color(1, 1, 1, ratio);
+		tMesh.color = new Color(tMesh.color.r, tMesh.color.g, tMesh.color.b, ratio);
 		if ((int)ratio == 1)
 		{
 			timeElapsed = 0;
 			stateMe = STATE.WHITE_TO_NOTHING;
 			EVENT_FINISHED_TRANSITION();
+			enabled = false;
 		}
 	}
 	void Update()

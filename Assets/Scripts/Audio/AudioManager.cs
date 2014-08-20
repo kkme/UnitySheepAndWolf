@@ -17,7 +17,7 @@ public class AudioManager : MonoBehaviour {
 	}
 	static public void Play_DeadPlayer()
 	{
-		me.DeadPlayer.Play();
+		//me.DeadPlayer.Play();
 	}
 	static public void Play_DeadEnemy()
 	{
@@ -30,10 +30,23 @@ public class AudioManager : MonoBehaviour {
 	static public void Play_Spawn()
 	{
 		me.numSpawnPlay++;
+		
+	}
+	static public void Play_Button00()
+	{
+		me.button00.Play();
+	}
+	static public void Play_Button01()
+	{
+		me.button01.Play();
 	}
 	static public void Play_Attacked()
 	{
 		me.Attacked.Play();
+	}
+	static public void Play_Intro()
+	{
+		me.MusicIntro.Play();
 	}
 	public AudioSource 
 		Move,
@@ -43,12 +56,20 @@ public class AudioManager : MonoBehaviour {
 		DeadPlayer,
 		DeadEnemy,
 		DeadDoor,
-		Spawn;
+		Spawn,
+		Explosion,
+		Swap,
+		MusicIntro,
+		button00,
+		button01;
 	// Use this for initialization
-	int numSpawnPlay = 0;
+	int numSpawnPlay = 0, numExplosionPlay=0;
 	void Awake()
 	{
 		AudioManager.me = this;
+		UnitBase.EVENT_EXPLOSION += delegate { numExplosionPlay++;};
+		GameLoop.EVENT_GAME_OVER += delegate { DeadPlayer.Play(); };
+		UnitBase.EVENT_SWAPPING += delegate { Swap.Play(); };
 	}
 	void Start () {
 
@@ -56,11 +77,19 @@ public class AudioManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		if (numSpawnPlay != 0 && !Spawn.isPlaying)
+	void Update()
+	{
+		if (numSpawnPlay != 0)
 		{
+			if (Spawn.isPlaying) return;
 			numSpawnPlay--;
 			Spawn.Play();
+		}
+		if (numExplosionPlay != 0)
+		{
+			Explosion.volume = numExplosionPlay * .2f;
+			numExplosionPlay = 0;
+			Explosion.PlayOneShot(Explosion.clip); 
 		}
 	
 	}

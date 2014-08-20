@@ -71,7 +71,6 @@ class GameLoop : MonoBehaviour
 		turn_others(WorldInfo.unitsUpdate00);
 		foreach (var u in WorldInfo.unitsUpdate00)
 		{
-			Debug.Log("UPDATING ANI OF " + u);
 			//if (u.isPushed) { units_animation.Add(u); helperInitAnimation(u); continue; }
 			u.UpdateAnimation();
 		}
@@ -145,6 +144,8 @@ class GameLoop : MonoBehaviour
 			case State.CALCULATING_REACTION:
 				WorldInfo.initEveryTurn();
 				turn_others(WorldInfo.unitsUpdate01);
+
+				if (WorldInfo.unitPlayer_real.isMoved) WorldInfo.unitPlayer_real.UpdateAnimation();
 				turn_playAni_reset(units_animation);
 				turn_playAni_reset(WorldInfo.unitsUpdate00);
 				turn_playAni_reset(WorldInfo.unitsUpdate01);
@@ -157,6 +158,7 @@ class GameLoop : MonoBehaviour
 			case State.PROCESSING_REACTION:
 				for (int i = WorldInfo.unitsUpdate01.Count - 1; i >= 0; i--)
 					if (WorldInfo.unitsUpdate01[i].GetComponent<RendererSprite>().isAnimating()) break;
+				
 				if (WorldInfo.unitPlayer_real.amIStuck())
 				{
 					EVENT_GAME_OVER();
@@ -165,7 +167,6 @@ class GameLoop : MonoBehaviour
 				{
 					myState = State.READY;
 					units_animation = new List<UnitBase>();
-				
 				}
 				enabled = false;
 				break;

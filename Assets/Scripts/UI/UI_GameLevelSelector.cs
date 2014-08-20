@@ -16,8 +16,8 @@ class UI_GameLevelSelector : UIOrganizer
 		myItems.Add(bttn_forward);
 		myItems.Add(bttn_back);
 		myItems.Add(text);
-		bttn_back.EVENT_CLICK += delegate { CLICK(-1); };
-		bttn_forward.EVENT_CLICK += delegate { CLICK(+1); };
+		bttn_back.EVENT_CLICK += delegate { AudioManager.Play_Button00(); CLICK(-1); };
+		bttn_forward.EVENT_CLICK += delegate { AudioManager.Play_Button01(); CLICK(+1); };
 	}
 	public override void show()
 	{

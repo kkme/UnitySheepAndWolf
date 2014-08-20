@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-class AudioEvent_Enemy : MonoBehaviour
+public class AudioEvent_Enemy : MonoBehaviour
 {
-	void Start()
+	public virtual void Start()
 	{
 		var u = GetComponent<UnitBase>();
 		u.EVENT_ATTACK_PUSH += delegate { AudioManager.Play_AttackPush(); };
