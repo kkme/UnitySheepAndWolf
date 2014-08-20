@@ -109,6 +109,7 @@
      <Compile Include="Assets\Scripts\OS\OS_DeskTOp.cs" />
      <Compile Include="Assets\Scripts\UI\UIInfo.cs" />
      <Compile Include="Assets\Scripts\UI\UIItem.cs" />
+     <Compile Include="Assets\Scripts\UI\UIItem_Holder.cs" />
      <Compile Include="Assets\Scripts\UI\UIItem_Selector.cs" />
      <Compile Include="Assets\Scripts\UI\UIOrganizer.cs" />
      <Compile Include="Assets\Scripts\UI\UI_Editor.cs" />

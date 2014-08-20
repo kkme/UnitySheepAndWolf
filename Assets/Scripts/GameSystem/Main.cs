@@ -6,6 +6,7 @@ using SimpleJSON;
 
 class Main : MonoBehaviour
 {
+	static int MaxLevel = 25;
 	static string PATH_DATA = "Assets/Resources/Data/";
 	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT EVENT_INTPUT_PLAYER = delegate { };
 	public TextMesh debugScreen;
@@ -30,8 +31,7 @@ class Main : MonoBehaviour
 
 		UI_Menu.EVENT_REQUEST_GAME_START += delegate { stateMe = STATE.GameModeNoDelay;  transition.initTransition(); };
 		UI_Menu.EVENT_REQUEST_MAP_EDITOR += delegate { stateMe = STATE.EditorMode; transition.initTransition(); };
-		UI_Game.EVENT_REQUEST_MAP_CHANGE += delegate(int levelIncrement) { WorldInfo.level =Mathf.Max(0, WorldInfo.level+levelIncrement); helperInitLevelSelect(); };
-		UI_Game.EVENT_REQUEST_MAP_CHANGE += delegate(int dir) { };
+		UI_Game.EVENT_REQUEST_MAP_CHANGE += delegate(int levelIncrement) { helperInitLevelSelect(); UI_GameLevelSelector.EVENT_REQUEST_BTTN_CLICK(levelIncrement); };
 		UI_GameLevelSelector.EVENT_LEVEL_SELECTED += delegate(int level) { WorldInfo.level = level; stateMe = STATE.GameModeNoDelay; transition.initTransition(); };
 		//UI_Menu.EVENT_REQUEST_GAME_START += EVENTHDR_INIT_GAME;
 		//UI_Menu.EVENT_REQUEST_MAP_EDITOR += EVENTHDR_INIT_EDITOR;
@@ -111,6 +111,7 @@ class Main : MonoBehaviour
 	void helperInitLevelSelect()
 	{
 		hideAll();
+		EffectManager.Clear();
 		setting.destroy();
 		myUI_GameLevelSelector.show();
 
@@ -118,7 +119,8 @@ class Main : MonoBehaviour
 	
 	void initGame(int lv = 0)
 	{
-
+		lv = Mathf.Min(lv, MaxLevel);
+		EffectManager.Clear();
 		WorldInfo.level = lv;
 		string fileName = (lv < 10) ? ("level0" + lv) : ("level" + lv);
 	
@@ -183,9 +185,9 @@ class Main : MonoBehaviour
 		Debug.Log("NEXT LEVEL");
 		hideAll();
 		//pause for a second
-		WorldInfo.level++;
+		WorldInfo.level = Mathf.Min(MaxLevel, WorldInfo.level + 1);
 		stateMe = STATE.GameModeDelay;
-		transition.initTransition(WorldInfo.level);
+		transition.initTransition(""+WorldInfo.level, (WorldInfo.level == 0) ? "" : ("" + (WorldInfo.level-1)));
 	}
 	void EVENTHDR_GAME_WIN()
 	{

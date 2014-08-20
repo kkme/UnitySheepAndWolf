@@ -13,7 +13,7 @@ public class TransitionEffect :MonoBehaviour
 	public static KDels.EVENTHDR_REQUEST_SIMPLE
 		EVENT_FINISHED_TRANSITION = delegate { } ;
 
-	public TextMesh tMesh;
+	public TextMesh tMesh,tMeshBefore;
 	public MeshRenderer background;
 	public SpriteRenderer logo; //one time usage but still very useful
 	float timeElapsed = 0, timeElapsedMax = .3f;
@@ -49,11 +49,17 @@ public class TransitionEffect :MonoBehaviour
 		enabled = true;
 	}
 	public void initTransition(int n) { initTransition("" + n); }
-	public void initTransition(string t = "")
+	public void initTransition(string t = "", string tBefore = "")
 	{
+		this.gameObject.SetActive(true);
 		tMesh.text = t;
+		tMeshBefore.text = tBefore;
+		tMeshBefore.transform.localPosition = new Vector3(0,-.35f,+1);
+		tMeshBefore.GetComponent<Rigidbody2D>().velocity = new Vector2(0, -.5f);
+
 		timeElapsed = 0;
 		stateMe = STATE.NOTHING_TO_WHITE;
+
 		enabled = true;
 	}
 	void UpdateInit(float ratio)
@@ -75,6 +81,7 @@ public class TransitionEffect :MonoBehaviour
 	{
 		background.material.color = new Color(1, 1, 1, 1 - ratio);
 		tMesh.color = new Color(tMesh.color.r, tMesh.color.g, tMesh.color.b, 1 - ratio);
+		tMeshBefore.color = new Color(tMeshBefore.color.r, tMeshBefore.color.g, tMeshBefore.color.b, 1-ratio);
 		if ((int)ratio == 1)
 		{
 			timeElapsed = 0;
@@ -86,6 +93,7 @@ public class TransitionEffect :MonoBehaviour
 	{
 		background.material.color = new Color(1, 1, 1, ratio);
 		tMesh.color = new Color(tMesh.color.r, tMesh.color.g, tMesh.color.b, ratio);
+		tMeshBefore.color = new Color(tMeshBefore.color.r, tMeshBefore.color.g, tMeshBefore.color.b, ratio);
 		if ((int)ratio == 1)
 		{
 			timeElapsed = 0;
@@ -111,6 +119,7 @@ public class TransitionEffect :MonoBehaviour
 				UpdateFromWhiteToNothing(ratio);
 				break;
 			case STATE.NOTHING:
+				this.gameObject.SetActive(false);
 				//logo.gameObject.SetActive(false);
 				//background.gameObject.SetActive(false);
 				//textAfter.gameObject.SetActive(false);

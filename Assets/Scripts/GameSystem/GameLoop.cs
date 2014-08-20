@@ -62,10 +62,9 @@ class GameLoop : MonoBehaviour
 		WorldInfo.PLAYER_INPUT = dir;
 
 		myState = State.PROCESSING_PLAYER_INPUT;
-
-		if (!WorldInfo.unitPlayer_real.turn(dir) ||
-			!WorldInfo.unitPlayer_real.isAlive ||
-			!isPlaying
+		if (!WorldInfo.unitPlayer_real.isAlive 
+			||!isPlaying
+			|| !WorldInfo.unitPlayer_real.turn(dir)
 			) {myState = State.READY; return;}
 		if (WorldInfo.unitPlayer_real.isMoved) WorldInfo.unitPlayer_real.UpdateAnimation();
 		turn_others(WorldInfo.unitsUpdate00);
@@ -73,6 +72,7 @@ class GameLoop : MonoBehaviour
 		{
 			//if (u.isPushed) { units_animation.Add(u); helperInitAnimation(u); continue; }
 			u.UpdateAnimation();
+
 		}
 		//turn_record(WorldInfo.unitsUpdate00);
 
@@ -105,7 +105,7 @@ class GameLoop : MonoBehaviour
 		{
 			if (isCloseEnoughToPlayer(l[i])) l[i].turn();
 		}
-		for (int i = l.Count - 1; i >= 0; i--)
+		for (int i = l.Count - 1; i >= 0; i--) 
 			if (!l[i].isAlive)
 			{
 				l[i].Destroy();
@@ -134,6 +134,7 @@ class GameLoop : MonoBehaviour
 	}
 	void Update()
 	{
+		if (!isPlaying) return;
 		switch (myState)
 		{
 			case State.PROCESSING_PLAYER_INPUT:

@@ -5,7 +5,15 @@ using System.Text;
 
 class UnitPlayer_Mimic : UnitUpdated
 {
+	static public event KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT
+		EVENT_EXPLOSION = delegate { };
 
+	public override bool helperExplode(int x, int y)
+	{
+		var result = base.helperExplode(x, y);
+		if (result) EVENT_EXPLOSION(x, y);
+		return result;
+	}
 	public override KEnums.UNIT typeMe
 	{
 		get

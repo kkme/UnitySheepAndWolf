@@ -93,8 +93,8 @@ public class UnitPlayer : UnitUpdated
 	}
 	bool helperIsStuck(int x, int y)
 	{
-		return (!isIndexValid(x, y) || 
-			(WorldInfo.gridUnits[x, y] != null && !WorldInfo.gridUnits[x, y].isDestroyable_simpleAttack));
+		return (!isIndexValid(x, y) ||
+			(WorldInfo.gridUnits[x, y] != null && !WorldInfo.gridUnits[x, y].isDestroyable_simpleAttack && !WorldInfo.gridUnits[x, y].isSwappable));
 	}
 	public bool amIStuck()
 	{

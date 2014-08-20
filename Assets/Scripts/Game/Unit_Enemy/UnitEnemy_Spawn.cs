@@ -46,7 +46,7 @@ public class UnitEnemy_Spawn : UnitEnemy
 		var u = (Instantiate(PREFAB_SPAWN) as GameObject).GetComponent<UnitBase>();
 		u.pos = this.pos;
 		u.dirFacing = spawn_dirFacing;
-		u.typeAttack = UnitBase.TYPE_ATTACK.NONE ;
+		u.typeAttack = spawn_Attack;
 		u.isBomb = spawn_isBomb;
 		u.isDestroyable_simpleAttack = spawn_isDestroyable_simpleAttack;
 		u.isDestroyable_bomb = spawn_isDestroyable_bomb;
@@ -97,7 +97,8 @@ public class UnitEnemy_Spawn : UnitEnemy
 		var pPos = WorldInfo.getClosestPlayerUnit(pos, -1).pos;
 		bool isPathClear = findPathToUnit((int)pPos.x, (int)pPos.y) != -1;
 		if (!isPathClear) return;
-
+		
+		unit.typeAttack = UnitBase.TYPE_ATTACK.NONE;
 		if (++turnCount % 4 != 0) return;
 		turnCount = 0;
 		if (isTrap) UpdateTrap((int)pPos.x,(int)pPos.y);

@@ -5,7 +5,9 @@ using System.Text;
 
 class UI_GameLevelSelector : UIOrganizer
 {
-	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT EVENT_LEVEL_SELECTED;
+	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT
+		EVENT_REQUEST_BTTN_CLICK = delegate { },
+		EVENT_LEVEL_SELECTED = delegate { };
 	public UIItem text,
 		bttn_back, bttn_forward;
 	int levelSelected = 0;
@@ -18,6 +20,11 @@ class UI_GameLevelSelector : UIOrganizer
 		myItems.Add(text);
 		bttn_back.EVENT_CLICK += delegate { AudioManager.Play_Button00(); CLICK(-1); };
 		bttn_forward.EVENT_CLICK += delegate { AudioManager.Play_Button01(); CLICK(+1); };
+		EVENT_REQUEST_BTTN_CLICK += delegate(int n)
+		{
+			if (n == -1) bttn_back.OnMouseDown();
+			if (n == 1) bttn_forward.OnMouseDown();
+		};
 	}
 	public override void show()
 	{
@@ -49,7 +56,7 @@ class UI_GameLevelSelector : UIOrganizer
 	public void CLICK(int n)
 	{
 		timeElapsed = 0;
-		levelSelected = Mathf.Max(0, n + levelSelected);
+		levelSelected =Mathf.Min(59, Mathf.Max(0, n + levelSelected));
 
 		text.TextMesh.text = "" + levelSelected;
 	}
@@ -59,6 +66,8 @@ class UI_GameLevelSelector : UIOrganizer
 		if (timeElapsed > timeElapsedMax)
 		{
 			enabled = false;
+			bttn_back.gameObject.SetActive(false);
+			bttn_forward.gameObject.SetActive(false);
 			EVENT_LEVEL_SELECTED(levelSelected);
 		}
 	}

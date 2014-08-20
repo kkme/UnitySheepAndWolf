@@ -45,6 +45,10 @@ public class EffectManager : MonoBehaviour
 		helperInstantiateSimpleExplosion(posX, posY, dirX, dirY, me.colorPlayer);
 		helperInstantiateSimpleExplosion(posX, posY, dirX, dirY, me.colorPlayer);
 	}
+	static public void Clear()
+	{
+		foreach (var v in effectsBase) v.gameObject.SetActive(false);
+	}
 	public Color colorPlayer, colorEnemy, colorDefault;
 	public EffectBase EFFECT_SMALL;
 	public GameObject 
@@ -54,11 +58,14 @@ public class EffectManager : MonoBehaviour
 	public CamDistorted 
 		camHorizontal00, camHorizontal01,
 		camVertical00, camVertical01;
+	
 	void Awake()
 	{
 		me = this;
-		UnitPlayer.EVENT_EXPLOSION += delegate(int x, int y) { Debug.Log("PLAYER EXPLODED " + x + " " + y ); explosion(x, y, colorPlayer); };
+		UnitPlayer.EVENT_EXPLOSION += delegate(int x, int y) { Debug.Log("PLAYER EXPLODED " + x + " " + y); explosion(x, y, colorPlayer); };
 		UnitEnemy.EVENT_EXPLOSION += delegate(int x, int y) { explosion(x, y, colorEnemy); };
+		UnitPlayer_Bush.EVENT_EXPLOSION += delegate(int x, int y) { explosion(x, y, colorPlayer); };
+		UnitPlayer_Mimic.EVENT_EXPLOSION += delegate(int x, int y) { explosion(x, y, colorPlayer); };
 	
 	}
 	void initCmas()

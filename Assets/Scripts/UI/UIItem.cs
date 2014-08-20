@@ -29,7 +29,6 @@ public class UIItem : UIOrganizer
 	}
 	public virtual void OnMouseDown()
 	{
-		if (!enabled) return;
 		EVENT_CLICK();
 		//Debug.Log("EVENT CLICK HERE " + gameObject.name);
 	}
