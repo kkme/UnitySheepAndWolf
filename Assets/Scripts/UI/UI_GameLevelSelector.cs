@@ -26,12 +26,24 @@ class UI_GameLevelSelector : UIOrganizer
 			if (n == 1) bttn_forward.OnMouseDown();
 		};
 	}
+	void helperShowLevel(int level) {
+		text.TextMesh.text = "" + levelSelected;
+		if (WorldInfo.levelStates[level])
+		{
+			text.TextMesh.color = new Color(.52f, .52f, .52f);
+		}
+		else
+		{
+
+			text.TextMesh.color = new Color(1.0f, .32f, .32f);
+		}
+	}
 	public override void show()
 	{
 		enabled = true;
 		timeElapsed = 0;
-		levelSelected =  WorldInfo.level;
-		text.TextMesh.text = "" + levelSelected;
+		levelSelected = WorldInfo.level;
+		helperShowLevel(levelSelected);
 		base.show();
 	}
 	public override void hide()
@@ -57,8 +69,7 @@ class UI_GameLevelSelector : UIOrganizer
 	{
 		timeElapsed = 0;
 		levelSelected =Mathf.Min(59, Mathf.Max(0, n + levelSelected));
-
-		text.TextMesh.text = "" + levelSelected;
+		helperShowLevel(levelSelected);
 	}
 	void Update()
 	{

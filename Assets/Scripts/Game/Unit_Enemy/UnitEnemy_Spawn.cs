@@ -5,7 +5,12 @@ using System.Text;
 
 public class UnitEnemy_Spawn : UnitEnemy
 {
-	internal KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT EVENT_SPAWN = delegate { };
+	internal KDels.EVENTHDR_REQUEST_SIMPLE_INT_INT
+		EVENT_SPAWN = delegate { };
+	internal KDels.EVENTHDR_REQUEST_SIMPLE
+		EVENT_SPAWN_SOON = delegate { },
+		EVENT_SPAWN_ATTEMPTED = delegate { };
+
 	internal int turnCount;
 	internal GameObject PREFAB_SPAWN = null;
 	internal UnitBase unit;
@@ -89,7 +94,8 @@ public class UnitEnemy_Spawn : UnitEnemy
 	public override void Start()
 	{
 		base.Start();
-		spawnNew(); 
+		spawnNew();
+		if (turnCount == 3) EVENT_SPAWN_SOON();
 	}
 	public override void KUpdate()
 	{
@@ -99,7 +105,12 @@ public class UnitEnemy_Spawn : UnitEnemy
 		if (!isPathClear) return;
 		
 		unit.typeAttack = UnitBase.TYPE_ATTACK.NONE;
-		if (++turnCount % 4 != 0) return;
+		if (++turnCount % 4 != 0)
+		{
+			if (turnCount == 3) EVENT_SPAWN_SOON();
+			return;
+		}
+		EVENT_SPAWN_ATTEMPTED();
 		turnCount = 0;
 		if (isTrap) UpdateTrap((int)pPos.x,(int)pPos.y);
 		else unit.KUpdate();

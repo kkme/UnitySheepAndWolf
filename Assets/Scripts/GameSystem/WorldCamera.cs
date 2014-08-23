@@ -39,7 +39,7 @@ public class WorldCamera : MonoBehaviour
 	}
 	void Update()
 	{
-		timeElapsed += Time.deltaTime;
+		timeElapsed +=Mathf.Min(.025f, Time.deltaTime);
 		float ratio = Mathf.Min(1, timeElapsed / timeElapsedMax);
 		camera.orthographicSize = .6f + (orthographicSize-.6f)*ratio;
 		if ((int)ratio == 1){

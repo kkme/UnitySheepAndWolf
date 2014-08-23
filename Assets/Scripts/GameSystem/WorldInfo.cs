@@ -16,6 +16,7 @@ public class WorldInfo
 	public static UnitBase door;//the final goal, game "success" sequence	
 	public static UnitPlayer unitPlayer_real;//static public UnitPlayer unitPlayer;
 	public static UnitBase[,] gridUnits;
+	public static bool[] levelStates = new bool[60];
 
 	public static List<UnitBase>	unitsUpdate01,
 									unitsUpdate00,

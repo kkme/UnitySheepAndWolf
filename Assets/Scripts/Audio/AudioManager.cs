@@ -5,7 +5,7 @@ public class AudioManager : MonoBehaviour {
 	static AudioManager me;
 	public static void Play_PlayerMoved()
 	{
-		me.Move.Play();
+		me.Move.PlayOneShot(me.Move.clip);
 	}
 	public static void Play_Attack()
 	{
@@ -34,11 +34,11 @@ public class AudioManager : MonoBehaviour {
 	}
 	static public void Play_Button00()
 	{
-		me.button00.Play();
+		me.button00.PlayOneShot(me.button00.clip);
 	}
 	static public void Play_Button01()
 	{
-		me.button01.Play();
+		me.button01.PlayOneShot(me.button01.clip);
 	}
 	static public void Play_Attacked()
 	{

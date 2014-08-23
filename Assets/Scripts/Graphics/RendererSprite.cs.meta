@@ -2,7 +2,13 @@ fileFormatVersion: 2
 guid: 4a01bbc43df25f445850d06e453db764
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - PREFAB_FLICKERING: {fileID: 11400000, guid: 0b6f498e1148a0245b188d41e0144405,
+      type: 2}
+  - mySprite: {instanceID: 0}
+  - ani: {instanceID: 0}
+  - aniA: {instanceID: 0}
+  - aniB: {instanceID: 0}
   executionOrder: 50
   icon: {instanceID: 0}
   userData: 

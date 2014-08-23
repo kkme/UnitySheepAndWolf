@@ -6,7 +6,7 @@ using SimpleJSON;
 
 class Main : MonoBehaviour
 {
-	static int MaxLevel = 25;
+	static int MaxLevel = 59;
 	static string PATH_DATA = "Assets/Resources/Data/";
 	static public KDels.EVENTHDR_REQUEST_SIMPLE_INT EVENT_INTPUT_PLAYER = delegate { };
 	public TextMesh debugScreen;
@@ -43,8 +43,49 @@ class Main : MonoBehaviour
 		GameLoop.EVENT_GAME_WIN += EVENTHDR_NEXT_LEVEL;
 
 		TransitionEffect.EVENT_FINISHED_TRANSITION += transitionCompleted;
-	}
+		WorldInfo.level = int.Parse( helperReadFile("level.txt", "0"));
+		for (int i = 0; i < 60; i++)
+		{
+			WorldInfo.levelStates[i] = isLevelFinished(i);
+		}
+		//Time.timeScale = .3f;
 
+	}
+	string helperReadFile(string fileName, string failSafeContent = "")
+	{
+		var path = Application.persistentDataPath + "/" + fileName;
+		Debug.Log(path);
+		try
+		{
+			using (var file = new System.IO.StreamReader(path)) 
+				return file.ReadToEnd();
+		}
+		catch { } //well... sigh
+		//this should not fail...
+		Debug.Log("ATTEMPT TO READ THE FILE HAS BEEN FAILED");
+		helperWriteFile(fileName, failSafeContent);
+		
+		return failSafeContent;
+	}
+	bool helperWriteFile(string fileName, string newCotnent = "")
+	{
+		try
+		{
+			using (var file = new System.IO.StreamWriter(Application.persistentDataPath + "/" + fileName))
+				file.WriteLine(newCotnent);
+		}
+		catch { return false; }
+		return true;
+	}
+	bool isLevelFinished(int n)
+	{
+		return int.Parse(helperReadFile("" + n + ".txt", "0")) == 1;
+	}
+	void saveLevelState(int level, bool isFinished)
+	{
+		helperWriteFile("" + level + ".txt", (isFinished)? "1":"0" );
+		WorldInfo.levelStates[level] = isFinished;
+	}
 	IEnumerator<WaitForSeconds> handleTransition()
 	{
 
@@ -119,6 +160,7 @@ class Main : MonoBehaviour
 	
 	void initGame(int lv = 0)
 	{
+		helperWriteFile("level.txt", ""+lv);
 		lv = Mathf.Min(lv, MaxLevel);
 		EffectManager.Clear();
 		WorldInfo.level = lv;
@@ -185,6 +227,7 @@ class Main : MonoBehaviour
 		Debug.Log("NEXT LEVEL");
 		hideAll();
 		//pause for a second
+		saveLevelState(WorldInfo.level, true);
 		WorldInfo.level = Mathf.Min(MaxLevel, WorldInfo.level + 1);
 		stateMe = STATE.GameModeDelay;
 		transition.initTransition(""+WorldInfo.level, (WorldInfo.level == 0) ? "" : ("" + (WorldInfo.level-1)));
