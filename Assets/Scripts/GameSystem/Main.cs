@@ -43,7 +43,7 @@ class Main : MonoBehaviour
 		GameLoop.EVENT_GAME_WIN += EVENTHDR_NEXT_LEVEL;
 
 		TransitionEffect.EVENT_FINISHED_TRANSITION += transitionCompleted;
-		WorldInfo.level = int.Parse( helperReadFile("level.txt", "0"));
+		WorldInfo.level =  int.Parse(helperReadFile("level.txt", "0"));
 		for (int i = 0; i < 60; i++)
 		{
 			WorldInfo.levelStates[i] = isLevelFinished(i);
